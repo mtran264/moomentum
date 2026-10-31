@@ -62,6 +62,9 @@
   .greet-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin: 8px 0 20px; }
   .greet h2 { font-size: 34px; line-height: 1.15; }
   .greet .lead { color: var(--muted); margin-top: 6px; font-size: 17px; }
+  .icon-btn { min-width: 44px; min-height: 44px; border-radius: 50%; border: 2px solid var(--night-sky); background: #fff; color: var(--night-cerulean); font-size: 16px; vertical-align: middle; margin-left: 6px; }
+  .name-form { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; }
+  .name-form input { flex: 1; min-width: 180px; max-width: 280px; }
   .desk-date { display: none; text-align: right; color: var(--muted); font-size: 15px; }
   .desk-date b { display: block; font-family: var(--font-display); font-weight: 600; font-size: 20px; color: var(--night-deep); }
 
@@ -220,7 +223,12 @@
       <section id="home">
         <div class="greet-row">
           <div class="greet">
-            <h2 id="greeting"></h2>
+            <h2 id="greeting"><span id="greetText"></span> <button class="icon-btn" id="nameEdit" aria-label="Add your name" title="Edit name">&#9998;</button></h2>
+            <div class="name-form" id="nameForm" hidden>
+              <input type="text" id="nameInput" maxlength="30" placeholder="Your first name" aria-label="Your name">
+              <button class="btn btn-primary btn-sm" id="nameSave">Save</button>
+              <button class="btn btn-ghost btn-sm" id="nameCancel">Cancel</button>
+            </div>
             <p class="lead">Take a moment to reflect on your day.</p>
           </div>
           <div class="desk-date" id="deskDate"></div>
@@ -374,7 +382,8 @@
 
 <script>
 const $ = s => document.querySelector(s);
-const NAME = 'Michael';
+let NAME = readName();
+function readName() { try { return localStorage.getItem('moomentum:name') || ''; } catch (e) { return ''; } }
 const PIE = ['#283D6B', '#F2C94C', '#3A5BA0', '#F7E59A', '#6F8FC7', '#2F4F3A', '#1B2A4A', '#B9C9E6'];
 const FREQUENT_DAYS = 20;
 
@@ -402,11 +411,6 @@ const restored = loadStore();
 if (restored) {
   ACTS = restored.activities;
   Object.assign(data, restored.days);
-} else for (let i = 1; i <= 400; i++) {
-  if (rnd() < 0.2) continue;
-  const day = {};
-  ACTS.forEach(a => { if (rnd() < 0.4) day[a.id] = 15 + Math.floor(rnd() * 6) * 15; });
-  data[keyOf(daysAgo(i))] = day;
 }
 
 const day = k => data[k] || (data[k] = {});
@@ -418,7 +422,9 @@ const isMobile = () => matchMedia('(max-width: 899px)').matches;
 
 function renderHeader() {
   const h = new Date().getHours();
-  $('#greeting').textContent = `${h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening'}, ${NAME}`;
+  const part = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+  $('#greetText').textContent = NAME ? `${part}, ${NAME}` : part;
+  $('#nameEdit').setAttribute('aria-label', NAME ? 'Edit name' : 'Add your name');
   $('#deskDate').innerHTML = `Today<b>${new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</b>`;
 }
 
@@ -901,10 +907,23 @@ function loadStore() {
 async function exportBackup() {
   const msg = $('#dataMsg');
   const downloads = await window.claude?.use?.('downloads');
-  if (!downloads) { msg.textContent = 'Saving files is not available in this view.'; return false; }
   const payload = { app: 'Moomentum', version: 1, exportedAt: new Date().toISOString(), activities: ACTS, days: data };
   try {
-    await downloads.save({ filename: `moomentum-backup-${TODAY}.json`, data: JSON.stringify(payload, null, 2) });
+    const json = JSON.stringify(payload, null, 2);
+    const filename = `moomentum-backup-${TODAY}.json`;
+    if (downloads) {
+      await downloads.save({ filename, data: json });
+    } else {
+      // Standard browser download, used on GitHub Pages and other normal sites
+      const url = URL.createObjectURL(new Blob([json], { type: 'application/json' }));
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
     msg.textContent = 'Backup saved.';
     return true;
   } catch (e) {
@@ -980,6 +999,23 @@ $('#eraseGo').onclick = () => {
   renderHeat();
   renderManage();
 };
+
+function saveName() {
+  NAME = $('#nameInput').value.trim();
+  try { localStorage.setItem('moomentum:name', NAME); } catch (e) { /* storage unavailable */ }
+  $('#nameForm').hidden = true;
+  $('#nameEdit').hidden = false;
+  renderHeader();
+}
+$('#nameEdit').onclick = () => {
+  $('#nameInput').value = NAME;
+  $('#nameForm').hidden = false;
+  $('#nameEdit').hidden = true;
+  $('#nameInput').focus();
+};
+$('#nameCancel').onclick = () => { $('#nameForm').hidden = true; $('#nameEdit').hidden = false; };
+$('#nameSave').onclick = saveName;
+$('#nameInput').onkeydown = e => { if (e.key === 'Enter') saveName(); };
 
 $('#homeLink').onclick = () => {
   showTab('home');
