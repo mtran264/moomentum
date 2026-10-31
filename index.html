@@ -10,6 +10,7 @@
   :root {
     --night-deep: #1B2A4A; --night-ultramarine: #283D6B; --night-cerulean: #3A5BA0; --night-sky: #6F8FC7;
     --star-chrome: #F2C94C; --star-pale: #F7E59A; --moon-cream: #FBF6E9; --cypress: #2F4F3A;
+    --ember: #D9824B; --ember-deep: #A4502A;
     --ink: #1E2633; --mist: #E6ECF5; --muted: #5A6B8A;
     --radius-sm: 8px; --radius-md: 16px; --radius-lg: 24px; --radius-xl: 36px; --radius-pill: 999px;
     --shadow-soft: 0 8px 24px rgba(27, 42, 74, .12); --shadow-lift: 0 14px 36px rgba(27, 42, 74, .18);
@@ -66,13 +67,14 @@
   .name-form { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; }
   .name-form input { flex: 1; min-width: 180px; max-width: 280px; }
   .desk-date { display: none; text-align: right; color: var(--muted); font-size: 15px; }
-  .desk-date b { display: block; font-family: var(--font-display); font-weight: 600; font-size: 20px; color: var(--night-deep); }
+  .d-only { display: none; }
+  .desk-date b { display: inline; font-family: var(--font-body); font-weight: 500; font-size: 14px; color: var(--muted); }
 
   .recap { background: #fff; border-radius: var(--radius-xl); box-shadow: var(--shadow-soft); overflow: hidden; margin-bottom: 20px; width: 100%; min-width: 0; }
   .recap-toggle { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 72px; padding: 18px 22px; background: var(--night-ultramarine); color: var(--moon-cream); border: 0; text-align: left; }
   .recap-toggle b { display: block; font-family: var(--font-display); font-weight: 600; font-size: 20px; }
   .recap-toggle small { color: var(--mist); font-size: 14px; }
-  .chev { font-size: 18px; transition: transform 240ms var(--ease); flex-shrink: 0; }
+  .chev { width: 40px; height: 40px; min-width: 40px; border-radius: 50%; background: var(--star-chrome); color: var(--night-deep); display: inline-flex; align-items: center; justify-content: center; font-size: 32px; line-height: 1; transition: transform 240ms var(--ease); flex-shrink: 0; }
   .recap-toggle[aria-expanded="true"] .chev { transform: rotate(180deg); }
   .recap-panel { padding: 20px 22px 24px; }
 
@@ -89,6 +91,10 @@
   .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
   .chip { min-height: 44px; padding: 8px 16px; border-radius: var(--radius-pill); border: 2px solid var(--mist); background: #fff; font-weight: 700; font-size: 15px; transition: background 180ms var(--ease), color 180ms var(--ease); }
   .chip.on { background: var(--night-ultramarine); border-color: var(--night-ultramarine); color: var(--moon-cream); }
+  .chip.neg { border-style: dashed; border-color: var(--night-sky); }
+  .chip.neg.on { background: var(--ember-deep); border-color: var(--ember-deep); color: #FFFFFF; }
+  .neg-opt { display: flex; align-items: center; gap: 8px; min-height: 44px; margin: -4px 0 12px; font-size: 15px; font-weight: 500; color: var(--muted); cursor: pointer; }
+  .neg-opt input { width: 20px; height: 20px; accent-color: var(--ember-deep); margin: 0; }
   .add-row { display: flex; gap: 8px; margin-bottom: 12px; }
   .act-line { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--mist); }
   .stepper { display: flex; align-items: center; gap: 8px; }
@@ -117,16 +123,21 @@
   .heat-grid .wlabel { font-size: 12px; color: var(--muted); align-self: center; font-weight: 500; }
   .cell { width: 20px; height: 20px; border-radius: 6px; border: 0; padding: 0; background: var(--mist); transition: transform 180ms var(--ease); }
   .cell:hover:not(:disabled) { transform: scale(1.12); }
-  .cell.l1 { background: #B9C9E6; }
-  .cell.l2 { background: var(--night-sky); }
-  .cell.l3 { background: var(--night-cerulean); }
-  .cell.l4 { background: var(--night-ultramarine); }
+  .cell.pos1 { background: #B9C9E6; }
+  .cell.pos2 { background: #6F8FC7; }
+  .cell.pos3 { background: #3A5BA0; }
+  .cell.pos4 { background: #283D6B; }
+  .cell.neg1 { background: #F7E59A; }
+  .cell.neg2 { background: #F2C94C; }
+  .cell.neg3 { background: #D9824B; }
+  .cell.neg4 { background: #A4502A; }
+  .cell.bal { background: var(--moon-cream); border: 2px dashed #6F8FC7; }
   .cell.sel { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--star-chrome); }
   .cell.blank { background: none; cursor: default; }
   .cell:disabled { opacity: .35; cursor: default; }
   .cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
   .cal .cell { width: 100%; min-height: 48px; font-weight: 700; font-size: 14px; color: var(--ink); border-radius: var(--radius-sm); }
-  .cal .cell.l3, .cal .cell.l4 { color: var(--moon-cream); }
+  .cal .cell.pos3, .cal .cell.pos4, .cal .cell.neg4 { color: var(--moon-cream); }
   .cal .dow { text-align: center; font-size: 13px; color: var(--muted); font-weight: 700; padding: 4px 0; }
   .month-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
   .month-nav strong { font-family: var(--font-display); font-weight: 600; font-size: 18px; color: var(--night-deep); }
@@ -136,13 +147,19 @@
 
   /* History */
   .seg { display: flex; background: #fff; border-radius: var(--radius-pill); box-shadow: var(--shadow-soft); padding: 4px; margin-bottom: 20px; overflow-x: auto; }
-  .seg button { flex: 1; min-height: 44px; padding: 8px 10px; border: 0; border-radius: var(--radius-pill); background: none; font-weight: 700; color: var(--muted); white-space: nowrap; transition: background 180ms var(--ease); }
+  .seg button { flex: 1 1 0; min-width: 0; min-height: 44px; padding: 8px 10px; border: 0; border-radius: var(--radius-pill); background: none; font-weight: 700; color: var(--muted); white-space: nowrap; transition: background 180ms var(--ease); }
   .seg button.on { background: var(--night-ultramarine); color: var(--moon-cream); }
   .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
   .stat { background: #fff; border-radius: var(--radius-lg); box-shadow: var(--shadow-soft); padding: 16px 8px; text-align: center; }
   .stat b { display: block; font-family: var(--font-display); font-weight: 600; font-size: 24px; color: var(--night-deep); }
   .stat span { font-size: 13px; color: var(--muted); font-weight: 500; }
   .chart svg { width: 100%; height: auto; display: block; }
+  .hbar { padding: 8px 0; }
+  .hbar + .hbar { border-top: 1px solid var(--mist); }
+  .hbar-head { display: flex; justify-content: space-between; gap: 12px; font-size: 15px; font-weight: 700; color: var(--night-deep); margin-bottom: 6px; }
+  .hbar-head span:last-child { font-weight: 500; color: var(--muted); font-size: 14px; }
+  .hbar-track { height: 12px; border-radius: var(--radius-pill); background: var(--mist); overflow: hidden; }
+  .hbar-track span { display: block; height: 100%; background: var(--night-cerulean); border-radius: var(--radius-pill); }
   .pie-wrap { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-content: center; }
   .pie-wrap svg { width: 210px; height: 210px; flex-shrink: 0; }
   .pie-legend { flex: 1; min-width: 200px; font-size: 15px; }
@@ -170,9 +187,11 @@
     header.top { display: none; }
     .app { max-width: none; min-width: 0; }
     main { padding: 48px 64px; }
-    main > section { width: 800px; max-width: 100%; margin: 0 auto; min-width: 0; }
+    main > section { width: 100%; max-width: 800px; margin: 0 auto; min-width: 0; }
     .greet h2 { font-size: 42px; }
     .desk-date { display: block; }
+    .m-only { display: none; }
+    .d-only { display: inline; }
     .heat-cal { display: none; }
     .heat-desk { display: block; }
     .stats, .kpis { gap: 16px; }
@@ -181,7 +200,6 @@
     .shell { grid-template-columns: 200px minmax(0, 1fr); }
     nav.side button { padding: 10px 14px; font-size: 14px; }
     main { padding: 32px 24px; }
-    main > section { width: 100%; }
   }
   @media (min-width: 1100px) and (max-width: 1199px) {
     main { padding: 40px 40px; }
@@ -238,7 +256,7 @@
           <button class="recap-toggle" id="recapToggle" aria-expanded="false" aria-controls="recapPanel">
             <span>
               <b>Ready to recap your day?</b>
-              <small>Log what you worked on in about 5 minutes.</small>
+              <small>Log what you worked on in a few minutes.</small>
             </span>
             <span class="chev" aria-hidden="true">&#9662;</span>
           </button>
@@ -260,7 +278,7 @@
               <div class="step-body" id="s2Body">
                 <div id="s2Ask" class="row-controls">
                   <button class="btn btn-secondary" id="copyYes">Yes</button>
-                  <button class="btn btn-ghost" id="copyNo">No</button>
+                  <button class="btn btn-primary" id="copyNo">No</button>
                 </div>
                 <div id="s2Copy" class="row-controls" hidden>
                   <label>Copy from <input type="date" id="copySrc"></label>
@@ -271,13 +289,14 @@
             </div>
 
             <div class="step" id="s3">
-              <div class="step-head"><span class="num">3</span><h3>Choose Activities and adjust time</h3><span class="step-status" id="s3Status"></span></div>
+              <div class="step-head"><span class="num">3</span><h3>Choose activities and adjust time</h3><span class="step-status" id="s3Status"></span></div>
               <div class="step-body" id="s3Body">
                 <div class="chips" id="chips"></div>
                 <div class="add-row">
                   <input type="text" id="newAct" placeholder="Add an activity, e.g. Piano" maxlength="30" aria-label="New activity name">
                   <button class="btn btn-ghost btn-sm" id="addAct">Add</button>
                 </div>
+                <label class="neg-opt" id="negWrap" hidden><input type="checkbox" id="newNeg"> This is not a productive activity</label>
                 <div id="selected"></div>
                 <div class="total"><span>Time logged</span><span id="total">0m</span></div>
                 <button class="btn btn-primary btn-block" id="saveBtn">Save Recap</button>
@@ -292,14 +311,14 @@
           </div>
         </div>
 
-        <p class="sub caption" id="ytdLabel" style="margin:0 0 8px">Year to date</p>
+        <div class="section-title"><h2 id="ytdLabel"></h2></div>
         <div class="kpis">
           <div class="kpi"><b id="kDays">0</b><span>Active days</span></div>
           <div class="kpi"><b id="kHours">0h</b><span>Hours logged</span></div>
           <div class="kpi"><b id="kActs">0</b><span>Activities explored</span></div>
         </div>
 
-        <div class="section-title"><h2>Your progress</h2><span class="caption">Tap any day to log it</span></div>
+        <div class="section-title"><h2>Your progress</h2><span class="caption"><span class="m-only">Tap</span><span class="d-only">Click</span> any day to log it</span></div>
         <div class="card">
           <div class="heat-cal">
             <div class="month-nav">
@@ -313,7 +332,7 @@
             <div class="heat-wrap"><div class="heat-grid" id="grid"></div></div>
           </div>
           <div class="legend">
-            Less <i style="background:var(--mist)"></i><i style="background:#B9C9E6"></i><i style="background:var(--night-sky)"></i><i style="background:var(--night-cerulean)"></i><i style="background:var(--night-ultramarine)"></i> More
+            Unproductive <i style="background:#A4502A"></i><i style="background:#D9824B"></i><i style="background:#F2C94C"></i><i style="background:#F7E59A"></i><i style="background:var(--moon-cream);border:2px dashed #6F8FC7"></i> <i style="background:#B9C9E6"></i><i style="background:#6F8FC7"></i><i style="background:#3A5BA0"></i><i style="background:#283D6B"></i> Productive
           </div>
         </div>
       </section>
@@ -388,12 +407,11 @@ const PIE = ['#283D6B', '#F2C94C', '#3A5BA0', '#F7E59A', '#6F8FC7', '#2F4F3A', '
 const FREQUENT_DAYS = 20;
 
 let ACTS = [
-  { id: 'design', name: 'Design practice' },
-  { id: 'art', name: 'Art / sketching' },
-  { id: 'japanese', name: 'Japanese study' },
-  { id: 'exercise', name: 'Exercise' },
-  { id: 'reading', name: 'Reading' },
-  { id: 'family', name: 'Family time' }
+  { id: 'exercise', name: 'Exercise', type: 'pos' },
+  { id: 'reading', name: 'Reading', type: 'pos' },
+  { id: 'journaling', name: 'Journaling', type: 'pos' },
+  { id: 'cooking', name: 'Cooking', type: 'pos' },
+  { id: 'doomscrolling', name: 'Doomscrolling', type: 'neg' }
 ];
 
 function keyOf(d) {
@@ -409,16 +427,52 @@ const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
 const data = {};
 const STORE_KEY = 'moomentum:v1';
 const restored = loadStore();
+function freshDefaults() {
+  return [
+    { id: 'exercise', name: 'Exercise', type: 'pos' },
+    { id: 'reading', name: 'Reading', type: 'pos' },
+    { id: 'journaling', name: 'Journaling', type: 'pos' },
+    { id: 'cooking', name: 'Cooking', type: 'pos' },
+    { id: 'doomscrolling', name: 'Doomscrolling', type: 'neg' }
+  ];
+}
 if (restored) {
-  ACTS = restored.activities;
+  const legacy = restored.activities.some(a => !a.type);
+  ACTS = legacy ? freshDefaults() : restored.activities;
   Object.assign(data, restored.days);
+  Object.keys(data).forEach(k => {
+    Object.keys(data[k]).forEach(id => { if (!ACTS.some(a => a.id === id)) delete data[k][id]; });
+    if (!Object.keys(data[k]).length) delete data[k];
+  });
 }
 
 const day = k => data[k] || (data[k] = {});
-const total = m => Object.values(m).reduce((a, b) => a + b, 0);
+const total = m => Object.entries(m)
+  .filter(([id]) => ACTS.some(a => a.id === id))
+  .reduce((s, [, min]) => s + min, 0);
 const fmtMin = n => (Math.floor(n / 60) ? `${Math.floor(n / 60)}h ` : '') + `${n % 60}m`;
 const fmtDate = k => new Date(k + 'T12:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-const lvlOf = t => (t === 0 ? 0 : t < 60 ? 1 : t < 120 ? 2 : t < 180 ? 3 : 4);
+function netOf(k) {
+  let p = 0, n = 0;
+  Object.entries(data[k] || {}).forEach(([id, min]) => {
+    const a = ACTS.find(x => x.id === id);
+    if (!a) return;
+    if (a.type === 'neg') n += min; else p += min;
+  });
+  return { p, n, net: p - n };
+}
+function heatClass(k) {
+  const { p, n, net } = netOf(k);
+  if (!p && !n) return 'l0';
+  const m = Math.abs(net);
+  if (m < 15) return 'bal';
+  const s = m < 60 ? 1 : m < 120 ? 2 : m < 180 ? 3 : 4;
+  return (net > 0 ? 'pos' : 'neg') + s;
+}
+function dayTitle(k) {
+  const { p, n } = netOf(k);
+  return `${fmtDate(k)} · ${fmtMin(p)} positive, ${fmtMin(n)} negative`;
+}
 const isMobile = () => matchMedia('(max-width: 899px)').matches;
 
 function renderHeader() {
@@ -426,11 +480,13 @@ function renderHeader() {
   const part = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
   $('#greetText').textContent = NAME ? `${part}, ${NAME}` : part;
   $('#nameEdit').setAttribute('aria-label', NAME ? 'Edit name' : 'Add your name');
-  $('#deskDate').innerHTML = `Today<b>${new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</b>`;
+  $('#deskDate').innerHTML = `<b>${new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</b>`;
 }
 
 function renderKpis() {
-  const yStart = `${new Date().getFullYear()}-01-01`;
+  const year = new Date().getFullYear();
+  $('#ytdLabel').textContent = 'Year in review';
+  const yStart = `${year}-01-01`;
   const keys = Object.keys(data).filter(k => k >= yStart && k <= TODAY);
   const activeDays = keys.filter(k => total(data[k]) > 0).length;
   const minutes = keys.reduce((s, k) => s + total(data[k]), 0);
@@ -444,7 +500,7 @@ function renderKpis() {
 function setRecapOpen(open) {
   $('#recapToggle').setAttribute('aria-expanded', String(open));
   $('#recapPanel').hidden = !open;
-  $('#recapToggle').querySelector('small').textContent = open ? 'Tap again to close.' : 'Log what you worked on in about 5 minutes.';
+  $('#recapToggle').querySelector('small').textContent = open ? 'Tap again to close.' : 'Log what you worked on in a few minutes.';
 }
 $('#recapToggle').onclick = () => setRecapOpen($('#recapPanel').hidden);
 
@@ -473,7 +529,7 @@ function renderChips() {
   $('#chips').innerHTML = '';
   ACTS.forEach(a => {
     const b = document.createElement('button');
-    b.className = 'chip' + (cur[a.id] != null ? ' on' : '');
+    b.className = 'chip' + (a.type === 'neg' ? ' neg' : '') + (cur[a.id] != null ? ' on' : '');
     b.textContent = a.name;
     b.setAttribute('aria-pressed', cur[a.id] != null);
     b.onclick = () => {
@@ -522,12 +578,24 @@ $('#addAct').onclick = () => {
   if (!name) return flash('Type a name for the new activity first.');
   if (ACTS.some(a => a.name.toLowerCase() === name.toLowerCase())) return flash(`"${name}" already exists.`);
   const id = 'x' + Date.now();
-  ACTS.push({ id, name });
+  const type = $('#newNeg').checked ? 'neg' : 'pos';
+  ACTS.push({ id, name, type });
   day(current)[id] = 30;
   input.value = '';
+  $('#newNeg').checked = false;
+  $('#negWrap').hidden = true;
   renderLog();
-  flash(`Added "${name}" and logged 30 min.`);
+  flash(`Added "${name}" as ${type === 'neg' ? 'a negative habit' : 'a productive activity'} and logged 30 min.`);
 };
+
+function syncNegOption() {
+  const wrap = $('#negWrap');
+  const filled = $('#newAct').value.trim() !== '';
+  if (filled || document.activeElement === $('#newAct')) wrap.hidden = false;
+}
+$('#newAct').onfocus = syncNegOption;
+$('#newAct').oninput = syncNegOption;
+$('#newNeg').onchange = syncNegOption;
 $('#newAct').onkeydown = e => { if (e.key === 'Enter') $('#addAct').click(); };
 
 // Progressive recap: 1 = date, 2 = copy choice, 3 = activities + save
@@ -634,10 +702,10 @@ function renderCalendar() {
     const k = keyOf(new Date(y, m, d));
     const t = total(data[k] || {});
     const cell = document.createElement('button');
-    cell.className = `cell l${lvlOf(t)}` + (k === current ? ' sel' : '');
+    cell.className = `cell ${heatClass(k)}` + (k === current ? ' sel' : '');
     cell.textContent = d;
     cell.disabled = k > TODAY;
-    cell.title = `${fmtDate(k)} · ${fmtMin(t)}`;
+    cell.title = dayTitle(k);
     cell.setAttribute('aria-label', cell.title);
     cell.onclick = () => selectDay(k);
     cal.appendChild(cell);
@@ -682,8 +750,8 @@ function renderDesktopGrid() {
       const k = keyOf(d);
       const t = total(data[k] || {});
       const btn = document.createElement('button');
-      btn.className = `cell l${lvlOf(t)}` + (k === current ? ' sel' : '');
-      btn.title = `${fmtDate(k)} · ${fmtMin(t)}`;
+      btn.className = `cell ${heatClass(k)}` + (k === current ? ' sel' : '');
+      btn.title = dayTitle(k);
       btn.setAttribute('aria-label', btn.title);
       btn.onclick = () => selectDay(k);
       btn.style.gridRow = `${r + 2}`;
@@ -798,7 +866,7 @@ function buckets(days) {
 }
 
 function lineChart(bk) {
-  const W = 600, H = 220, P = { l: 44, r: 16, t: 16, b: 34 };
+  const W = 600, H = 220, P = { l: 76, r: 16, t: 16, b: 34 };
   const max = Math.max(...bk.map(b => b.min), 1);
   const n = bk.length;
   const x = i => (n === 1 ? (P.l + W - P.r) / 2 : P.l + (i * (W - P.l - P.r)) / (n - 1));
@@ -819,24 +887,15 @@ function lineChart(bk) {
   </svg>`;
 }
 
-function pieChart(slices) {
+function barChart(slices) {
+  if (!slices.length) return '<p class="hint">No time logged in this range.</p>';
   const sum = slices.reduce((s, x) => s + x.min, 0);
-  if (!sum) return '<p class="hint">No time logged in this range.</p>';
-  const cx = 100, cy = 100, r = 96;
-  let angle = -Math.PI / 2;
-  const paths = slices.map((s, i) => {
-    const frac = s.min / sum;
-    const fill = PIE[i % PIE.length];
-    if (frac >= 0.9999) return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}" stroke="#fff" stroke-width="2"/>`;
-    const a1 = angle + frac * 2 * Math.PI;
-    const p = a => `${(cx + r * Math.cos(a)).toFixed(2)} ${(cy + r * Math.sin(a)).toFixed(2)}`;
-    const d = `M ${cx} ${cy} L ${p(angle)} A ${r} ${r} 0 ${frac > 0.5 ? 1 : 0} 1 ${p(a1)} Z`;
-    angle = a1;
-    return `<path d="${d}" fill="${fill}" stroke="#fff" stroke-width="2"><title>${s.name}: ${fmtMin(s.min)}</title></path>`;
-  }).join('');
-  const legend = slices.map((s, i) => `
-    <div><i style="background:${PIE[i % PIE.length]}"></i><span>${s.name}</span><span>${Math.round((s.min / sum) * 100)}% · ${fmtMin(s.min)}</span></div>`).join('');
-  return `<div class="pie-wrap"><svg viewBox="0 0 200 200" role="img" aria-label="Pie chart of time by activity">${paths}</svg><div class="pie-legend">${legend}</div></div>`;
+  const rows = slices.map(s => `
+    <div class="hbar">
+      <div class="hbar-head"><span>${s.name}</span><span>${Math.round((s.min / sum) * 100)}% · ${fmtMin(s.min)}</span></div>
+      <div class="hbar-track"><span style="width:${((s.min / sum) * 100).toFixed(1)}%"></span></div>
+    </div>`).join('');
+  return `<div role="list" aria-label="Time by activity">${rows}</div>`;
 }
 
 function renderHistory() {
@@ -852,7 +911,7 @@ function renderHistory() {
     name: a.name,
     min: days.reduce((s, k) => s + ((data[k] || {})[a.id] || 0), 0)
   })).filter(s => s.min > 0).sort((a, b) => b.min - a.min);
-  $('#breakdown').innerHTML = pieChart(totals);
+  $('#breakdown').innerHTML = barChart(totals);
 }
 
 $('#seg').querySelectorAll('button').forEach(btn => {
@@ -887,8 +946,9 @@ $('#burger').onclick = () => {
 };
 
 const DEFAULT_ACTS = [
-  { id: 'design', name: 'Design practice' }, { id: 'art', name: 'Art / sketching' }, { id: 'japanese', name: 'Japanese study' },
-  { id: 'exercise', name: 'Exercise' }, { id: 'reading', name: 'Reading' }, { id: 'family', name: 'Family time' }
+  { id: 'exercise', name: 'Exercise', type: 'pos' }, { id: 'reading', name: 'Reading', type: 'pos' },
+  { id: 'journaling', name: 'Journaling', type: 'pos' }, { id: 'cooking', name: 'Cooking', type: 'pos' },
+  { id: 'doomscrolling', name: 'Doomscrolling', type: 'neg' }
 ];
 
 function saveStore() {
