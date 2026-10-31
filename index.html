@@ -407,6 +407,7 @@ const TODAY = keyOf(daysAgo(0));
 let seed = 7;
 const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
 const data = {};
+const STORE_KEY = 'moomentum:v1';
 const restored = loadStore();
 if (restored) {
   ACTS = restored.activities;
@@ -885,7 +886,6 @@ $('#burger').onclick = () => {
   $('#burger').setAttribute('aria-expanded', String(open));
 };
 
-const STORE_KEY = 'moomentum:v1';
 const DEFAULT_ACTS = [
   { id: 'design', name: 'Design practice' }, { id: 'art', name: 'Art / sketching' }, { id: 'japanese', name: 'Japanese study' },
   { id: 'exercise', name: 'Exercise' }, { id: 'reading', name: 'Reading' }, { id: 'family', name: 'Family time' }
