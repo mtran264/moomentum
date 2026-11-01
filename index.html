@@ -308,6 +308,13 @@
     </header>
 
     <main>
+      <div class="update-banner backup-banner" id="backupBanner" hidden role="status">
+        <p>It's the end of the month. Export a backup to keep your progress safe.</p>
+        <div class="update-actions">
+          <button type="button" class="btn btn-ghost btn-sm" id="backupLater">Remind me later</button>
+          <button type="button" class="btn btn-primary btn-sm" id="backupNow">Export backup</button>
+        </div>
+      </div>
       <div class="update-banner" id="updateBanner" hidden role="status">
         <p>A new version of Moomentum is ready.</p>
         <div class="update-actions">
@@ -472,7 +479,8 @@
 
         <div class="card" style="margin-top:20px">
           <h3>Your data</h3>
-          <p class="caption" style="margin:6px 0 14px">Logs and activities are saved in this browser. Export a backup to keep a copy or move to another device.</p>
+          <p class="caption" style="margin:6px 0 4px">Logs and activities are saved in this browser. Export a backup to keep a copy or move to another device.</p>
+          <p class="caption last-backup" id="lastBackup" style="margin:0 0 14px"></p>
           <div class="row-controls">
             <button class="btn btn-secondary" id="exportBtn">Export backup</button>
             <button class="btn btn-ghost" id="importBtn">Import backup</button>
@@ -547,8 +555,51 @@
 <script>
 const $ = s => document.querySelector(s);
 
+// Backup tracking and reminders
+const BACKUP_KEY = 'moomentum:lastBackup';
+const REMINDER_KEY = 'moomentum:lastReminder';
+const REMIND_LAST_DAYS = 3;
+function storedTime(key) {
+  try { const v = Number(localStorage.getItem(key)); return v || null; } catch (e) { return null; }
+}
+function setStoredTime(key, t) {
+  try { localStorage.setItem(key, String(t)); } catch (e) { /* storage unavailable */ }
+}
+function recordBackup() {
+  setStoredTime(BACKUP_KEY, Date.now());
+  renderBackupStatus();
+  $('#backupBanner').hidden = true;
+}
+function renderBackupStatus() {
+  const t = storedTime(BACKUP_KEY);
+  $('#lastBackup').textContent = t
+    ? `Last backup: ${new Date(t).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`
+    : 'No backup yet.';
+}
+function monthKey(d) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+}
+function isEndOfMonth(d) {
+  const lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+  return d.getDate() > lastDay - REMIND_LAST_DAYS;
+}
+function maybeShowBackupReminder() {
+  const hasData = Object.values(data).some(m => Object.keys(m || {}).length > 0);
+  const now = new Date();
+  const lastBackup = storedTime(BACKUP_KEY);
+  const backedUpThisMonth = lastBackup && monthKey(new Date(lastBackup)) === monthKey(now);
+  let remindedThisMonth = false;
+  try { remindedThisMonth = localStorage.getItem(REMINDER_KEY) === monthKey(now); } catch (e) { /* storage unavailable */ }
+  $('#backupBanner').hidden = !(hasData && isEndOfMonth(now) && !backedUpThisMonth && !remindedThisMonth);
+}
+$('#backupLater').onclick = () => {
+  try { localStorage.setItem(REMINDER_KEY, monthKey(new Date())); } catch (e) { /* storage unavailable */ }
+  $('#backupBanner').hidden = true;
+};
+$('#backupNow').onclick = () => exportBackup();
+
 // App version and update check
-const APP_VERSION = '1.4.3';
+const APP_VERSION = '1.4.4';
 $('#appVersion').textContent = `Moomentum · Version ${APP_VERSION}`;
 function isNewerVersion(remote, local) {
   const r = String(remote).split('.').map(Number);
@@ -766,6 +817,7 @@ function rangeStart() {
 }
 function renderKpis() {
   renderBanner();
+  maybeShowBackupReminder();
   const start = rangeStart();
   const G = goalsFor(kpiRange);
   const keys = Object.keys(data).filter(k => k >= start && k <= TODAY);
@@ -1415,6 +1467,7 @@ async function exportBackup() {
       setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
     msg.textContent = 'Backup saved.';
+    recordBackup();
     return true;
   } catch (e) {
     msg.textContent = e?.code === 'declined' ? 'Backup cancelled.' : 'Backup could not be saved. Try again.';
@@ -1515,6 +1568,8 @@ $('#homeLink').onclick = () => {
 
 renderHeader();
 setDate(TODAY);
+renderBackupStatus();
+maybeShowBackupReminder();
 renderRecap();
 </script>
 </body>
