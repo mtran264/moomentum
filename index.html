@@ -599,7 +599,7 @@ $('#backupLater').onclick = () => {
 $('#backupNow').onclick = () => exportBackup();
 
 // App version and update check
-const APP_VERSION = '1.4.4';
+const APP_VERSION = '1.4.5';
 $('#appVersion').textContent = `Moomentum · Version ${APP_VERSION}`;
 function isNewerVersion(remote, local) {
   const r = String(remote).split('.').map(Number);
@@ -664,9 +664,17 @@ function freshDefaults() {
     { id: 'doomscrolling', name: 'Doomscrolling', type: 'neg' }
   ];
 }
+// Keep every custom activity and its name. Only the four built-in activities from the first
+// release, saved without a type, are dropped. Anything missing a type is treated as productive.
+const LEGACY_BUILTIN_IDS = ['design', 'art', 'japanese', 'family'];
+function cleanActivities(list) {
+  return (list || [])
+    .filter(a => a && a.id && a.name && !(LEGACY_BUILTIN_IDS.includes(a.id) && !a.type))
+    .map(a => ({ id: String(a.id), name: String(a.name).trim(), type: a.type === 'neg' ? 'neg' : 'pos' }));
+}
 if (restored) {
-  const legacy = restored.activities.some(a => !a.type);
-  ACTS = legacy ? freshDefaults() : restored.activities;
+  const cleaned = cleanActivities(restored.activities);
+  ACTS = cleaned.length ? cleaned : freshDefaults();
   Object.assign(data, restored.days);
   Object.keys(data).forEach(k => {
     Object.keys(data[k]).forEach(id => { if (!ACTS.some(a => a.id === id)) delete data[k][id]; });
@@ -735,11 +743,11 @@ const BANNER_VARIANTS = {
   ],
   relief: [
     (act, amt) => `You spent ${amt} less on ${act} than last week. That's time back in your day.`,
-    (act, amt) => `${act[0].toUpperCase() + act.slice(1)} is down ${amt} from last week. Nice work taking that time back.`
+    (act, amt) => `${act[0].toUpperCase() + act.slice(1)} is down ${amt} from last week. Nice work reclaiming that time.`
   ],
   positive: [
     (amt) => `Your productivity time is up ${amt} from last week. Let's keep the moomentum going tomorrow!`,
-    (amt) => `You added ${amt} of good habits compared with last week. That's a real shift.`
+    (amt) => `You added ${amt} of productivity compared to last week. That's a real progress.`
   ]
 };
 function renderBanner() {
@@ -1449,7 +1457,7 @@ function loadStore() {
 async function exportBackup() {
   const msg = $('#dataMsg');
   const downloads = await window.claude?.use?.('downloads');
-  const payload = { app: 'Moomentum', version: 1, exportedAt: new Date().toISOString(), activities: ACTS, days: data };
+  const payload = { app: 'Moomentum', version: 1, exportedAt: new Date().toISOString(), name: NAME, activities: ACTS, days: data };
   try {
     const json = JSON.stringify(payload, null, 2);
     const filename = `moomentum-backup-${TODAY}.json`;
@@ -1479,16 +1487,24 @@ let pendingImport = null;
 
 function applyImport(mode) {
   if (!pendingImport) return;
+  const incoming = cleanActivities(pendingImport.activities);
   if (mode === 'replace') {
     Object.keys(data).forEach(k => delete data[k]);
-    ACTS = pendingImport.activities.map(a => ({ ...a }));
+    ACTS = incoming.length ? incoming : freshDefaults();
     Object.assign(data, pendingImport.days);
   } else {
-    pendingImport.activities.forEach(a => { if (!ACTS.some(x => x.id === a.id)) ACTS.push({ ...a }); });
+    incoming.forEach(a => { if (!ACTS.some(x => x.id === a.id)) ACTS.push({ ...a }); });
     Object.entries(pendingImport.days).forEach(([k, m]) => {
       const cur = day(k);
       Object.entries(m).forEach(([id, min]) => { if (cur[id] == null) cur[id] = min; });
     });
+  }
+  const importedName = typeof pendingImport.name === 'string' ? pendingImport.name.trim().slice(0, 30) : '';
+  if (importedName && (mode === 'replace' || !NAME)) {
+    NAME = importedName;
+    try { localStorage.setItem('moomentum:name', NAME); } catch (e) { /* storage unavailable */ }
+    $('#nameInput').value = NAME;
+    renderHeader();
   }
   const count = Object.keys(pendingImport.days).length;
   pendingImport = null;
