@@ -231,6 +231,10 @@
   #addName:focus { outline: none; border-color: var(--night-cerulean); }
   .add-check { display: flex; align-items: center; gap: 8px; min-height: 44px; font-size: 15px; color: var(--muted); margin-bottom: 8px; }
   .add-check input { width: 20px; height: 20px; margin: 0; accent-color: var(--ember-deep); }
+  .update-banner { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; background: #fff; border-left: 4px solid var(--star-chrome); border-radius: var(--radius-md); box-shadow: var(--shadow-soft); padding: 14px 16px; margin-bottom: 16px; }
+  .update-banner p { flex: 1; min-width: 200px; font-size: 16px; font-weight: 600; color: var(--night-deep); line-height: 1.4; margin: 0; }
+  .update-actions { display: flex; gap: 8px; }
+  .app-version { text-align: center; font-size: 13px; color: var(--muted); margin: 24px 0 8px; }
   .toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 12px); background: var(--night-deep); color: var(--moon-cream); padding: 12px 18px; border-radius: var(--radius-pill); box-shadow: var(--shadow-lift); font-size: 15px; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity .2s var(--ease), transform .2s var(--ease); z-index: 60; max-width: calc(100% - 32px); text-align: center; }
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
   .act-count { display: inline-block; min-width: 22px; padding: 1px 8px; margin-left: 6px; border-radius: var(--radius-pill); background: var(--mist); color: var(--night-deep); font-size: 12px; text-align: center; letter-spacing: 0; }
@@ -304,6 +308,13 @@
     </header>
 
     <main>
+      <div class="update-banner" id="updateBanner" hidden role="status">
+        <p>A new version of Moomentum is ready.</p>
+        <div class="update-actions">
+          <button type="button" class="btn btn-ghost btn-sm" id="updateLater">Later</button>
+          <button type="button" class="btn btn-primary btn-sm" id="updateRefresh">Refresh</button>
+        </div>
+      </div>
       <!-- HOME -->
       <section id="home">
         <div class="greet-row">
@@ -489,6 +500,7 @@
           <p class="caption" id="dataMsg" style="margin-top:14px;min-height:22px"></p>
         </div>
       </section>
+      <p class="app-version" id="appVersion"></p>
     </main>
   </div>
 </div>
@@ -534,6 +546,38 @@
 </dialog>
 <script>
 const $ = s => document.querySelector(s);
+
+// App version and update check
+const APP_VERSION = '1.4.3';
+$('#appVersion').textContent = `Moomentum · Version ${APP_VERSION}`;
+function isNewerVersion(remote, local) {
+  const r = String(remote).split('.').map(Number);
+  const l = String(local).split('.').map(Number);
+  for (let i = 0; i < 3; i++) {
+    const a = r[i] || 0, b = l[i] || 0;
+    if (a !== b) return a > b;
+  }
+  return false;
+}
+let updateDismissed = false;
+async function checkForUpdate() {
+  try {
+    const res = await fetch(`version.json?t=${Date.now()}`, { cache: 'no-store' });
+    if (!res.ok) return;
+    const { version } = await res.json();
+    if (version && isNewerVersion(version, APP_VERSION) && !updateDismissed) {
+      $('#updateBanner').hidden = false;
+    }
+  } catch (e) {
+    /* offline or file:// preview: stay quiet */
+  }
+}
+$('#updateRefresh').onclick = () => location.reload();
+$('#updateLater').onclick = () => {
+  updateDismissed = true;
+  $('#updateBanner').hidden = true;
+};
+window.addEventListener('load', checkForUpdate);
 let NAME = readName();
 function readName() { try { return localStorage.getItem('moomentum:name') || ''; } catch (e) { return ''; } }
 const PIE = ['#283D6B', '#F2C94C', '#3A5BA0', '#F7E59A', '#6F8FC7', '#2F4F3A', '#1B2A4A', '#B9C9E6'];
