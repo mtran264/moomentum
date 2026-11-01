@@ -57,6 +57,7 @@
   .btn:disabled { opacity: .35; cursor: default; transform: none; box-shadow: none; }
   .btn-primary { background: var(--star-chrome); color: var(--night-deep); box-shadow: var(--shadow-soft); }
   .btn-primary:hover { background: var(--star-pale); }
+  #recapPanel .btn, #recapPanel .btn:hover { box-shadow: none; }
   .btn-secondary { background: var(--night-cerulean); color: var(--moon-cream); }
   .btn-secondary:hover { background: var(--night-ultramarine); }
   .btn-ghost { background: transparent; color: var(--night-cerulean); border: 2px solid var(--night-cerulean); }
@@ -111,6 +112,11 @@
   .goal-stepper input:focus { outline: none; border-color: var(--night-cerulean); }
   .goal-stepper input.over { border-color: var(--ember); }
   .goal-stepper .unit { font-size: 15px; color: var(--muted); }
+  .stepper-bump-up input { animation: valueUp 180ms var(--ease); }
+  .stepper-bump-down input { animation: valueDown 180ms var(--ease); }
+  @keyframes valueUp { 0% { transform: translateY(6px); opacity: .4; border-color: var(--night-cerulean); } 100% { transform: none; opacity: 1; } }
+  @keyframes valueDown { 0% { transform: translateY(-6px); opacity: .4; border-color: var(--night-cerulean); } 100% { transform: none; opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .stepper-bump-up input, .stepper-bump-down input { animation: none; } }
   .goal-stepper input::-webkit-outer-spin-button, .goal-stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
   .goal-input-row span { font-size: 15px; color: var(--muted); }
   .dialog-actions { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
@@ -125,6 +131,11 @@
   .chev { width: 40px; height: 40px; min-width: 40px; border-radius: 50%; background: var(--star-chrome); color: var(--night-deep); display: inline-flex; align-items: center; justify-content: center; font-size: 32px; line-height: 1; transition: transform 240ms var(--ease); flex-shrink: 0; }
   .recap-toggle[aria-expanded="true"] .chev { transform: rotate(180deg); }
   .recap-panel { padding: 20px 22px 24px; }
+  .reveal-open { animation: revealIn 320ms var(--ease) both; }
+  .reveal-close { animation: revealOut 240ms var(--ease) both; }
+  @keyframes revealIn { from { opacity: 0; clip-path: inset(0 0 100% 0); transform: translateY(-6px); } to { opacity: 1; clip-path: inset(0 0 0 0); transform: none; } }
+  @keyframes revealOut { from { opacity: 1; clip-path: inset(0 0 0 0); transform: none; } to { opacity: 0; clip-path: inset(0 0 100% 0); transform: translateY(-6px); } }
+  @media (prefers-reduced-motion: reduce) { .reveal-open, .reveal-close { animation: none; } }
 
   .step { border-top: 1px dashed var(--mist); padding: 16px 0; }
   .step:first-child { border-top: 0; padding-top: 0; }
@@ -187,6 +198,9 @@
   .cell.blank { background: none; cursor: default; }
   .cell:disabled { opacity: .35; cursor: default; }
   .cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+  .cell.cell-in { animation: cellIn 280ms var(--ease) both; animation-delay: calc(var(--i, 0) * 14ms); }
+  @keyframes cellIn { from { opacity: 0; transform: translateX(-6px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .cell.cell-in { animation: none; } }
   .cal .cell { width: 100%; min-height: 48px; font-weight: 700; font-size: 14px; color: var(--ink); border-radius: var(--radius-sm); }
   .cal .cell.pos3, .cal .cell.pos4, .cal .cell.neg4 { color: var(--moon-cream); }
   .cal .dow { text-align: center; font-size: 13px; color: var(--muted); font-weight: 700; padding: 4px 0; }
@@ -211,6 +225,17 @@
   .hbar-head span:last-child { font-weight: 500; color: var(--muted); font-size: 14px; }
   .hbar-track { height: 12px; border-radius: var(--radius-pill); background: var(--mist); overflow: hidden; }
   .hbar-track span { display: block; height: 100%; background: var(--night-cerulean); border-radius: var(--radius-pill); }
+  .hbar-track span.bar-grow { transform-origin: left center; animation: barGrow 420ms var(--ease) both; animation-delay: calc(var(--i, 0) * 60ms); }
+  @keyframes barGrow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  .trend-line.draw-line { stroke-dasharray: 100; stroke-dashoffset: 100; animation: lineDraw 900ms var(--ease) forwards; }
+  @keyframes lineDraw { to { stroke-dashoffset: 0; } }
+  .trend-dot { opacity: 0; animation: dotIn 280ms var(--ease) forwards; animation-delay: calc(var(--i, 0) * 60ms + 200ms); }
+  @keyframes dotIn { from { opacity: 0; transform: translateX(-4px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .hbar-track span.bar-grow, .trend-line.draw-line, .trend-dot { animation: none; }
+    .trend-line.draw-line { stroke-dashoffset: 0; }
+    .trend-dot { opacity: 1; }
+  }
   .pie-wrap { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-content: center; }
   .pie-wrap svg { width: 210px; height: 210px; flex-shrink: 0; }
   .pie-legend { flex: 1; min-width: 200px; font-size: 15px; }
@@ -717,7 +742,7 @@ $('#backupLater').onclick = () => {
 $('#backupNow').onclick = () => exportBackup();
 
 // App version and update check
-const APP_VERSION = '1.5.1';
+const APP_VERSION = '1.5.2';
 $('#appVersion').textContent = `Moomentum · Version ${APP_VERSION}`;
 function isNewerVersion(remote, local) {
   const r = String(remote).split('.').map(Number);
@@ -1038,6 +1063,12 @@ function bumpGoal(dir) {
   if (goalKey === 'days') next = Math.round(next);
   $('#goalInput').value = next;
   updateOverState();
+  if (next !== cur) {
+    const wrap = document.querySelector('#defModal .goal-stepper');
+    wrap.classList.remove('stepper-bump-up', 'stepper-bump-down');
+    void wrap.offsetWidth;
+    wrap.classList.add(dir > 0 ? 'stepper-bump-up' : 'stepper-bump-down');
+  }
 }
 $('#goalMinus').onclick = () => bumpGoal(-1);
 $('#goalPlus').onclick = () => bumpGoal(1);
@@ -1051,14 +1082,43 @@ document.querySelectorAll('#rangeSeg button').forEach(btn => {
       b.setAttribute('aria-pressed', String(on));
     });
     renderKpis();
+    heatAnimate = true;
     renderHeat();
   };
 });
 
 // Accordion
+function animateReveal(el, show) {
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (show) {
+    if (!el.hidden) return;
+    el.hidden = false;
+    if (!reduce) {
+      el.classList.remove('reveal-close');
+      el.classList.add('reveal-open');
+    }
+    return;
+  }
+  if (el.hidden || el.classList.contains('reveal-close')) return;
+  // Hidden ancestors don't run animations, so collapse immediately in that case
+  if (reduce || el.offsetParent === null) { el.hidden = true; return; }
+  el.classList.remove('reveal-open');
+  el.classList.add('reveal-close');
+  const finish = () => {
+    if (!el.classList.contains('reveal-close')) return;
+    el.classList.remove('reveal-close');
+    el.hidden = true;
+  };
+  el.addEventListener('animationend', function onEnd(e) {
+    if (e.target !== el) return;
+    el.removeEventListener('animationend', onEnd);
+    finish();
+  });
+  setTimeout(finish, 400);
+}
 function setRecapOpen(open) {
   $('#recapToggle').setAttribute('aria-expanded', String(open));
-  $('#recapPanel').hidden = !open;
+  animateReveal($('#recapPanel'), open);
   $('#recapToggle').querySelector('small').textContent = open ? 'Tap again to close.' : 'Log what you worked on in a few minutes.';
 }
 $('#recapToggle').onclick = () => setRecapOpen($('#recapPanel').hidden);
@@ -1108,7 +1168,10 @@ function renderChips() {
   $('#chips').appendChild(addBtn);
 }
 
+let pendingBump = null;
 function renderSelected() {
+  const bump = pendingBump;
+  pendingBump = null;
   const cur = day(current);
   const box = $('#selected');
   const ids = Object.keys(cur).filter(id => ACTS.some(a => a.id === id));
@@ -1128,8 +1191,14 @@ function renderSelected() {
     const input = row.querySelector('input');
     const MAX_MIN = 1440;
     row.querySelectorAll('button').forEach(btn => {
-      btn.onclick = () => { cur[id] = Math.min(MAX_MIN, Math.max(5, cur[id] + Number(btn.dataset.d))); renderLog(); };
+      btn.onclick = () => {
+        const before = cur[id];
+        cur[id] = Math.min(MAX_MIN, Math.max(5, cur[id] + Number(btn.dataset.d)));
+        if (cur[id] !== before) pendingBump = { id, cls: Number(btn.dataset.d) > 0 ? 'stepper-bump-up' : 'stepper-bump-down' };
+        renderLog();
+      };
     });
+    if (bump && bump.id === id) row.querySelector('.stepper').classList.add(bump.cls);
     input.addEventListener('input', () => {
       const v = parseFloat(input.value);
       input.classList.toggle('over', !isNaN(v) && v > MAX_MIN);
@@ -1166,10 +1235,10 @@ function openAddActivity(source) {
 let recap = { stage: 1, copy: null, done: false, src: null };
 
 function renderRecap() {
-  $('#s1Body').hidden = recap.stage !== 1;
-  $('#s2Body').hidden = recap.stage !== 2;
-  $('#s3Body').hidden = recap.stage !== 3 || recap.done;
-  $('#recapDone').hidden = !recap.done;
+  animateReveal($('#s1Body'), recap.stage === 1);
+  animateReveal($('#s2Body'), recap.stage === 2);
+  animateReveal($('#s3Body'), recap.stage === 3 && !recap.done);
+  animateReveal($('#recapDone'), recap.done);
   $('#s2Ask').hidden = recap.copy === 'yes';
   $('#s2Copy').hidden = recap.copy !== 'yes';
   $('#s1Status').innerHTML = recap.stage > 1 ? `${fmtDate(current)} <button class="btn btn-ghost btn-sm" data-act="edit1">Edit</button>` : '';
@@ -1238,6 +1307,7 @@ function selectDay(k) {
   if (isMobile()) $('#recapToggle').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+let heatAnimate = true;
 function renderHeat() {
   const month = kpiRange === 'month';
   document.querySelector('.heat-cal').hidden = !month;
@@ -1247,6 +1317,8 @@ function renderHeat() {
 }
 
 function renderCalendar() {
+  const animate = heatAnimate;
+  heatAnimate = false;
   const { y, m } = viewMonth;
   const first = new Date(y, m, 1);
   const daysIn = new Date(y, m + 1, 0).getDate();
@@ -1270,7 +1342,8 @@ function renderCalendar() {
     const k = keyOf(new Date(y, m, d));
     const t = total(data[k] || {});
     const cell = document.createElement('button');
-    cell.className = `cell ${heatClass(k)}` + (k === current ? ' sel' : '');
+    cell.className = `cell ${heatClass(k)}` + (k === current ? ' sel' : '') + (animate ? ' cell-in' : '');
+    if (animate) cell.style.setProperty('--i', (first.getDay() + d - 1) % 7);
     cell.textContent = d;
     cell.disabled = k > TODAY;
     cell.title = dayTitle(k);
@@ -1281,6 +1354,8 @@ function renderCalendar() {
 }
 
 function renderYearGrid() {
+  const animate = heatAnimate;
+  heatAnimate = false;
   const grid = $('#grid');
   grid.innerHTML = '';
   const end = daysAgo(0);
@@ -1324,6 +1399,7 @@ function renderYearGrid() {
       btn.onclick = () => selectDay(k);
       btn.style.gridRow = `${r + 2}`;
       btn.style.gridColumn = `${c + 2}`;
+      if (animate) { btn.classList.add('cell-in'); btn.style.setProperty('--i', c); }
       grid.appendChild(btn);
     }
   }
@@ -1332,11 +1408,13 @@ function renderYearGrid() {
 }
 
 $('#prevMonth').onclick = () => {
+  heatAnimate = true;
   viewMonth.m -= 1;
   if (viewMonth.m < 0) { viewMonth.m = 11; viewMonth.y -= 1; }
   renderCalendar();
 };
 $('#nextMonth').onclick = () => {
+  heatAnimate = true;
   viewMonth.m += 1;
   if (viewMonth.m > 11) { viewMonth.m = 0; viewMonth.y += 1; }
   renderCalendar();
@@ -1473,7 +1551,7 @@ function buckets(days) {
   return [...map.values()];
 }
 
-function lineChart(bk) {
+function lineChart(bk, animate = false) {
   const W = 600, H = 220, P = { l: 76, r: 16, t: 16, b: 34 };
   const max = Math.max(...bk.map(b => b.min), 1);
   const n = bk.length;
@@ -1486,27 +1564,30 @@ function lineChart(bk) {
     return `<line x1="${P.l}" x2="${W - P.r}" y1="${y(v)}" y2="${y(v)}" stroke="#E6ECF5"/>
             <text x="${P.l - 8}" y="${y(v) + 4}" font-size="12" text-anchor="end" fill="#5A6B8A">${fmtMin(v)}</text>`;
   }).join('');
-  const dots = bk.map((b, i) => `<circle cx="${x(i)}" cy="${y(b.min)}" r="5" fill="#F2C94C" stroke="#283D6B" stroke-width="2"><title>${b.label}: ${fmtMin(b.min)}</title></circle>`).join('');
+  const dots = bk.map((b, i) => `<circle class="${animate ? 'trend-dot' : ''}" style="--i:${i}" cx="${x(i)}" cy="${y(b.min)}" r="5" fill="#F2C94C" stroke="#283D6B" stroke-width="2"><title>${b.label}: ${fmtMin(b.min)}</title></circle>`).join('');
   const labels = bk.map((b, i) => (i % step === 0 ? `<text x="${x(i)}" y="${H - 10}" font-size="12" text-anchor="middle" fill="#5A6B8A">${b.label}</text>` : '')).join('');
   return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Line chart of time logged">
     ${grid}
-    <polyline points="${pts}" fill="none" stroke="#3A5BA0" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+    <polyline class="${animate ? 'trend-line draw-line' : 'trend-line'}" pathLength="100" points="${pts}" fill="none" stroke="#3A5BA0" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
     ${dots}${labels}
   </svg>`;
 }
 
-function barChart(slices) {
+function barChart(slices, animate = false) {
   if (!slices.length) return '<p class="hint">No time logged in this range.</p>';
   const sum = slices.reduce((s, x) => s + x.min, 0);
-  const rows = slices.map(s => `
+  const rows = slices.map((s, i) => `
     <div class="hbar">
       <div class="hbar-head"><span>${s.name}</span><span>${Math.round((s.min / sum) * 100)}% · ${fmtMin(s.min)}</span></div>
-      <div class="hbar-track"><span style="width:${((s.min / sum) * 100).toFixed(1)}%"></span></div>
+      <div class="hbar-track"><span class="${animate ? 'bar-grow' : ''}" style="--i:${i};width:${((s.min / sum) * 100).toFixed(1)}%"></span></div>
     </div>`).join('');
   return `<div role="list" aria-label="Time by activity">${rows}</div>`;
 }
 
+let insightsAnimate = false;
 function renderHistory() {
+  const animate = insightsAnimate;
+  insightsAnimate = false;
   const days = rangeDays();
   const rangeTotal = days.reduce((s, k) => s + total(data[k] || {}), 0);
   const active = days.filter(k => total(data[k] || {}) > 0).length;
@@ -1514,17 +1595,18 @@ function renderHistory() {
   $('#sActive').textContent = `${active}/${days.length}`;
   $('#sAvg').textContent = active ? fmtMin(Math.round(rangeTotal / active)) : '0m';
   $('#trendTitle').textContent = { week: 'Daily', month: 'Weekly', quarter: 'Monthly', year: 'Monthly', all: 'Monthly' }[range] + ' trend';
-  $('#trend').innerHTML = lineChart(buckets(days));
+  $('#trend').innerHTML = lineChart(buckets(days), animate);
   const totals = ACTS.map(a => ({
     name: a.name,
     min: days.reduce((s, k) => s + ((data[k] || {})[a.id] || 0), 0)
   })).filter(s => s.min > 0).sort((a, b) => b.min - a.min);
-  $('#breakdown').innerHTML = barChart(totals);
+  $('#breakdown').innerHTML = barChart(totals, animate);
 }
 
 $('#seg').querySelectorAll('button').forEach(btn => {
   btn.onclick = () => {
     range = btn.dataset.r;
+    insightsAnimate = true;
     $('#seg').querySelectorAll('button').forEach(b => b.classList.toggle('on', b === btn));
     renderHistory();
   };
@@ -1537,7 +1619,7 @@ function showTab(t) {
   $('#history').hidden = t !== 'history';
   $('#manage').hidden = t !== 'manage';
   if (t === 'home') renderHeader();
-  if (t === 'history') renderHistory();
+  if (t === 'history') { insightsAnimate = true; renderHistory(); }
   if (t === 'manage') renderManage();
 }
 document.querySelectorAll('nav.side button').forEach(btn => {
