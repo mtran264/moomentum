@@ -8,9 +8,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Moomentum</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600&family=Nunito:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
+  @font-face { font-family: "Fredoka"; font-weight: 600; font-style: normal; font-display: swap; src: url("fonts/fredoka-600.woff2") format("woff2"); }
+  @font-face { font-family: "Nunito"; font-weight: 400; font-style: normal; font-display: swap; src: url("fonts/nunito-400.woff2") format("woff2"); }
+  @font-face { font-family: "Nunito"; font-weight: 500; font-style: normal; font-display: swap; src: url("fonts/nunito-500.woff2") format("woff2"); }
+  @font-face { font-family: "Nunito"; font-weight: 700; font-style: normal; font-display: swap; src: url("fonts/nunito-700.woff2") format("woff2"); }
   :root {
     --night-deep: #1B2A4A; --night-ultramarine: #283D6B; --night-cerulean: #3A5BA0; --night-sky: #6F8FC7;
     --star-chrome: #f2c94c; --star-pale: #F7E59A; --moon-cream: #FBF6E9; --cypress: #2F4F3A;
@@ -233,7 +235,9 @@
   .add-check input { width: 20px; height: 20px; margin: 0; accent-color: var(--ember-deep); }
   .update-banner { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; background: #fff; border-left: 4px solid var(--star-chrome); border-radius: var(--radius-md); box-shadow: var(--shadow-soft); padding: 14px 16px; margin-bottom: 16px; }
   .update-banner p { flex: 1; min-width: 200px; font-size: 16px; font-weight: 600; color: var(--night-deep); line-height: 1.4; margin: 0; }
-  .update-actions { display: flex; gap: 8px; }
+  .update-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .install-step { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px; font-size: 15px; line-height: 1.5; color: var(--ink); }
+  .install-num { width: 32px; height: 32px; border-radius: 50%; background: var(--star-chrome); color: var(--night-deep); font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .app-version { text-align: center; font-size: 13px; color: var(--muted); margin: 24px 0 8px; }
   .toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 12px); background: var(--night-deep); color: var(--moon-cream); padding: 12px 18px; border-radius: var(--radius-pill); box-shadow: var(--shadow-lift); font-size: 15px; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity .2s var(--ease), transform .2s var(--ease); z-index: 60; max-width: calc(100% - 32px); text-align: center; }
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
@@ -308,6 +312,20 @@
     </header>
 
     <main>
+      <div class="update-banner install-banner" id="installBanner" hidden role="status">
+        <p>Install Moomentum for quick access.</p>
+        <div class="update-actions">
+          <button type="button" class="btn btn-ghost btn-sm" id="installNotNow">Not now</button>
+          <button type="button" class="btn btn-primary btn-sm" id="installGo">Install</button>
+        </div>
+      </div>
+      <div class="update-banner install-banner" id="tipBanner" hidden role="status">
+        <p>To add Moomentum to your home screen, use your browser's menu and look for <b>Add to Home Screen</b> or <b>Install app</b>.</p>
+        <div class="update-actions">
+          <button type="button" class="btn btn-ghost btn-sm" id="tipAlready">I've already added it</button>
+          <button type="button" class="btn btn-primary btn-sm" id="tipDone">Got it</button>
+        </div>
+      </div>
       <div class="update-banner backup-banner" id="backupBanner" hidden role="status">
         <p>It's the end of the month. Export a backup to keep your progress safe.</p>
         <div class="update-actions">
@@ -507,6 +525,16 @@
           </div>
           <p class="caption" id="dataMsg" style="margin-top:14px;min-height:22px"></p>
         </div>
+
+        <div class="card privacy-note">
+          <h3>Your privacy</h3>
+          <p class="caption" style="margin:6px 0"><b>Your data stays on your device.</b> Your logs, activities, goals, and name are saved only in your browser's local storage on your device. We don't operate servers that receive this information, and we don't use cookies, analytics, or advertising.</p>
+          <p class="caption" style="margin:6px 0"><b>Hosting.</b> Moomentum is hosted on GitHub Pages. To deliver the app's files, GitHub may process your IP address and standard request logs. See <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub's privacy statement</a>.</p>
+          <p class="caption" style="margin:6px 0"><b>Fonts.</b> The app's fonts are included with the app. Your browser doesn't contact any third-party font service.</p>
+          <p class="caption" style="margin:6px 0"><b>Install help.</b> When you open Moomentum on a phone, the app checks your browser locally to show install steps. This check isn't saved or sent anywhere.</p>
+          <p class="caption" style="margin:6px 0"><b>Backups.</b> Exporting creates a file that you save wherever you choose. It contains your logs and name, so keep it safe.</p>
+          <p class="caption" style="margin:6px 0"><b>Your control.</b> You can view, change, export, or erase your data in the app at any time (Manage Activities, Your data). Clearing your browser data or deleting the app also removes it. Data that's been erased cannot be recovered.</p>
+        </div>
       </section>
       <p class="app-version" id="appVersion"></p>
     </main>
@@ -514,6 +542,17 @@
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<dialog id="iosModal" aria-labelledby="iosTitle">
+  <h3 id="iosTitle">Add Moomentum to your Home Screen</h3>
+  <div class="install-step"><span class="install-num">1</span><span>Tap the <b>Share</b> icon at the bottom of the screen.</span></div>
+  <div class="install-step"><span class="install-num">2</span><span>Scroll down and tap <b>Add to Home Screen</b>.</span></div>
+  <div class="install-step"><span class="install-num">3</span><span>Tap <b>Add</b>, then open Moomentum from your Home Screen.</span></div>
+  <div class="dialog-actions">
+    <button type="button" class="btn btn-ghost btn-sm" id="iosAlready">I've already added it</button>
+    <button type="button" class="btn btn-ghost btn-sm" id="iosNotNow">Not now</button>
+    <button type="button" class="btn btn-primary btn-sm" id="iosGotIt">Got it</button>
+  </div>
+</dialog>
 <dialog id="removeModal" aria-labelledby="removeTitle">
   <h3 id="removeTitle"></h3>
   <p id="removeBody"></p>
@@ -554,6 +593,57 @@
 </dialog>
 <script>
 const $ = s => document.querySelector(s);
+
+// Install prompts, tailored to device and browser
+const INSTALL_KEY = 'moomentum:installPrompt';
+const UA = navigator.userAgent;
+const isIPhone = /iPhone|iPod/.test(UA);
+const isAndroid = /Android/.test(UA);
+const isPhone = isIPhone || isAndroid;
+const isChromeAndroid = isAndroid && /Chrome\//.test(UA) && !/SamsungBrowser|EdgA|OPR|Firefox/.test(UA);
+let deferredInstall = null;
+function isInstalled() {
+  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+}
+function installDone() {
+  try { return localStorage.getItem(INSTALL_KEY) === 'done'; } catch (e) { return false; }
+}
+function hideInstallPrompts() {
+  $('#installBanner').hidden = true;
+  $('#tipBanner').hidden = true;
+  if ($('#iosModal').open) $('#iosModal').close();
+}
+function markInstallDone() {
+  try { localStorage.setItem(INSTALL_KEY, 'done'); } catch (e) { /* storage unavailable */ }
+  hideInstallPrompts();
+}
+function maybeShowInstallPrompt() {
+  hideInstallPrompts();
+  if (!isPhone || isInstalled() || installDone()) return;
+  if (isIPhone) { $('#iosModal').showModal(); return; }
+  if (isChromeAndroid && deferredInstall) { $('#installBanner').hidden = false; return; }
+  $('#tipBanner').hidden = false;
+}
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredInstall = e;
+  maybeShowInstallPrompt();
+});
+window.addEventListener('appinstalled', markInstallDone);
+$('#installNotNow').onclick = markInstallDone;
+$('#tipDone').onclick = markInstallDone;
+$('#tipAlready').onclick = markInstallDone;
+$('#iosGotIt').onclick = markInstallDone;
+$('#iosNotNow').onclick = markInstallDone;
+$('#iosAlready').onclick = markInstallDone;
+$('#iosModal').addEventListener('cancel', markInstallDone);
+$('#installGo').onclick = async () => {
+  if (!deferredInstall) return markInstallDone();
+  deferredInstall.prompt();
+  await deferredInstall.userChoice;
+  deferredInstall = null;
+  markInstallDone();
+};
 
 // Backup tracking and reminders
 const BACKUP_KEY = 'moomentum:lastBackup';
@@ -599,7 +689,7 @@ $('#backupLater').onclick = () => {
 $('#backupNow').onclick = () => exportBackup();
 
 // App version and update check
-const APP_VERSION = '1.4.5';
+const APP_VERSION = '1.5.0';
 $('#appVersion').textContent = `Moomentum · Version ${APP_VERSION}`;
 function isNewerVersion(remote, local) {
   const r = String(remote).split('.').map(Number);
@@ -747,7 +837,7 @@ const BANNER_VARIANTS = {
   ],
   positive: [
     (amt) => `Your productivity time is up ${amt} from last week. Let's keep the moomentum going tomorrow!`,
-    (amt) => `You added ${amt} of productivity compared to last week. That's a real progress.`
+    (amt) => `You added ${amt} of productivity compared to last week. That's real progress.`
   ]
 };
 function renderBanner() {
@@ -1586,6 +1676,8 @@ renderHeader();
 setDate(TODAY);
 renderBackupStatus();
 maybeShowBackupReminder();
+if (isChromeAndroid) setTimeout(maybeShowInstallPrompt, 3000);
+else maybeShowInstallPrompt();
 renderRecap();
 </script>
 </body>
