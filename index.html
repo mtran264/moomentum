@@ -45,6 +45,7 @@
   header.top h1 { font-size: 22px; color: var(--moon-cream); }
   .burger { min-width: 44px; min-height: 44px; border-radius: var(--radius-md); border: 2px solid var(--night-sky); background: transparent; color: var(--moon-cream); font-size: 18px; }
   .logo-mark { color: var(--star-chrome); font-size: 22px; line-height: 1; }
+  img.logo-mark { width: 24px; height: 24px; object-fit: contain; }
   .brand-btn { display: flex; align-items: center; gap: 8px; background: none; border: 0; padding: 0; color: inherit; cursor: pointer; text-align: left; }
   main { padding: 16px; }
   main > section { width: 100%; max-width: 800px; margin: 0 auto; min-width: 0; }
@@ -98,6 +99,14 @@
   dialog::backdrop { background: rgba(27, 42, 74, .45); }
   dialog h3 { font-family: var(--font-display); font-weight: 600; font-size: 20px; color: var(--night-deep); margin-bottom: 8px; }
   dialog p { font-size: 15px; line-height: 1.5; color: var(--ink); margin-bottom: 18px; }
+  .goal-block { margin-bottom: 20px; }
+  .goal-label { display: block; font-size: 13px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+  .goal-input-row { display: flex; align-items: center; gap: 8px; }
+  .goal-stepper input { width: 96px; min-height: 44px; padding: 8px 4px; border: 0; background: transparent; text-align: center; font-size: 16px; font-weight: 700; font-family: var(--font-display); color: var(--night-deep); -moz-appearance: textfield; }
+  .goal-stepper input::-webkit-outer-spin-button, .goal-stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .goal-stepper input:focus { outline: none; }
+  .goal-input-row span { font-size: 15px; color: var(--muted); }
+  .dialog-actions { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
   .desk-date { display: none; text-align: right; color: var(--muted); font-size: 15px; }
   .d-only { display: none; }
   .desk-date b { display: inline; font-family: var(--font-body); font-weight: 500; font-size: 14px; color: var(--muted); }
@@ -268,7 +277,7 @@
 
   <div class="app">
     <header class="top">
-      <button class="brand-btn" id="homeLink" aria-label="Moomentum home"><span class="logo-mark" aria-hidden="true">&#10022;</span><h1>Moomentum</h1></button>
+      <button class="brand-btn" id="homeLink" aria-label="Moomentum home"><img src="logo-nav-menu.svg" alt="" class="brand-icon logo-mark" aria-hidden="true"><h1>Moomentum</h1></button>
       <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="nav">&#9776;</button>
     </header>
 
@@ -464,7 +473,22 @@
 <dialog id="defModal" aria-labelledby="defTitle">
   <h3 id="defTitle"></h3>
   <p id="defBody"></p>
-  <button type="button" class="btn btn-primary btn-sm" id="defClose">Got it</button>
+  <div class="goal-block">
+    <span class="goal-label">Goal</span>
+    <div class="goal-input-row">
+      <span class="stepper goal-stepper">
+        <button type="button" id="goalMinus" aria-label="Decrease goal">&minus;</button>
+        <input type="number" id="goalInput" min="0" step="any" inputmode="decimal" aria-label="Goal value">
+        <button type="button" id="goalPlus" aria-label="Increase goal">+</button>
+      </span>
+      <span id="goalUnit"></span>
+    </div>
+  </div>
+  <div class="dialog-actions">
+    <button type="button" class="btn btn-ghost btn-sm" id="goalReset">Reset</button>
+    <button type="button" class="btn btn-ghost btn-sm" id="goalCancel">Cancel</button>
+    <button type="button" class="btn btn-primary btn-sm" id="goalSave">Save</button>
+  </div>
 </dialog>
 <script>
 const $ = s => document.querySelector(s);
@@ -629,10 +653,26 @@ function animateRings(targets) {
   requestAnimationFrame(step);
 }
 let kpiRange = 'month';
-const KPI_GOALS = {
-  ytd: { prod: 300 * 60, days: 150, reclaim: 40 * 60, prodTxt: '300 h', daysTxt: '150', reclaimTxt: '40 h', period: 'this year' },
-  month: { prod: 25 * 60, days: 12, reclaim: 200, prodTxt: '25 h', daysTxt: '12', reclaimTxt: '3.3 h', period: 'this month' }
+const GOAL_DEFAULTS = {
+  ytd: { prod: 300, days: 180, reclaim: 10 },
+  month: { prod: 25, days: 15, reclaim: 2.5 }
 };
+const GOAL_STEP = { prod: 1, days: 1, reclaim: 0.5 };
+const GOAL_KEY = 'moomentum:goals';
+let goalOverrides = (() => { try { return JSON.parse(localStorage.getItem(GOAL_KEY)) || {}; } catch (e) { return {}; } })();
+function saveGoalOverrides() { try { localStorage.setItem(GOAL_KEY, JSON.stringify(goalOverrides)); } catch (e) { /* storage unavailable */ } }
+function goalValue(range, key) {
+  const o = goalOverrides[range] && goalOverrides[range][key];
+  return o != null ? o : GOAL_DEFAULTS[range][key];
+}
+function goalsFor(range) {
+  const prod = goalValue(range, 'prod'), days = goalValue(range, 'days'), reclaim = goalValue(range, 'reclaim');
+  return {
+    prod: prod * 60, days, reclaim: reclaim * 60,
+    prodTxt: `${+prod.toFixed(1)} h`, daysTxt: `${days}`, reclaimTxt: `${+reclaim.toFixed(1)} h`,
+    period: range === 'month' ? 'this month' : 'this year'
+  };
+}
 function rangeStart() {
   const now = new Date();
   return kpiRange === 'month' ? keyOf(new Date(now.getFullYear(), now.getMonth(), 1)) : `${now.getFullYear()}-01-01`;
@@ -640,7 +680,7 @@ function rangeStart() {
 function renderKpis() {
   renderBanner();
   const start = rangeStart();
-  const G = KPI_GOALS[kpiRange];
+  const G = goalsFor(kpiRange);
   const keys = Object.keys(data).filter(k => k >= start && k <= TODAY);
   let prodMin = 0, negMin = 0, productiveDays = 0;
   keys.forEach(k => {
@@ -676,19 +716,51 @@ function renderKpis() {
 }
 
 const DEFS = {
-  prod: { title: 'Productive hours', body: () => `Total time on productive activities ${KPI_GOALS[kpiRange].period}. Goal: ${KPI_GOALS[kpiRange].prodTxt}.` },
-  days: { title: 'Productive days', body: () => `Days when productive time beat unproductive time by at least 15 minutes ${KPI_GOALS[kpiRange].period}. Goal: ${KPI_GOALS[kpiRange].daysTxt} days.` },
-  reclaim: { title: 'Time reclaimed', body: () => `Unproductive time cut from one week to the next ${KPI_GOALS[kpiRange].period}. Only weeks with logged time count. Goal: ${KPI_GOALS[kpiRange].reclaimTxt}.` }
+  prod: { title: 'Productive hours', body: () => `Total time on productive activities ${goalsFor(kpiRange).period}.` },
+  days: { title: 'Productive days', body: () => `Days when productive time beat unproductive time by at least 15 minutes ${goalsFor(kpiRange).period}.` },
+  reclaim: { title: 'Time reclaimed', body: () => `Unproductive time you cut from one week to the next ${goalsFor(kpiRange).period}. Example: 6 hours of doomscrolling one week and 4 hours the next means 2 hours reclaimed. Weeks that go up don't reduce the total, and weeks with no logging are skipped.` }
 };
+let goalKey = null;
+function openDef(key) {
+  goalKey = key;
+  const G = goalsFor(kpiRange);
+  const d = DEFS[key];
+  $('#defTitle').textContent = d.title;
+  $('#defBody').textContent = d.body();
+  $('#goalUnit').textContent = key === 'days' ? 'days' : 'hours';
+  const current = key === 'prod' ? G.prod / 60 : key === 'days' ? G.days : G.reclaim / 60;
+  $('#goalInput').value = key === 'days' ? current : +current.toFixed(1);
+  $('#defModal').showModal();
+}
 document.querySelectorAll('.ring-label').forEach(btn => {
-  btn.onclick = () => {
-    const d = DEFS[btn.dataset.def];
-    $('#defTitle').textContent = d.title;
-    $('#defBody').textContent = d.body();
-    $('#defModal').showModal();
-  };
+  btn.onclick = () => openDef(btn.dataset.def);
 });
-$('#defClose').onclick = () => $('#defModal').close();
+$('#goalSave').onclick = () => {
+  let v = parseFloat($('#goalInput').value);
+  if (goalKey === 'days') v = Math.round(v);
+  if (!(v > 0)) { $('#goalInput').focus(); return; }
+  goalOverrides[kpiRange] = goalOverrides[kpiRange] || {};
+  goalOverrides[kpiRange][goalKey] = goalKey === 'days' ? v : +v.toFixed(1);
+  saveGoalOverrides();
+  $('#defModal').close();
+  renderKpis();
+};
+$('#goalReset').onclick = () => {
+  if (goalOverrides[kpiRange]) delete goalOverrides[kpiRange][goalKey];
+  saveGoalOverrides();
+  $('#defModal').close();
+  renderKpis();
+};
+$('#goalCancel').onclick = () => $('#defModal').close();
+function bumpGoal(dir) {
+  const step = GOAL_STEP[goalKey];
+  const cur = parseFloat($('#goalInput').value) || 0;
+  let next = Math.max(step, +(cur + dir * step).toFixed(2));
+  if (goalKey === 'days') next = Math.round(next);
+  $('#goalInput').value = next;
+}
+$('#goalMinus').onclick = () => bumpGoal(-1);
+$('#goalPlus').onclick = () => bumpGoal(1);
 
 document.querySelectorAll('#rangeSeg button').forEach(btn => {
   btn.onclick = () => {
