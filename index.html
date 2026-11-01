@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1B2A4A">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Moomentum</title>
@@ -9,7 +13,7 @@
 <style>
   :root {
     --night-deep: #1B2A4A; --night-ultramarine: #283D6B; --night-cerulean: #3A5BA0; --night-sky: #6F8FC7;
-    --star-chrome: #F2C94C; --star-pale: #F7E59A; --moon-cream: #FBF6E9; --cypress: #2F4F3A;
+    --star-chrome: #f2c94c; --star-pale: #F7E59A; --moon-cream: #FBF6E9; --cypress: #2F4F3A;
     --ember: #D9824B; --ember-deep: #A4502A;
     --ink: #1E2633; --mist: #E6ECF5; --muted: #5A6B8A;
     --radius-sm: 8px; --radius-md: 16px; --radius-lg: 24px; --radius-xl: 36px; --radius-pill: 999px;
@@ -39,10 +43,12 @@
   .app { max-width: 960px; margin: 0 auto; }
   header.top { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--night-ultramarine); color: var(--moon-cream); position: sticky; top: 0; z-index: 20; }
   header.top h1 { font-size: 22px; color: var(--moon-cream); }
-  .burger { min-width: 44px; min-height: 44px; border-radius: var(--radius-pill); border: 2px solid var(--night-sky); background: transparent; color: var(--moon-cream); font-size: 18px; }
+  .burger { min-width: 44px; min-height: 44px; border-radius: var(--radius-md); border: 2px solid var(--night-sky); background: transparent; color: var(--moon-cream); font-size: 18px; }
   .logo-mark { color: var(--star-chrome); font-size: 22px; line-height: 1; }
   .brand-btn { display: flex; align-items: center; gap: 8px; background: none; border: 0; padding: 0; color: inherit; cursor: pointer; text-align: left; }
   main { padding: 16px; }
+  main > section { width: 100%; max-width: 800px; margin: 0 auto; min-width: 0; }
+  #trend svg, #breakdown svg { display: block; width: 100%; height: auto; }
   .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 22px; border-radius: var(--radius-pill); border: 0; font-weight: 700; transition: transform 180ms var(--ease), box-shadow 180ms var(--ease), background 180ms var(--ease); }
   .btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-lift); }
   .btn:disabled { opacity: .35; cursor: default; transform: none; box-shadow: none; }
@@ -53,7 +59,8 @@
   .btn-ghost { background: transparent; color: var(--night-cerulean); border: 2px solid var(--night-cerulean); }
   .btn-ghost:hover { background: var(--mist); }
   .btn-block { width: 100%; }
-  .btn-sm { min-height: 44px; padding: 8px 16px; font-size: 14px; }
+  .btn-sm { min-height: 44px; padding: 8px 16px; font-size: 16px; }
+  input[type="text"], input[type="date"] { font-size: 16px; }
   input[type=date], input[type=text] { min-height: 44px; padding: 8px 14px; border: 2px solid var(--mist); border-radius: var(--radius-md); background: #fff; color: var(--ink); }
   input:focus { outline: 3px solid var(--star-chrome); outline-offset: 2px; border-color: var(--night-cerulean); }
   input[type=text] { flex: 1; min-width: 0; }
@@ -66,6 +73,31 @@
   .icon-btn { min-width: 44px; min-height: 44px; border-radius: 50%; border: 2px solid var(--night-sky); background: #fff; color: var(--night-cerulean); font-size: 16px; vertical-align: middle; margin-left: 6px; }
   .name-form { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; }
   .name-form input { flex: 1; min-width: 180px; max-width: 280px; }
+  .rings-card { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; background: #fff; border-radius: var(--radius-lg); box-shadow: var(--shadow-soft); padding: 16px 20px; margin-bottom: 16px; }
+  .rings-wrap { position: relative; width: 240px; height: 240px; flex-shrink: 0; }
+  .rings-wrap svg { display: block; animation: ringsIn .6s var(--ease) both; }
+  @keyframes ringsIn { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: none; } }
+  .rings-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; }
+  .rings-center span { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .rings-center b { font-family: var(--font-display); font-weight: 600; font-size: 20px; color: var(--night-deep); }
+  .rings-legend { flex: 1; min-width: 200px; }
+  .rings-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px dashed var(--mist); }
+  .rings-row:first-child { border-top: 0; }
+  .rings-row i { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+  .rings-row span:nth-child(2) { flex: 1; font-weight: 700; color: var(--night-deep); }
+  .rings-row span:last-child { color: var(--muted); }
+  .rings-row span:nth-child(2) small { display: block; font-weight: 500; font-size: 13px; color: var(--muted); margin-top: 2px; }
+  .rings-note { font-size: 13px; color: var(--muted); margin-top: 8px; }
+  @media (max-width: 640px) { .rings-note { text-align: center; } }
+  .section-title.snap-head { align-items: center; flex-wrap: wrap; margin: 8px 0 16px; }
+  .section-title.snap-head .seg.kpi-seg { margin: 0; }
+  .seg.kpi-seg { display: inline-flex; width: auto; margin: 0; padding: 3px; flex-shrink: 0; max-width: 100%; }
+  .seg.kpi-seg button { flex: 0 0 auto; min-width: 0; padding: 6px 18px; min-height: 36px; }
+  .ring-label { flex: 1; display: inline-flex; align-items: center; min-height: 44px; padding: 0; border: 0; background: none; text-align: left; font-weight: 700; color: var(--night-cerulean); text-decoration: none; cursor: pointer; }
+  dialog { border: 0; border-radius: var(--radius-lg); padding: 24px; width: calc(100% - 32px); max-width: 340px; background: #fff; color: var(--ink); box-shadow: var(--shadow-lift); }
+  dialog::backdrop { background: rgba(27, 42, 74, .45); }
+  dialog h3 { font-family: var(--font-display); font-weight: 600; font-size: 20px; color: var(--night-deep); margin-bottom: 8px; }
+  dialog p { font-size: 15px; line-height: 1.5; color: var(--ink); margin-bottom: 18px; }
   .desk-date { display: none; text-align: right; color: var(--muted); font-size: 15px; }
   .d-only { display: none; }
   .desk-date b { display: inline; font-family: var(--font-body); font-weight: 500; font-size: 14px; color: var(--muted); }
@@ -98,11 +130,13 @@
   .add-row { display: flex; gap: 8px; margin-bottom: 12px; }
   .act-line { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--mist); }
   .stepper { display: flex; align-items: center; gap: 8px; }
-  .stepper button { width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--night-cerulean); background: #fff; color: var(--night-cerulean); font-size: 18px; font-weight: 700; }
-  .stepper b { min-width: 56px; text-align: center; font-family: var(--font-display); font-weight: 600; color: var(--night-deep); }
+  .stepper button { width: 44px; height: 44px; min-width: 44px; border-radius: 50%; border: 2px solid var(--night-cerulean); background: #fff; color: var(--night-cerulean); font-size: 18px; font-weight: 700; }
+  .stepper b { min-width: 96px; white-space: nowrap; text-align: center; font-family: var(--font-display); font-weight: 600; font-size: 16px; color: var(--night-deep); }
   .hint { color: var(--muted); font-size: 15px; padding: 6px 0; }
   .total { display: flex; justify-content: space-between; align-items: center; margin: 14px 0; font-weight: 700; color: var(--night-deep); }
   .total span:last-child { font-family: var(--font-display); font-weight: 600; font-size: 20px; }
+  .banner { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; background: #fff; border-left: 4px solid var(--star-chrome); border-radius: var(--radius-md); box-shadow: var(--shadow-soft); padding: 14px 16px; margin-bottom: 16px; }
+  .banner p { flex: 1; min-width: 200px; font-size: 16px; font-weight: 600; color: var(--night-deep); line-height: 1.4; }
   .msg { min-height: 22px; color: var(--cypress); font-size: 14px; margin-top: 10px; font-weight: 500; }
 
   .done { margin-top: 14px; padding: 16px 18px; border-radius: var(--radius-lg); background: var(--mist); display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
@@ -141,7 +175,7 @@
   .cal .dow { text-align: center; font-size: 13px; color: var(--muted); font-weight: 700; padding: 4px 0; }
   .month-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
   .month-nav strong { font-family: var(--font-display); font-weight: 600; font-size: 18px; color: var(--night-deep); }
-  .month-nav .btn { min-width: 44px; padding: 6px 12px; }
+  .month-nav .btn { width: 44px; height: 44px; min-width: 44px; padding: 0; border-radius: 50%; font-size: 32px; line-height: 1; }
   .legend { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; color: var(--muted); margin-top: 14px; flex-wrap: wrap; }
   .legend i { width: 14px; height: 14px; border-radius: 4px; display: inline-block; }
 
@@ -182,12 +216,14 @@
     .shell { display: grid; grid-template-columns: 240px minmax(0, 1fr); }
     nav.side { flex-direction: column; position: sticky; top: 0; height: 100vh; padding: 20px 14px; gap: 6px; border-radius: 0 var(--radius-xl) var(--radius-xl) 0; }
     nav.side .brand { display: flex; align-items: center; gap: 10px; padding: 8px 10px 22px; font-family: var(--font-display); font-weight: 600; font-size: 22px; color: var(--moon-cream); }
-    nav.side .brand::before { content: "\2726"; color: var(--star-chrome); font-size: 22px; }
+    nav.side .brand-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;}
     nav.side button { flex: none; text-align: left; padding: 12px 18px; min-height: 48px; }
     header.top { display: none; }
-    .app { max-width: none; min-width: 0; }
+    .app { width: 100%; max-width: none; min-width: 0; }
     main { padding: 48px 64px; }
-    main > section { width: 100%; max-width: 800px; margin: 0 auto; min-width: 0; }
     .greet h2 { font-size: 42px; }
     .desk-date { display: block; }
     .m-only { display: none; }
@@ -224,9 +260,9 @@
 <body>
 <div class="shell">
   <nav class="side" id="nav" aria-label="Main">
-    <div class="brand">Moomentum</div>
+    <div class="brand"><img src="logo-nav-menu.svg" alt="logo" class="brand-icon">Moomentum</div>
     <button class="active" data-tab="home">Home</button>
-    <button data-tab="history">History</button>
+    <button data-tab="history">Insights</button>
     <button data-tab="manage">Manage Activities</button>
   </nav>
 
@@ -311,11 +347,37 @@
           </div>
         </div>
 
-        <div class="section-title"><h2 id="ytdLabel"></h2></div>
-        <div class="kpis">
-          <div class="kpi"><b id="kDays">0</b><span>Active days</span></div>
-          <div class="kpi"><b id="kHours">0h</b><span>Hours logged</span></div>
-          <div class="kpi"><b id="kActs">0</b><span>Activities explored</span></div>
+        <div class="banner" id="banner" hidden>
+          <p id="bannerMsg"></p>
+          <button class="btn btn-ghost btn-sm" id="bannerClose" aria-label="Dismiss message">Dismiss</button>
+        </div>
+        <div class="section-title snap-head"><h2 id="ytdLabel">Productivity summary</h2>
+          <div class="seg kpi-seg" id="rangeSeg" role="group" aria-label="Snapshot range">
+            <button type="button" data-range="month" aria-pressed="true" class="on">This Month</button>
+            <button type="button" data-range="ytd" aria-pressed="false">This Year</button>
+          </div></div>
+        <div class="rings-card">
+          <div class="rings-wrap">
+            <svg width="240" height="240" viewBox="0 0 240 240" role="img" aria-labelledby="ringsTitle ringsDesc">
+              <title id="ringsTitle">Year-to-date rings</title>
+              <desc id="ringsDesc">Outer ring: productive hours. Middle ring: productive days. Inner ring: time reclaimed.</desc>
+              <g fill="none" stroke-width="16" stroke-linecap="round" transform="rotate(-90 120 120)">
+                <circle cx="120" cy="120" r="100" stroke="#E6ECF5"/>
+                <circle id="ringProd" cx="120" cy="120" r="100" stroke="#3A5BA0" pathLength="100" stroke-dasharray="0 100"/>
+                <circle cx="120" cy="120" r="80" stroke="#E6ECF5"/>
+                <circle id="ringDays" cx="120" cy="120" r="80" stroke="#6F8FC7" pathLength="100" stroke-dasharray="0 100"/>
+                <circle cx="120" cy="120" r="60" stroke="#E6ECF5"/>
+                <circle id="ringReclaim" cx="120" cy="120" r="60" stroke="#F2C94C" pathLength="100" stroke-dasharray="0 100"/>
+              </g>
+            </svg>
+            <div class="rings-center"><span>Net balance</span><b id="netCenter">0.0 h</b></div>
+          </div>
+          <div class="rings-legend">
+            <div class="rings-row"><i style="background:#3A5BA0"></i><button type="button" class="ring-label" data-def="prod">Productive hours</button><span id="lProd">0.0 h of 300 h</span></div>
+            <div class="rings-row"><i style="background:#6F8FC7"></i><button type="button" class="ring-label" data-def="days">Productive days</button><span id="lDays">0 of 150</span></div>
+            <div class="rings-row"><i style="background:#F2C94C"></i><button type="button" class="ring-label" data-def="reclaim">Time reclaimed</button><span id="lReclaim">0.0 h of 40 h</span></div>
+            <p class="rings-note">Net balance: Productive hours minus Unproductive hours.</p>
+          </div>
         </div>
 
         <div class="section-title"><h2>Your progress</h2><span class="caption"><span class="m-only">Tap</span><span class="d-only">Click</span> any day to log it</span></div>
@@ -339,7 +401,7 @@
 
       <!-- HISTORY -->
       <section id="history" hidden>
-        <div class="section-title"><h2>History</h2></div>
+        <div class="section-title"><h2>Insights</h2></div>
         <div class="seg" id="seg">
           <button data-r="week">Week</button>
           <button data-r="month" class="on">Month</button>
@@ -399,6 +461,11 @@
   </div>
 </div>
 
+<dialog id="defModal" aria-labelledby="defTitle">
+  <h3 id="defTitle"></h3>
+  <p id="defBody"></p>
+  <button type="button" class="btn btn-primary btn-sm" id="defClose">Got it</button>
+</dialog>
 <script>
 const $ = s => document.querySelector(s);
 let NAME = readName();
@@ -450,7 +517,8 @@ const day = k => data[k] || (data[k] = {});
 const total = m => Object.entries(m)
   .filter(([id]) => ACTS.some(a => a.id === id))
   .reduce((s, [, min]) => s + min, 0);
-const fmtMin = n => (Math.floor(n / 60) ? `${Math.floor(n / 60)}h ` : '') + `${n % 60}m`;
+const fmtMin = n => `${(n / 60).toFixed(1)} h`;
+const fmtHM = n => (Math.floor(n / 60) ? `${Math.floor(n / 60)} hr ${String(n % 60).padStart(2, '0')}m` : `${n % 60}m`);
 const fmtDate = k => new Date(k + 'T12:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 function netOf(k) {
   let p = 0, n = 0;
@@ -483,18 +551,156 @@ function renderHeader() {
   $('#deskDate').innerHTML = `<b>${new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</b>`;
 }
 
-function renderKpis() {
-  const year = new Date().getFullYear();
-  $('#ytdLabel').textContent = 'Year in review';
-  const yStart = `${year}-01-01`;
-  const keys = Object.keys(data).filter(k => k >= yStart && k <= TODAY);
-  const activeDays = keys.filter(k => total(data[k]) > 0).length;
-  const minutes = keys.reduce((s, k) => s + total(data[k]), 0);
-  const explored = ACTS.filter(a => keys.some(k => (data[k] || {})[a.id])).length;
-  $('#kDays').textContent = activeDays;
-  $('#kHours').textContent = `${(minutes / 60).toFixed(1)}h`;
-  $('#kActs').textContent = explored;
+function plainMin(m) {
+  return `${(m / 60).toFixed(1)} h`;
 }
+function windowTotals(offset, days) {
+  let pos = 0, neg = 0;
+  const byAct = {};
+  for (let i = 0; i < days; i++) {
+    Object.entries(data[keyOf(daysAgo(offset + i))] || {}).forEach(([id, min]) => {
+      const a = ACTS.find(x => x.id === id);
+      if (!a) return;
+      if (a.type === 'neg') neg += min; else pos += min;
+      byAct[id] = (byAct[id] || 0) + min;
+    });
+  }
+  return { pos, neg, byAct };
+}
+const BANNER_VARIANTS = {
+  warn: [
+    (act, amt) => `You logged ${amt} more ${act} than last week. Would you like to reclaim 15 minutes today?`,
+    (act, amt) => `${act[0].toUpperCase() + act.slice(1)} is up ${amt} from last week. Which activity deserves 15 minutes today?`
+  ],
+  relief: [
+    (act, amt) => `You spent ${amt} less on ${act} than last week. That's time back in your day.`,
+    (act, amt) => `${act[0].toUpperCase() + act.slice(1)} is down ${amt} from last week. Nice work taking that time back.`
+  ],
+  positive: [
+    (amt) => `Your productivity time is up ${amt} from last week. Let's keep the moomentum going tomorrow!`,
+    (amt) => `You added ${amt} of good habits compared with last week. That's a real shift.`
+  ]
+};
+function renderBanner() {
+  const el = $('#banner');
+  if (localStorage.getItem('moomentum:bannerDismissed') === TODAY) { el.hidden = true; return; }
+  const cur = windowTotals(0, 7), prev = windowTotals(7, 7);
+  const negDelta = cur.neg - prev.neg, posDelta = cur.pos - prev.pos;
+  const negActs = ACTS.filter(a => a.type === 'neg');
+  const topNeg = negActs.slice().sort((a, b) => (cur.byAct[b.id] || 0) - (cur.byAct[a.id] || 0))[0];
+  const act = topNeg ? topNeg.name.toLowerCase() : 'scrolling';
+  const pick = list => list[Number(TODAY.slice(-2)) % list.length];
+  const options = [];
+  if (negDelta >= 30) options.push({ score: negDelta, text: pick(BANNER_VARIANTS.warn)(act, plainMin(negDelta)) });
+  if (negDelta <= -30) options.push({ score: -negDelta, text: pick(BANNER_VARIANTS.relief)(act, plainMin(-negDelta)) });
+  if (posDelta >= 30) options.push({ score: posDelta, text: pick(BANNER_VARIANTS.positive)(plainMin(posDelta)) });
+  if (!options.length) { el.hidden = true; return; }
+  options.sort((a, b) => b.score - a.score);
+  $('#bannerMsg').textContent = options[0].text;
+  el.hidden = false;
+}
+$('#bannerClose').onclick = () => {
+  try { localStorage.setItem('moomentum:bannerDismissed', TODAY); } catch (e) { /* storage unavailable */ }
+  $('#banner').hidden = true;
+};
+
+const ringState = { prod: 0, days: 0, reclaim: 0 };
+const RING_IDS = { prod: '#ringProd', days: '#ringDays', reclaim: '#ringReclaim' };
+function setRingDash(key, v) { $(RING_IDS[key]).setAttribute('stroke-dasharray', `${v.toFixed(2)} 100`); }
+function animateRings(targets) {
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) {
+    Object.keys(targets).forEach(k => { ringState[k] = targets[k]; setRingDash(k, targets[k]); });
+    return;
+  }
+  const from = { ...ringState };
+  const start = performance.now();
+  const dur = 900;
+  const step = now => {
+    const p = Math.min(1, (now - start) / dur);
+    const e = 1 - Math.pow(1 - p, 3);
+    Object.keys(targets).forEach(k => {
+      const v = from[k] + (targets[k] - from[k]) * e;
+      ringState[k] = v;
+      setRingDash(k, v);
+    });
+    if (p < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+let kpiRange = 'month';
+const KPI_GOALS = {
+  ytd: { prod: 300 * 60, days: 150, reclaim: 40 * 60, prodTxt: '300 h', daysTxt: '150', reclaimTxt: '40 h', period: 'this year' },
+  month: { prod: 25 * 60, days: 12, reclaim: 200, prodTxt: '25 h', daysTxt: '12', reclaimTxt: '3.3 h', period: 'this month' }
+};
+function rangeStart() {
+  const now = new Date();
+  return kpiRange === 'month' ? keyOf(new Date(now.getFullYear(), now.getMonth(), 1)) : `${now.getFullYear()}-01-01`;
+}
+function renderKpis() {
+  renderBanner();
+  const start = rangeStart();
+  const G = KPI_GOALS[kpiRange];
+  const keys = Object.keys(data).filter(k => k >= start && k <= TODAY);
+  let prodMin = 0, negMin = 0, productiveDays = 0;
+  keys.forEach(k => {
+    const { p, n, net } = netOf(k);
+    prodMin += p;
+    negMin += n;
+    if (net >= 15) productiveDays++;
+  });
+  // Time reclaimed: week-over-week cuts in unproductive time, counting only weeks with logging
+  const weeks = [];
+  for (let w = 0; addDays(start, w * 7) <= TODAY; w++) {
+    let neg = 0, any = false;
+    for (let i = 0; i < 7; i++) {
+      const k = addDays(start, w * 7 + i);
+      if (k > TODAY) break;
+      const d = netOf(k);
+      neg += d.n;
+      if (d.p + d.n > 0) any = true;
+    }
+    weeks.push({ neg, any });
+  }
+  let reclaimedMin = 0;
+  for (let w = 1; w < weeks.length; w++) {
+    if (weeks[w - 1].any && weeks[w].any) reclaimedMin += Math.max(0, weeks[w - 1].neg - weeks[w].neg);
+  }
+  const pct = (v, g) => Math.min(100, (v / g) * 100);
+  animateRings({ prod: pct(prodMin, G.prod), days: pct(productiveDays, G.days), reclaim: pct(reclaimedMin, G.reclaim) });
+  const net = prodMin - negMin;
+  $('#netCenter').textContent = `${net >= 0 ? '+' : '−'}${fmtMin(Math.abs(net))}`;
+  $('#lProd').textContent = `${fmtMin(prodMin)} of ${G.prodTxt}`;
+  $('#lDays').textContent = `${productiveDays} of ${G.daysTxt}`;
+  $('#lReclaim').textContent = `${fmtMin(reclaimedMin)} of ${G.reclaimTxt}`;
+}
+
+const DEFS = {
+  prod: { title: 'Productive hours', body: () => `Total time on productive activities ${KPI_GOALS[kpiRange].period}. Goal: ${KPI_GOALS[kpiRange].prodTxt}.` },
+  days: { title: 'Productive days', body: () => `Days when productive time beat unproductive time by at least 15 minutes ${KPI_GOALS[kpiRange].period}. Goal: ${KPI_GOALS[kpiRange].daysTxt} days.` },
+  reclaim: { title: 'Time reclaimed', body: () => `Unproductive time cut from one week to the next ${KPI_GOALS[kpiRange].period}. Only weeks with logged time count. Goal: ${KPI_GOALS[kpiRange].reclaimTxt}.` }
+};
+document.querySelectorAll('.ring-label').forEach(btn => {
+  btn.onclick = () => {
+    const d = DEFS[btn.dataset.def];
+    $('#defTitle').textContent = d.title;
+    $('#defBody').textContent = d.body();
+    $('#defModal').showModal();
+  };
+});
+$('#defClose').onclick = () => $('#defModal').close();
+
+document.querySelectorAll('#rangeSeg button').forEach(btn => {
+  btn.onclick = () => {
+    kpiRange = btn.dataset.range;
+    document.querySelectorAll('#rangeSeg button').forEach(b => {
+      const on = b === btn;
+      b.classList.toggle('on', on);
+      b.setAttribute('aria-pressed', String(on));
+    });
+    renderKpis();
+  };
+});
 
 // Accordion
 function setRecapOpen(open) {
@@ -554,7 +760,7 @@ function renderSelected() {
     row.innerHTML = `<span>${a.name}</span>
       <span class="stepper">
         <button data-d="-5" aria-label="Less time">&minus;</button>
-        <b>${cur[id]}m</b>
+        <b>${fmtHM(cur[id])}</b>
         <button data-d="5" aria-label="More time">+</button>
       </span>`;
     row.querySelectorAll('button').forEach(btn => {
@@ -568,7 +774,7 @@ function renderLog() {
   saveStore();
   renderChips();
   renderSelected();
-  $('#total').textContent = fmtMin(total(day(current)));
+  $('#total').textContent = fmtHM(total(day(current)));
   renderKpis();
 }
 
@@ -649,7 +855,7 @@ $('#saveBtn').onclick = () => {
   const cur = day(current);
   if (!Object.keys(cur).length) return flash('Add at least one activity first.');
   recap.done = true;
-  $('#doneText').textContent = `${fmtDate(current)}: ${fmtMin(total(cur))} logged.`;
+  $('#doneText').textContent = `${fmtDate(current)}: ${fmtHM(total(cur))} logged.`;
   renderRecap();
   renderHeat();
 };
