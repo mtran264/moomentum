@@ -312,6 +312,13 @@
     </header>
 
     <main>
+      <div class="update-banner install-banner" id="iosBanner" hidden role="status">
+        <p>Add Moomentum to your Home Screen for quick access.</p>
+        <div class="update-actions">
+          <button type="button" class="btn btn-ghost btn-sm" id="iosBannerNotNow">Not now</button>
+          <button type="button" class="btn btn-primary btn-sm" id="iosShow">Show me how</button>
+        </div>
+      </div>
       <div class="update-banner install-banner" id="installBanner" hidden role="status">
         <p>Install Moomentum for quick access.</p>
         <div class="update-actions">
@@ -322,8 +329,8 @@
       <div class="update-banner install-banner" id="tipBanner" hidden role="status">
         <p>To add Moomentum to your home screen, use your browser's menu and look for <b>Add to Home Screen</b> or <b>Install app</b>.</p>
         <div class="update-actions">
-          <button type="button" class="btn btn-ghost btn-sm" id="tipAlready">I've already added it</button>
-          <button type="button" class="btn btn-primary btn-sm" id="tipDone">Got it</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="tipNotNow">Not now</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="tipAlready">Already added</button>
         </div>
       </div>
       <div class="update-banner backup-banner" id="backupBanner" hidden role="status">
@@ -548,9 +555,8 @@
   <div class="install-step"><span class="install-num">2</span><span>Scroll down and tap <b>Add to Home Screen</b>.</span></div>
   <div class="install-step"><span class="install-num">3</span><span>Tap <b>Add</b>, then open Moomentum from your Home Screen.</span></div>
   <div class="dialog-actions">
-    <button type="button" class="btn btn-ghost btn-sm" id="iosAlready">I've already added it</button>
     <button type="button" class="btn btn-ghost btn-sm" id="iosNotNow">Not now</button>
-    <button type="button" class="btn btn-primary btn-sm" id="iosGotIt">Got it</button>
+    <button type="button" class="btn btn-primary btn-sm" id="iosAlready">Already added</button>
   </div>
 </dialog>
 <dialog id="removeModal" aria-labelledby="removeTitle">
@@ -595,7 +601,9 @@
 const $ = s => document.querySelector(s);
 
 // Install prompts, tailored to device and browser
-const INSTALL_KEY = 'moomentum:installPrompt';
+const INSTALL_KEY = 'moomentum:installPrompt';   // 'done' = dismissed permanently
+const SNOOZE_KEY = 'moomentum:installSnooze';    // time of the last "Not now"
+const SNOOZE_MS = 7 * 86400000;                  // show again after one week
 const UA = navigator.userAgent;
 const isIPhone = /iPhone|iPod/.test(UA);
 const isAndroid = /Android/.test(UA);
@@ -608,19 +616,30 @@ function isInstalled() {
 function installDone() {
   try { return localStorage.getItem(INSTALL_KEY) === 'done'; } catch (e) { return false; }
 }
+function snoozed() {
+  try {
+    const t = Number(localStorage.getItem(SNOOZE_KEY));
+    return !!t && Date.now() - t < SNOOZE_MS;
+  } catch (e) { return false; }
+}
 function hideInstallPrompts() {
+  $('#iosBanner').hidden = true;
   $('#installBanner').hidden = true;
   $('#tipBanner').hidden = true;
   if ($('#iosModal').open) $('#iosModal').close();
 }
-function markInstallDone() {
+function setInstallDone() {
   try { localStorage.setItem(INSTALL_KEY, 'done'); } catch (e) { /* storage unavailable */ }
+  hideInstallPrompts();
+}
+function snoozeInstall() {
+  try { localStorage.setItem(SNOOZE_KEY, String(Date.now())); } catch (e) { /* storage unavailable */ }
   hideInstallPrompts();
 }
 function maybeShowInstallPrompt() {
   hideInstallPrompts();
-  if (!isPhone || isInstalled() || installDone()) return;
-  if (isIPhone) { $('#iosModal').showModal(); return; }
+  if (!isPhone || isInstalled() || installDone() || snoozed()) return;
+  if (isIPhone) { $('#iosBanner').hidden = false; return; }
   if (isChromeAndroid && deferredInstall) { $('#installBanner').hidden = false; return; }
   $('#tipBanner').hidden = false;
 }
@@ -629,21 +648,30 @@ window.addEventListener('beforeinstallprompt', e => {
   deferredInstall = e;
   maybeShowInstallPrompt();
 });
-window.addEventListener('appinstalled', markInstallDone);
-$('#installNotNow').onclick = markInstallDone;
-$('#tipDone').onclick = markInstallDone;
-$('#tipAlready').onclick = markInstallDone;
-$('#iosGotIt').onclick = markInstallDone;
-$('#iosNotNow').onclick = markInstallDone;
-$('#iosAlready').onclick = markInstallDone;
-$('#iosModal').addEventListener('cancel', markInstallDone);
+window.addEventListener('appinstalled', setInstallDone);
+
+// iPhone: banner first, tutorial on request
+$('#iosShow').onclick = () => {
+  $('#iosBanner').hidden = true;
+  $('#iosModal').showModal();
+};
+$('#iosBannerNotNow').onclick = snoozeInstall;
+$('#iosNotNow').onclick = snoozeInstall;
+$('#iosAlready').onclick = setInstallDone;
+// Going back or pressing Escape counts as "Not now"
+$('#iosModal').addEventListener('cancel', snoozeInstall);
+
+// Android Chrome and other browsers
+$('#installNotNow').onclick = snoozeInstall;
 $('#installGo').onclick = async () => {
-  if (!deferredInstall) return markInstallDone();
+  if (!deferredInstall) return setInstallDone();
   deferredInstall.prompt();
   await deferredInstall.userChoice;
   deferredInstall = null;
-  markInstallDone();
+  setInstallDone();
 };
+$('#tipNotNow').onclick = snoozeInstall;
+$('#tipAlready').onclick = setInstallDone;
 
 // Backup tracking and reminders
 const BACKUP_KEY = 'moomentum:lastBackup';
@@ -689,7 +717,7 @@ $('#backupLater').onclick = () => {
 $('#backupNow').onclick = () => exportBackup();
 
 // App version and update check
-const APP_VERSION = '1.5.0';
+const APP_VERSION = '1.5.1';
 $('#appVersion').textContent = `Moomentum · Version ${APP_VERSION}`;
 function isNewerVersion(remote, local) {
   const r = String(remote).split('.').map(Number);
