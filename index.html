@@ -92,6 +92,19 @@
   .rings-row span:last-child { color: var(--muted); }
   .rings-row span:nth-child(2) small { display: block; font-weight: 500; font-size: 13px; color: var(--muted); margin-top: 2px; }
   .rings-note { font-size: 13px; color: var(--muted); margin-top: 8px; }
+  .net-value { pointer-events: auto; background: none; border: 0; padding: 2px 8px; margin-top: -4px; min-height: 44px; font-family: var(--font-display); font-weight: 600; font-size: 20px; color: var(--night-deep); cursor: pointer; }
+  .net-pos { color: var(--night-cerulean); }
+  .net-banner { background: #fff; border-left: 4px solid var(--night-cerulean); border-radius: var(--radius-md); box-shadow: var(--shadow-soft); padding: 14px 16px; margin-bottom: 16px; font-size: 15px; line-height: 1.5; color: var(--night-deep); }
+  .net-banner.net-neg { border-left-color: var(--ember-deep); }
+  .rings-card .net-banner { flex: 1 0 100%; margin: 4px 0 0; background: var(--moon-cream); box-shadow: none; }
+  .rings-card .net-banner:not(.net-neg) { background: var(--mist); }
+  .rings-card .net-banner.net-even { background: var(--moon-cream); }
+  .net-neg { color: var(--ember-deep); }
+  .net-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px dashed var(--mist); font-size: 15px; color: var(--ink); }
+  .net-row b { font-family: var(--font-display); font-weight: 600; font-size: 16px; color: var(--night-deep); }
+  .net-row.net-total b { font-size: 18px; }
+  .net-row.net-total b.net-pos { color: var(--night-cerulean); }
+  .net-row.net-total b.net-neg { color: var(--ember-deep); }
   @media (max-width: 640px) { .rings-note { text-align: center; } }
   .section-title.snap-head { align-items: center; flex-wrap: wrap; margin: 8px 0 16px; }
   .section-title.snap-head .seg.kpi-seg { margin: 0; }
@@ -264,7 +277,7 @@
   .install-step { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px; font-size: 15px; line-height: 1.5; color: var(--ink); }
   .install-num { width: 32px; height: 32px; border-radius: 50%; background: var(--star-chrome); color: var(--night-deep); font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .app-version { text-align: center; font-size: 13px; color: var(--muted); margin: 24px 0 8px; }
-  .toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 12px); background: var(--night-deep); color: var(--moon-cream); padding: 12px 18px; border-radius: var(--radius-pill); box-shadow: var(--shadow-lift); font-size: 15px; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity .2s var(--ease), transform .2s var(--ease); z-index: 60; max-width: calc(100% - 32px); text-align: center; }
+  .toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 12px); background: var(--night-deep); color: var(--moon-cream); padding: 12px 18px; border-radius: 16px; box-shadow: var(--shadow-lift); font-size: 14px; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity .2s var(--ease), transform .2s var(--ease); z-index: 60; max-width: calc(100% - 32px); text-align: center; }
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
   .act-count { display: inline-block; min-width: 22px; padding: 1px 8px; margin-left: 6px; border-radius: var(--radius-pill); background: var(--mist); color: var(--night-deep); font-size: 12px; text-align: center; letter-spacing: 0; }
   .chip.add-chip { border-style: dashed; border-color: var(--night-sky); color: var(--night-cerulean); background: #fff; }
@@ -355,7 +368,7 @@
         <p>To add Moomentum to your home screen, use your browser's menu and look for <b>Add to Home Screen</b> or <b>Install app</b>.</p>
         <div class="update-actions">
           <button type="button" class="btn btn-ghost btn-sm" id="tipNotNow">Not now</button>
-          <button type="button" class="btn btn-ghost btn-sm" id="tipAlready">Already added</button>
+          <button type="button" class="btn btn-primary btn-sm" id="tipAlready">Already added</button>
         </div>
       </div>
       <div class="update-banner backup-banner" id="backupBanner" hidden role="status">
@@ -467,14 +480,14 @@
                 <circle id="ringReclaim" cx="120" cy="120" r="60" stroke="#F2C94C" pathLength="100" stroke-dasharray="0 100"/>
               </g>
             </svg>
-            <div class="rings-center"><span>Net balance</span><b id="netCenter">0.0 h</b></div>
+            <div class="rings-center"><span>Net balance</span><button type="button" class="net-value" id="netCenter" aria-label="Show how the net balance is calculated">0.0 h</button></div>
           </div>
           <div class="rings-legend">
             <div class="rings-row"><i style="background:#3A5BA0"></i><button type="button" class="ring-label" data-def="prod">Productive hours</button><span id="lProd">0.0 h of 300 h</span></div>
             <div class="rings-row"><i style="background:#6F8FC7"></i><button type="button" class="ring-label" data-def="days">Productive days</button><span id="lDays">0 of 150</span></div>
             <div class="rings-row"><i style="background:#F2C94C"></i><button type="button" class="ring-label" data-def="reclaim">Time reclaimed</button><span id="lReclaim">0.0 h of 40 h</span></div>
-            <p class="rings-note">Net balance: Productive hours minus Unproductive hours.</p>
           </div>
+          <div class="net-banner" id="netNote" role="status"></div>
         </div>
 
         <div class="section-title"><h2>Your progress</h2><span class="caption"><span class="m-only">Tap</span><span class="d-only">Click</span> any day to log it</span></div>
@@ -582,6 +595,15 @@
   <div class="dialog-actions">
     <button type="button" class="btn btn-ghost btn-sm" id="iosNotNow">Not now</button>
     <button type="button" class="btn btn-primary btn-sm" id="iosAlready">Already added</button>
+  </div>
+</dialog>
+<dialog id="netModal" aria-labelledby="netTitle">
+  <h3 id="netTitle">How your net balance adds up</h3>
+  <div class="net-row"><span>Productive hours</span><b id="netProd">0.0 h</b></div>
+  <div class="net-row"><span>Unproductive hours</span><b id="netNeg">0.0 h</b></div>
+  <div class="net-row net-total"><span>Net balance</span><b id="netResult">+0.0 h</b></div>
+  <div class="dialog-actions">
+    <button type="button" class="btn btn-primary btn-sm" id="netClose">Got it</button>
   </div>
 </dialog>
 <dialog id="removeModal" aria-labelledby="removeTitle">
@@ -742,7 +764,7 @@ $('#backupLater').onclick = () => {
 $('#backupNow').onclick = () => exportBackup();
 
 // App version and update check
-const APP_VERSION = '1.5.2';
+const APP_VERSION = '1.6.0';
 $('#appVersion').textContent = `Moomentum · Version ${APP_VERSION}`;
 function isNewerVersion(remote, local) {
   const r = String(remote).split('.').map(Number);
@@ -966,6 +988,87 @@ function rangeStart() {
   const now = new Date();
   return kpiRange === 'month' ? keyOf(new Date(now.getFullYear(), now.getMonth(), 1)) : `${now.getFullYear()}-01-01`;
 }
+// Net balance: counting animation, copy, colors, milestones, and the calculation modal
+let netShown = 0;
+let netRaf = null;
+let lastProd = 0, lastNeg = 0;
+const NET_MILESTONE_MIN = 600; // every 10 hours
+function fmtNet(v) { return `${v >= 0 ? '+' : '−'}${fmtMin(Math.abs(v))}`; }
+function animateNet(target, onDone) {
+  const el = $('#netCenter');
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const from = netShown;
+  cancelAnimationFrame(netRaf);
+  if (reduce || from === target) {
+    netShown = target;
+    el.textContent = fmtNet(target);
+    if (onDone) onDone();
+    return;
+  }
+  const start = performance.now();
+  const dur = 600;
+  const step = now => {
+    const p = Math.min(1, (now - start) / dur);
+    const eased = 1 - Math.pow(1 - p, 3);
+    netShown = from + (target - from) * eased;
+    el.textContent = fmtNet(Math.round(netShown));
+    if (p < 1) {
+      netRaf = requestAnimationFrame(step);
+    } else {
+      netShown = target;
+      el.textContent = fmtNet(target);
+      if (onDone) onDone();
+    }
+  };
+  netRaf = requestAnimationFrame(step);
+}
+function updateNetCopy(net) {
+  const hrs = (Math.abs(net) / 60).toFixed(1);
+  const signed = net >= 0 ? `+${hrs}` : `−${hrs}`;
+  let label, note;
+  if (net >= 15) {
+    label = "You're ahead";
+    note = `You have a net balance of ${signed} hours, so you were more productive than unproductive. Nice work!`;
+  } else if (net <= -15) {
+    label = 'Time to reclaim';
+    note = `You have a net balance of ${signed} hours. Unproductive time is leading for now, but don't give in. Every hour you reclaim, your future self will thank you.`;
+  } else {
+    label = 'Right in the middle';
+    note = "Your productive and unproductive hours are even. Your next activity can tip the scale. Keep the Moomentum going!";
+  }
+  const banner = $('#netNote');
+  banner.textContent = note;
+  banner.classList.toggle('net-neg', net < 0);
+  banner.classList.toggle('net-even', Math.abs(net) < 15);
+  const el = $('#netCenter');
+  el.classList.toggle('net-pos', net >= 0);
+  el.classList.toggle('net-neg', net < 0);
+}
+function checkNetMilestone(net) {
+  const level = net >= NET_MILESTONE_MIN ? Math.floor(net / NET_MILESTONE_MIN) : 0;
+  const key = `moomentum:netLevel:${kpiRange}:${kpiRange === 'month' ? monthKey(new Date()) : new Date().getFullYear()}`;
+  let prev = 0;
+  try {
+    prev = Number(localStorage.getItem(key)) || 0;
+    localStorage.setItem(key, String(level));
+  } catch (e) { /* storage unavailable */ }
+  if (level > prev) {
+    showToast(`You have a net balance of ${level * 10} hours and counting. Let's keep the Moomentum going!`, 8000);
+  }
+}
+function openNetModal() {
+  const net = lastProd - lastNeg;
+  $('#netProd').textContent = fmtMin(lastProd);
+  $('#netNeg').textContent = fmtMin(lastNeg);
+  const result = $('#netResult');
+  result.textContent = fmtNet(net);
+  result.classList.toggle('net-pos', net >= 0);
+  result.classList.toggle('net-neg', net < 0);
+  $('#netModal').showModal();
+}
+$('#netCenter').onclick = openNetModal;
+$('#netClose').onclick = () => $('#netModal').close();
+
 function renderKpis() {
   renderBanner();
   maybeShowBackupReminder();
@@ -999,7 +1102,10 @@ function renderKpis() {
   const pct = (v, g) => Math.min(100, (v / g) * 100);
   animateRings({ prod: pct(prodMin, G.prod), days: pct(productiveDays, G.days), reclaim: pct(reclaimedMin, G.reclaim) });
   const net = prodMin - negMin;
-  $('#netCenter').textContent = `${net >= 0 ? '+' : '−'}${fmtMin(Math.abs(net))}`;
+  lastProd = prodMin;
+  lastNeg = negMin;
+  updateNetCopy(net);
+  animateNet(net, () => checkNetMilestone(net));
   $('#lProd').textContent = `${fmtMin(prodMin)} of ${G.prodTxt}`;
   $('#lDays').textContent = `${productiveDays} of ${G.daysTxt}`;
   $('#lReclaim').textContent = `${fmtMin(reclaimedMin)} of ${G.reclaimTxt}`;
@@ -1453,12 +1559,12 @@ function renderManage() {
 }
 
 let toastTimer = null;
-function showToast(msg) {
+function showToast(msg, ms = 800) {
   const t = $('#toast');
   t.textContent = msg;
   t.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 800);
+  toastTimer = setTimeout(() => t.classList.remove('show'), ms);
 }
 
 let pendingRemove = null;
