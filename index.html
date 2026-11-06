@@ -163,7 +163,7 @@
   .ob-chip.neg { border-style: dashed; border-color: var(--mist); }
   .ob-chip.neg[aria-pressed="true"] { background: var(--ember-deep); border-color: var(--ember-deep); }
   .ob-tag { font-size: 12px; color: var(--muted); margin: 2px 0 14px; }
-  .ob-neg { display: flex; align-items: center; gap: 8px; min-height: 44px; font-size: 15px; font-weight: 600; color: var(--muted); cursor: pointer; margin: 0; }
+  .ob-neg { display: flex; align-items: flex-start; padding-top: 8px; gap: 8px; min-height: 44px; font-size: 15px; font-weight: 400; color: var(--muted); cursor: pointer; margin: 0; }
   .ob-neg input { width: 20px; height: 20px; accent-color: var(--ember-deep); margin: 0; }
   .ob-box { background: #fff; border-radius: 20px; box-shadow: var(--shadow-soft); padding: 14px 16px; margin-bottom: 12px; }
   .ob-stepper { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 10px 0 14px; }
@@ -334,8 +334,21 @@
   .add-plus { width: 40px; height: 40px; flex-shrink: 0; border-radius: 12px; background: var(--star-chrome); color: var(--night-deep); display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700; }
   #addName { width: 100%; min-height: 44px; padding: 8px 12px; border: 2px solid var(--mist); border-radius: var(--radius-sm); font-size: 16px; font-family: var(--font-body); color: var(--night-deep); margin-bottom: 12px; }
   #addName:focus { outline: none; border-color: var(--night-cerulean); }
-  .add-check { display: flex; align-items: center; gap: 8px; min-height: 44px; font-size: 15px; color: var(--muted); margin-bottom: 8px; }
+  .add-check { display: flex; align-items: flex-start; gap: 8px; min-height: 44px; font-size: 15px; color: var(--muted); margin-bottom: 8px; }
   .add-check input { width: 20px; height: 20px; margin: 0; accent-color: var(--ember-deep); }
+  .whats-panel p { margin: 0 0 8px; color: var(--muted); font-size: 15px; }
+  .whats-panel .whats-result { color: var(--night-deep); font-weight: 600; margin: 0; }
+  .whats-panel { background: #fff !important; border-left: 4px solid var(--star-chrome) !important; }
+  .whats-panel.perf-good .whats-result, .whats-panel.perf-watch .whats-result, .whats-panel.perf-even .whats-result { color: var(--night-deep) !important; }
+  .whats-row { display: flex; align-items: flex-start; gap: 12px; }
+  .whats-ico { width: 22px; height: 24px; flex-shrink: 0; margin-top: 1px; color: var(--night-cerulean); }
+  .whats-panel { border-left: 4px solid var(--mist); }
+  .whats-panel.perf-good { background: var(--moon-cream); border-left-color: var(--cypress); }
+  .whats-panel.perf-good .whats-result { color: var(--cypress); }
+  .whats-panel.perf-watch { background: rgba(217, 130, 75, .12); border-left-color: var(--ember); }
+  .whats-panel.perf-watch .whats-result { color: var(--ember-deep); }
+  .whats-panel.perf-even { background: var(--mist); border-left-color: var(--night-cerulean); }
+  #addSave:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
   .update-banner { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; background: #fff; border-left: 4px solid var(--star-chrome); border-radius: var(--radius-md); box-shadow: var(--shadow-soft); padding: 14px 16px; margin-bottom: 16px; }
   .update-banner p { flex: 1; min-width: 200px; font-size: 16px; font-weight: 600; color: var(--night-deep); line-height: 1.4; margin: 0; }
   .update-actions { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -456,6 +469,13 @@
   #wirMore.wir-more:hover { background: var(--night-ultramarine); }
   #wirDismiss.wir-dismiss { background: transparent; border: 2px solid var(--night-cerulean); color: var(--night-cerulean); }
   #wirDismiss.wir-dismiss:hover { background: var(--mist); }
+  .celebrate { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 300; animation: celebrateFade 5s var(--ease) forwards; }
+  .confetti { position: absolute; top: -14px; width: 8px; height: 12px; border-radius: 2px; opacity: 0; animation-name: confettiFall; animation-timing-function: cubic-bezier(.2, .6, .4, 1); animation-fill-mode: both; }
+  @keyframes confettiFall { 0% { opacity: 1; transform: translate3d(0, 0, 0) rotate(0deg); } 100% { opacity: 1; transform: translate3d(var(--drift), 105vh, 0) rotate(var(--spin)); } }
+  .ribbon { position: absolute; top: 18%; left: 50%; transform: translateX(-50%); background: var(--night-cerulean); color: #fff; font-family: var(--font-display); font-weight: 600; font-size: 22px; padding: 12px 40px; clip-path: polygon(0 0, 100% 0, calc(100% - 14px) 50%, 100% 100%, 0 100%, 14px 50%); box-shadow: var(--shadow-lift); white-space: nowrap; animation: ribbonIn .6s var(--ease) both; }
+  @keyframes ribbonIn { from { opacity: 0; transform: translate(-50%, -30px); } to { opacity: 1; transform: translate(-50%, 0); } }
+  @keyframes celebrateFade { 0%, 85% { opacity: 1; } 100% { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .confetti { display: none; } .ribbon { animation: none; } }
 </style>
 </head>
 <body>
@@ -623,10 +643,12 @@
             <div class="rings-row"><i style="background:#6F8FC7"></i><button type="button" class="ring-label" data-def="days">Net balance</button><span id="lDays">0 of 150</span></div>
             <div class="rings-row"><i style="background:#F2C94C"></i><button type="button" class="ring-label" data-def="reclaim">Days logged</button><span id="lReclaim">0.0 h of 40 h</span></div>
           </div>
-          <div class="net-banner" id="netNote" role="status"></div>
         </div>
 
         <div class="section-title"><h2>Your moomentum</h2></div>
+        <div class="card whats-panel" id="whatsThisPanel">
+          <div class="whats-row"><svg class="whats-ico" id="bulbIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 114.1 122.88" aria-hidden="true" focusable="false"><path fill-rule="evenodd" fill="currentColor" d="M75.84,27.1a35.68,35.68,0,0,1,8.61,7.09,32.45,32.45,0,0,1,5.76,9.26h0a36.84,36.84,0,0,1,1.85,6,34.64,34.64,0,0,1,.24,14,38.69,38.69,0,0,1-2.15,7.32l-.12.25c-2.06,5-5.59,9.86-9,14.66-1.75,2.42-3.48,4.82-4.94,7.15A4.69,4.69,0,0,1,71.73,95l-27.56,4.1A4.7,4.7,0,0,1,39,95.69a40.19,40.19,0,0,0-2.54-5.82,24.85,24.85,0,0,0-3-4.49c-1.43-1.63-2.88-3.29-4.29-5.2A40.42,40.42,0,0,1,25,73.24h0a41.08,41.08,0,0,1-2.81-8,35.84,35.84,0,0,1-.95-8.45v0A35.39,35.39,0,0,1,22.35,48a41.69,41.69,0,0,1,3.42-8.85l.2-.35a35.55,35.55,0,0,1,7.13-8.63,33.72,33.72,0,0,1,9.46-5.83l.28-.1a35.41,35.41,0,0,1,8-2.14,37.78,37.78,0,0,1,8.77-.2,39.14,39.14,0,0,1,8.4,1.71,38.44,38.44,0,0,1,7.79,3.49Zm-4,87.26a17.37,17.37,0,0,1-6.28,6.29,16.46,16.46,0,0,1-7.2,2.2A14.87,14.87,0,0,1,51,121.4a15.1,15.1,0,0,1-4.39-3.27l25.29-3.77Zm2.41-14.15,0,1.65,0,.58a22,22,0,0,1,0,3.25l-.49,2.39-30.64,4.56-.54-1.23-1.19-4.9,0-1.42,32.79-4.88ZM56.34,3.77A3.84,3.84,0,0,1,60.23,0h0l.27,0A3.84,3.84,0,0,1,64,3.89h0a1.27,1.27,0,0,1,0,.2l-.21,8.21h0a2.11,2.11,0,0,1,0,.26,3.84,3.84,0,0,1-3.87,3.54h0l-.27,0a3.84,3.84,0,0,1-3.53-3.88h0a1.09,1.09,0,0,1,0-.19l.2-8.25ZM14,18.15a3.84,3.84,0,0,1,2.47-6.66,3.83,3.83,0,0,1,2.76,1l6.16,5.73a3.91,3.91,0,0,1,1.22,2.68,3.82,3.82,0,0,1-1,2.76,3.86,3.86,0,0,1-2.67,1.22,3.8,3.8,0,0,1-2.76-1L14,18.15ZM3.92,60.48A3.86,3.86,0,0,1,0,56.75a3.84,3.84,0,0,1,3.73-4l8.41-.28a3.84,3.84,0,0,1,4,3.72v.06h0v.14a3.84,3.84,0,0,1-3.73,3.77h-.15l-8.3.27Zm106-11.92H110a3.84,3.84,0,0,1,2.66.86,3.81,3.81,0,0,1,1.4,2.59v0a.49.49,0,0,1,0,.13,3.84,3.84,0,0,1-3.44,4.06l-8.37.89a3.83,3.83,0,0,1-2.81-.85,3.84,3.84,0,0,1,2-6.8c2.79-.31,5.6-.63,8.4-.9ZM93.33,15.09A3.83,3.83,0,0,1,98.65,14h0a3.73,3.73,0,0,1,1.63,2.44,3.84,3.84,0,0,1-.58,2.88l-4.68,7A3.8,3.8,0,0,1,92.58,28a3.88,3.88,0,0,1-2.88-.57A3.92,3.92,0,0,1,88.06,25a3.84,3.84,0,0,1,.58-2.88l4.69-7ZM38.23,80.87A42.19,42.19,0,0,1,31,70.56,31.2,31.2,0,0,1,27.89,57,31.7,31.7,0,0,1,31.7,42.56a.47.47,0,0,0,.05-.1h0a27.5,27.5,0,0,1,13.4-11.71,29.65,29.65,0,0,1,13.93-2A32.09,32.09,0,0,1,72.39,33,27.43,27.43,0,0,1,84,46.2,28.85,28.85,0,0,1,84,68.45C81.31,75,75.15,82,71.11,88.4a1.67,1.67,0,0,0-.67,0L44.36,92.25a35,35,0,0,0-6.13-11.38Z"/></svg><p class="whats-result" id="whatsThisResult"></p></div>
+        </div>
         <div class="card">
           <div class="heat-cal">
             <div class="month-nav">
@@ -744,10 +766,10 @@
       <p class="ob-tag">Dashed chips represent activities you'd like to be more mindful of. Don't see one that fits?</p>
       <label class="ob-field" for="obNewAct">Add your own</label>
       <div class="ob-row">
-        <input class="ob-input" type="text" id="obNewAct" maxlength="30" placeholder="e.g. Piano">
+        <input class="ob-input" type="text" id="obNewAct" maxlength="30" placeholder="e.g. Piano practice">
         <button class="btn btn-ghost btn-sm" id="obAdd" type="button">Add</button>
       </div>
-      <label class="ob-neg"><input type="checkbox" id="obNeg">This is a non-goal activity</label>
+      <label class="ob-neg"><input type="checkbox" id="obNeg">This is a non-goal activity (e.g. Doomscrolling)</label>
     </section>
 
     <section class="ob-screen" data-step="2" hidden>
@@ -823,7 +845,7 @@
 <dialog id="addModal" aria-labelledby="addTitle">
   <h3 id="addTitle">Add an activity</h3>
   <input type="text" id="addName" maxlength="30" placeholder="e.g. Journaling" aria-label="Activity name">
-  <label class="add-check"><input type="checkbox" id="addNeg"> This is a non-goal activity</label>
+  <label class="add-check"><input type="checkbox" id="addNeg"> This is a non-goal activity (e.g. Doomscrolling)</label>
   <p id="addErr"></p>
   <div class="dialog-actions">
     <button type="button" class="btn btn-ghost btn-sm" id="addCancel">Cancel</button>
@@ -968,7 +990,7 @@ $('#backupLater').onclick = () => {
 $('#backupNow').onclick = () => exportBackup();
 
 // App version and update check
-const APP_VERSION = '1.8.0';
+const APP_VERSION = '1.8.1';
 $('#appVersion').textContent = `Moomentum · Version ${APP_VERSION}`;
 function isNewerVersion(remote, local) {
   const r = String(remote).split('.').map(Number);
@@ -1115,13 +1137,27 @@ const BANNER_VARIANTS = {
     (act, amt) => `${act[0].toUpperCase() + act.slice(1)} is down ${amt} from last week. Nice work reclaiming that time.`
   ],
   positive: [
-    (amt) => `Your productivity time is up ${amt} from last week. Let's keep the moomentum going tomorrow!`,
-    (amt) => `You added ${amt} of productivity compared to last week. That's real progress.`
+    (amt) => `Your goal activity hours rose ${amt} from last week. Let's keep the moo-mentum going!`,
+    (amt) => `You added ${amt} of goal activity time compared to last week. Talk about moo-ving the needle.`
   ]
 };
+const FIRST_USE_KEY = 'moomentum:firstUse';
+// The comparison features wait 7 days after first use (onboarding completion) so there is a week to compare against
+function firstUseDate() {
+  try {
+    let v = localStorage.getItem(FIRST_USE_KEY);
+    if (!v) { v = TODAY; localStorage.setItem(FIRST_USE_KEY, v); }
+    return v;
+  } catch (e) { return TODAY; }
+}
+function comparisonReady() {
+  const first = new Date(firstUseDate() + 'T00:00:00');
+  const now = new Date(TODAY + 'T00:00:00');
+  return (now - first) / 864e5 >= 7;
+}
 function renderBanner() {
   const el = $('#banner');
-  if (localStorage.getItem('moomentum:bannerDismissed') === TODAY) { el.hidden = true; return; }
+  if (localStorage.getItem('moomentum:bannerDismissed') === TODAY || !comparisonReady()) { el.hidden = true; return; }
   const cur = windowTotals(0, 7), prev = windowTotals(7, 7);
   const negDelta = cur.neg - prev.neg, posDelta = cur.pos - prev.pos;
   const negActs = ACTS.filter(a => a.type === 'neg');
@@ -1195,9 +1231,9 @@ function goalsFor(range) {
     period: range === 'month' ? 'this month' : 'this year'
   };
 }
-function rangeStart() {
+function rangeStart(range = kpiRange) {
   const now = new Date();
-  return kpiRange === 'month' ? keyOf(new Date(now.getFullYear(), now.getMonth(), 1)) : `${now.getFullYear()}-01-01`;
+  return range === 'month' ? keyOf(new Date(now.getFullYear(), now.getMonth(), 1)) : `${now.getFullYear()}-01-01`;
 }
 // Net balance: counting animation, copy, colors, milestones, and the calculation modal
 let netShown = 0;
@@ -1247,10 +1283,6 @@ function updateNetCopy(net) {
     label = 'Right in the middle';
     note = "Your goal activity and non-goal activity hours are even. Your next activity can tip the scale. Keep the Moo-mentum going!";
   }
-  const banner = $('#netNote');
-  banner.textContent = note;
-  banner.classList.toggle('net-neg', net < 0);
-  banner.classList.toggle('net-even', Math.abs(net) < 15);
   const el = $('#netCenter');
   el.classList.toggle('net-pos', net >= 0);
   el.classList.toggle('net-neg', net < 0);
@@ -1280,11 +1312,67 @@ function openNetModal() {
 $('#netCenter').onclick = openNetModal;
 $('#netClose').onclick = () => $('#netModal').close();
 
-function renderKpis() {
-  renderBanner();
-  maybeShowBackupReminder();
+function renderWhatsThis() {
   const start = rangeStart();
-  const G = goalsFor(kpiRange);
+  let p = 0, n = 0;
+  Object.keys(data).filter(k => k >= start && k <= TODAY).forEach(k => { const t = netOf(k); p += t.p; n += t.n; });
+  const lead = kpiRange === 'month' ? 'This month' : 'This year';
+  const panel = $('#whatsThisPanel');
+  let result, tone;
+  if (p === 0 && n === 0) { result = `${lead} you haven't logged anything yet.`; tone = 'perf-even'; }
+  else if (p > n) { result = `${lead} you spent more time on goal activities: ${fmtHM(p)} goal vs ${fmtHM(n)} non-goal.`; tone = 'perf-good'; }
+  else if (n > p) { result = `${lead} you spent more time on non-goal activities: ${fmtHM(n)} non-goal vs ${fmtHM(p)} goal.`; tone = 'perf-watch'; }
+  else { result = `${lead} you spent equal time on goal and non-goal activities: ${fmtHM(p)} each.`; tone = 'perf-even'; }
+  $('#whatsThisResult').textContent = result;
+  panel.classList.remove('perf-good', 'perf-watch', 'perf-even');
+  panel.classList.add(tone);
+}
+// ---- Goal celebrations: confetti + ribbon for 5 seconds, then a toast ----
+const GOAL_HIT_NAMES = { prod: 'Goal activity hours', days: 'Net balance', reclaim: 'Days logged' };
+function checkGoalHits(pcts, range) {
+  const period = range === 'month' ? monthKey(new Date()) : String(new Date().getFullYear());
+  const hits = [];
+  Object.keys(GOAL_HIT_NAMES).forEach(k => {
+    if (pcts[k] < 100) return;
+    // Each goal celebrates once per period, so reloads and later logs don't replay it
+    const key = `moomentum:goalHit:${range}:${period}:${k}`;
+    let seen = false;
+    try { seen = localStorage.getItem(key) === '1'; localStorage.setItem(key, '1'); } catch (e) { /* storage unavailable */ }
+    if (!seen) hits.push(GOAL_HIT_NAMES[k]);
+  });
+  if (hits.length) celebrateGoals(hits, range);
+}
+function celebrateGoals(hits, range) {
+  const lead = range === 'month' ? 'this month' : 'this year';
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const wrap = document.createElement('div');
+  wrap.className = 'celebrate';
+  wrap.setAttribute('aria-hidden', 'true');
+  if (!reduce) {
+    const colors = ['#f2c94c', '#3A5BA0', '#D9824B', '#2F4F3A', '#F7E59A', '#6F8FC7'];
+    for (let i = 0; i < 90; i++) {
+      const c = document.createElement('i');
+      c.className = 'confetti';
+      c.style.left = (Math.random() * 100).toFixed(1) + '%';
+      c.style.background = colors[i % colors.length];
+      c.style.animationDelay = (Math.random() * 1.2).toFixed(2) + 's';
+      c.style.animationDuration = (2.8 + Math.random() * 1.6).toFixed(2) + 's';
+      c.style.setProperty('--drift', ((Math.random() - 0.5) * 160).toFixed(0) + 'px');
+      c.style.setProperty('--spin', ((Math.random() > 0.5 ? 1 : -1) * (360 + Math.random() * 540)).toFixed(0) + 'deg');
+      wrap.appendChild(c);
+    }
+  }
+  const ribbon = document.createElement('div');
+  ribbon.className = 'ribbon';
+  ribbon.textContent = 'Goal reached!';
+  wrap.appendChild(ribbon);
+  document.body.appendChild(wrap);
+  setTimeout(() => wrap.remove(), 5000);
+  setTimeout(() => showToast(`You hit ${hits.length > 1 ? 'your goals' : 'your goal'} ${lead}: ${hits.join(', ')}!`, 4000), 5000);
+}
+function getKpiStats(range) {
+  const start = rangeStart(range);
+  const G = goalsFor(range);
   const keys = Object.keys(data).filter(k => k >= start && k <= TODAY);
   let prodMin = 0, negMin = 0, daysLogged = 0;
   keys.forEach(k => {
@@ -1295,8 +1383,18 @@ function renderKpis() {
   });
   const netMin = prodMin - negMin;
   const pct = (v, g) => Math.max(0, Math.min(100, (v / g) * 100));
+  return {
+    G, prodMin, negMin, daysLogged, netMin,
+    ringPcts: { prod: pct(prodMin, G.prod), days: pct(netMin, G.net), reclaim: pct(daysLogged, G.days) }
+  };
+}
+function renderKpis() {
+  renderBanner();
+  renderWhatsThis();
+  maybeShowBackupReminder();
+  const { G, prodMin, negMin, daysLogged, netMin, ringPcts } = getKpiStats(kpiRange);
   // Outer ring: goal activity hours. Middle ring: net balance. Inner ring: days logged.
-  animateRings({ prod: pct(prodMin, G.prod), days: pct(netMin, G.net), reclaim: pct(daysLogged, G.days) });
+  animateRings(ringPcts);
   lastProd = prodMin;
   lastNeg = negMin;
   updateNetCopy(netMin);
@@ -1524,6 +1622,7 @@ let addSource = 'manage';
 function openAddActivity(source) {
   addSource = source;
   $('#addName').value = '';
+  $('#addSave').disabled = true;
   $('#addNeg').checked = false;
   $('#addErr').textContent = '';
   $('#addModal').showModal();
@@ -1589,6 +1688,7 @@ $('#saveBtn').onclick = () => {
   renderRecap();
   renderHeat();
   renderWeekInReview();
+  checkGoalHits(getKpiStats(kpiRange).ringPcts, kpiRange);
   showToast('Recap saved', 2500);
 };
 
@@ -1815,9 +1915,10 @@ $('#removeCancel').onclick = () => { pendingRemove = null; $('#removeModal').clo
 
 $('#addActOpen').onclick = () => openAddActivity('manage');
 $('#addCancel').onclick = () => $('#addModal').close();
+$('#addName').addEventListener('input', () => { $('#addSave').disabled = !$('#addName').value.trim(); });
 $('#addSave').onclick = () => {
   const name = $('#addName').value.trim();
-  if (!name) { $('#addErr').textContent = 'Type a name for the new activity.'; return; }
+  if (!name) return;
   if (ACTS.some(a => a.name.toLowerCase() === name.toLowerCase())) { $('#addErr').textContent = `"${name}" already exists.`; return; }
   const id = 'x' + Date.now();
   ACTS.push({ id, name, type: $('#addNeg').checked ? 'neg' : 'pos' });
@@ -2171,7 +2272,7 @@ function renderWeekInReview() {
   let stored = null;
   try { stored = localStorage.getItem('moomentum:wirDismissed'); } catch (e) { /* storage unavailable */ }
   const hasAnyLog = Object.keys(data).some(k => Object.keys(data[k] || {}).length > 0);
-  if (stored === sundayKey || wirDismissedSession === sundayKey || !hasAnyLog) { card.hidden = true; return; }
+  if (stored === sundayKey || wirDismissedSession === sundayKey || !hasAnyLog || !comparisonReady()) { card.hidden = true; return; }
 
   const s = wirAnalyze(sundayKey, mondayKey);
   const weekIdx = Math.floor(new Date(sundayKey).getTime() / (7 * 864e5));
@@ -2323,6 +2424,7 @@ function finishOnboarding() {
   if (!obActive) return;
   clearTimeout(obFinishTimer);
   obActive = false;
+  firstUseDate();
   obMarkDone();
   $('#onboard').classList.remove('show');
   $('#onboard').hidden = true;
