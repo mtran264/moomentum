@@ -324,7 +324,7 @@
   /* Manage */
   .act-row { display: flex; flex-direction: column; gap: 8px; padding: 16px 0; border-bottom: 1px solid var(--mist); }
   .act-row:last-child { border-bottom: 0; }
-  #manage .section-title { margin-bottom: 4px; }
+  #manage .section-title, #activity .section-title { margin-bottom: 4px; }
   .act-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   .act-remove { background: none; border: 0; padding: 8px 4px; min-height: 44px; color: var(--night-cerulean); font: 700 15px var(--font-body); cursor: pointer; }
   .act-remove:hover { text-decoration: underline; }
@@ -476,6 +476,36 @@
   @keyframes ribbonIn { from { opacity: 0; transform: translate(-50%, -30px); } to { opacity: 1; transform: translate(-50%, 0); } }
   @keyframes celebrateFade { 0%, 85% { opacity: 1; } 100% { opacity: 0; } }
   @media (prefers-reduced-motion: reduce) { .confetti { display: none; } .ribbon { animation: none; } }
+  .act-title { min-width: 0; }
+  .act-menu-wrap { position: relative; flex-shrink: 0; }
+  .act-more { width: 36px; height: 32px; border: 0.5px solid var(--border); background: var(--surface-2); border-radius: 8px; cursor: pointer; font-size: 16px; line-height: 1; color: var(--text-primary); }
+  .act-menu { position: absolute; right: 0; top: 38px; z-index: 20; min-width: 200px; background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 6px; box-shadow: var(--shadow-popover); }
+  .act-menu button { display: block; width: 100%; text-align: left; background: none; border: 0; padding: 8px 10px; border-radius: 8px; font: inherit; font-size: 14px; color: var(--text-primary); cursor: pointer; }
+  .act-menu button:hover { background: var(--surface-1); }
+  .act-menu button.danger { color: var(--text-danger); }
+  .act-progress { margin-top: 10px; }
+  .act-progress-label { font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; }
+  .field-label { display: block; font-size: 13px; color: var(--text-secondary); margin-top: 8px; }
+  .field-label input { display: block; width: 100%; margin-top: 6px; font: inherit; font-size: 15px; padding: 8px 10px; border: 0.5px solid var(--border-strong); border-radius: 8px; color: var(--text-primary); background: var(--surface-2); }
+  .limit-stepper { display: flex; align-items: center; gap: 12px; margin: 12px 0; }
+  .limit-stepper output { font-family: var(--font-display); font-size: 22px; font-weight: 600; min-width: 140px; text-align: center; }
+  .sug-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 0; border-top: 0.5px solid var(--border); font-size: 14px; }
+  .sug-row:first-child { border-top: 0; }
+  .info-banner { display: block; background: #fff; border-top: 0; border-right: 0; border-bottom: 0; border-left: 4px solid var(--night-cerulean) !important; border-radius: var(--radius-md); margin: 12px 0 16px; padding: 12px 16px; }
+  .info-banner p { margin: 0; font-size: 14px; font-weight: 400 !important; color: var(--text-primary); }
+  .act-list-card { padding: 0; }
+  .act-list-head { padding: 16px 16px 12px; border-bottom: 1px solid var(--border); }
+  .act-list-title { margin: 0 0 4px; }
+  .act-list-sub { margin: 0; }
+  #actList .act-row { padding-left: 16px; padding-right: 16px; }
+  #actList .act-row:last-child { padding-bottom: 24px; }
+  #activity { padding-bottom: 32px; }
+  #activity .section-title.snap-head { margin-bottom: 16px; }
+  #limitMinus, #limitPlus, #limitCancel { background: #fff; border: 1px solid var(--border-strong); color: var(--text-primary); }
+  .badge.neg { background: rgba(217, 130, 75, .16); color: var(--ember-deep); }
+  .text-link { background: none; border: 0; padding: 0; font: inherit; font-size: 14px; color: var(--ember-deep); text-decoration: underline; cursor: pointer; }
+  .act-menu { background: #fff !important; box-shadow: 0 6px 18px rgba(0, 0, 0, .10), 0 1px 3px rgba(0, 0, 0, .08) !important; }
+  .act-menu button.danger { color: var(--ember-deep); }
 </style>
 </head>
 <body>
@@ -484,7 +514,8 @@
     <div class="brand"><img src="logo-nav-menu.svg" alt="logo" class="brand-icon">Moomentum</div>
     <button class="active" data-tab="home">Home</button>
     <button data-tab="history">Mootrics</button>
-    <button data-tab="manage">Herd Management</button>
+    <button data-tab="activity">Activity</button>
+    <button data-tab="manage">Settings</button>
   </nav>
 
   <div class="app">
@@ -609,6 +640,13 @@
           </div>
         </div>
 
+        <div class="banner nudge" id="nudgeBanner" hidden>
+          <p id="nudgeMsg"></p>
+          <div class="row-controls">
+            <button class="btn btn-ghost btn-sm" id="nudgeDismiss">Dismiss</button>
+            <button class="btn btn-primary btn-sm" id="nudgeTry">Try something else</button>
+          </div>
+        </div>
         <div class="banner" id="banner" hidden>
           <p id="bannerMsg"></p>
           <button class="btn btn-ghost btn-sm" id="bannerClose" aria-label="Dismiss message">Dismiss</button>
@@ -689,15 +727,18 @@
       </section>
 
       <!-- MANAGE -->
+      <section id="activity" hidden>
+        <div class="section-title snap-head"><h2>Activity</h2><button type="button" class="btn btn-primary btn-sm" id="addActHeader">+Add Activity</button></div>
+        <div class="card act-list-card">
+          <div class="act-list-head">
+            <h3 class="act-list-title">Your activities</h3>
+            <p class="caption act-list-sub">Track how much time each activity gets and set optional weekly limits. Use the ··· menu to rename, set a limit, or delete an activity.</p>
+          </div>
+          <div id="actList"></div>
+        </div>
+      </section>
       <section id="manage" hidden>
-        <div class="section-title"><h2>Herd Management</h2></div>
-        <p class="caption" style="margin-bottom:12px">Usage counts the last 90 days. Activities on 20 or more days are marked Frequent.</p>
-        <div class="card" id="actList"></div>
-        <button type="button" class="add-card" id="addActOpen">
-          <span class="add-plus" aria-hidden="true">+</span>
-          <span><strong>Add an activity</strong><small>Goal or non-goal</small></span>
-        </button>
-
+        <div class="section-title"><h2>Settings</h2></div>
         <div class="card" style="margin-top:20px">
           <h3>Your data</h3>
           <p class="caption" style="margin:6px 0 4px">Logs and activities are saved in this browser. Export a backup to keep a copy or move to another device.</p>
@@ -736,7 +777,7 @@
           <p class="caption" style="margin:6px 0"><b>Fonts.</b> The app's fonts are included with the app. Your browser doesn't contact any third-party font service.</p>
           <p class="caption" style="margin:6px 0"><b>Install help.</b> When you open Moomentum on a phone, the app checks your browser locally to show install steps. This check isn't saved or sent anywhere.</p>
           <p class="caption" style="margin:6px 0"><b>Backups.</b> Exporting creates a file that you save wherever you choose. It contains your logs and name, so keep it safe.</p>
-          <p class="caption" style="margin:6px 0"><b>Your control.</b> You can view, change, export, or erase your data in the app at any time (Herd Management, Your data). Clearing your browser data or deleting the app also removes it. Data that's been erased cannot be recovered.</p>
+          <p class="caption" style="margin:6px 0"><b>Your control.</b> You can view, change, export, or erase your data in the app at any time (Settings, Your data). Clearing your browser data or deleting the app also removes it. Data that's been erased cannot be recovered.</p>
         </div>
       </section>
       <p class="app-version" id="appVersion"></p>
@@ -840,6 +881,43 @@
   <div class="dialog-actions">
     <button type="button" class="btn btn-ghost btn-sm" id="removeCancel">Cancel</button>
     <button type="button" class="btn btn-primary btn-sm" id="removeConfirm">Confirm remove</button>
+  </div>
+</dialog>
+<dialog id="renameModal" aria-labelledby="renameTitle">
+  <h3 id="renameTitle">Rename activity</h3>
+  <label class="field-label">Activity name
+    <input type="text" id="renameInput" maxlength="30" aria-describedby="renameErr">
+  </label>
+  <p class="caption" id="renameErr" role="alert" style="min-height:18px;color:var(--text-danger)"></p>
+  <div class="goals-actions"><span class="grow"></span>
+    <button type="button" class="btn btn-secondary btn-sm" id="renameCancel">Cancel</button>
+    <button type="button" class="btn btn-primary btn-sm" id="renameSave" disabled>Save name</button>
+  </div>
+</dialog>
+<dialog id="limitModal" aria-labelledby="limitTitle" style="width:min(480px, 92vw)">
+  <h3 id="limitTitle">Set weekly limit</h3>
+  <p class="caption" id="limitSub"></p>
+  <div class="limit-stepper">
+    <button type="button" class="btn btn-secondary btn-sm" id="limitMinus" aria-label="Less time">&minus;</button>
+    <output id="limitOut"></output>
+    <button type="button" class="btn btn-secondary btn-sm" id="limitPlus" aria-label="More time">+</button>
+  </div>
+  <p class="caption">Time you miss one day can be made up on another day that week. Limits never trigger penalties.</p>
+  <div class="goals-actions">
+    <button type="button" class="text-link" id="limitRemove">Remove limit</button>
+    <span class="grow"></span>
+    <button type="button" class="btn btn-secondary btn-sm" id="limitCancel">Cancel</button>
+    <button type="button" class="btn btn-primary btn-sm" id="limitSave">Save</button>
+  </div>
+</dialog>
+<dialog id="suggestModal" aria-labelledby="suggestTitle">
+  <h3 id="suggestTitle">Try something different</h3>
+  <p class="caption">A random pick from all your activities. Shuffle for another.</p>
+  <div id="suggestList"></div>
+  <div class="goals-actions">
+    <button type="button" class="btn btn-ghost btn-sm" id="suggestShuffle">Shuffle</button>
+    <span class="grow"></span>
+    <button type="button" class="btn btn-secondary btn-sm" id="suggestClose">Close</button>
   </div>
 </dialog>
 <dialog id="addModal" aria-labelledby="addTitle">
@@ -990,7 +1068,7 @@ $('#backupLater').onclick = () => {
 $('#backupNow').onclick = () => exportBackup();
 
 // App version and update check
-const APP_VERSION = '1.8.1';
+const APP_VERSION = '1.9.0';
 $('#appVersion').textContent = `Moomentum · Version ${APP_VERSION}`;
 function isNewerVersion(remote, local) {
   const r = String(remote).split('.').map(Number);
@@ -1618,7 +1696,7 @@ function renderLog() {
   renderKpis();
 }
 
-let addSource = 'manage';
+let addSource = 'activity';
 function openAddActivity(source) {
   addSource = source;
   $('#addName').value = '';
@@ -1844,33 +1922,75 @@ matchMedia('(max-width: 899px)').addEventListener('change', renderHeat);
 
 // Manage activities
 
+const LIMITS_KEY = 'moomentum:limits';
+const NUDGE_KEY = 'moomentum:nudgeDismissed';
+const WEEKDAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+// Weekly limits in minutes per activity id. Limits never create penalties; they only drive progress and the early-week nudge.
+let LIMITS = (() => { try { return JSON.parse(localStorage.getItem(LIMITS_KEY)) || {}; } catch (e) { return {}; } })();
+function saveLimits() { try { localStorage.setItem(LIMITS_KEY, JSON.stringify(LIMITS)); } catch (e) { /* storage unavailable */ } }
+function weekMinutes(id) {
+  const start = sundayOf(TODAY);
+  let total = 0;
+  for (let i = 0; i < 7; i++) {
+    const k = addDays(start, i);
+    if (k > TODAY) break;
+    total += (data[k] || {})[id] || 0;
+  }
+  return total;
+}
+function lastLoggedKey(id) {
+  const keys = Object.keys(data).filter(k => k <= TODAY && (data[k] || {})[id]).sort();
+  return keys[keys.length - 1] || null;
+}
+function daysBetween(a, b) { return Math.round((dateOf(b) - dateOf(a)) / 864e5); }
+function lastLabel(n) {
+  if (n === 0) return 'today';
+  if (n === 1) return 'yesterday';
+  if (n < 7) return `${n} days ago`;
+  if (n < 14) return '1 week ago';
+  if (n < 30) return `${Math.round(n / 7)} weeks ago`;
+  const m = Math.round(n / 30);
+  return m <= 1 ? '1 month ago' : `${m} months ago`;
+}
+function lastLoggedText(id) {
+  const last = lastLoggedKey(id);
+  return last ? `Last logged ${lastLabel(daysBetween(last, TODAY))}` : 'Never logged';
+}
 function renderManage() {
-  const days90 = Array.from({ length: 90 }, (_, i) => addDays(TODAY, -i));
   const rows = ACTS.map(a => {
-    const usedDays = days90.filter(k => (data[k] || {})[a.id]).length;
-    const allKeys = Object.keys(data).filter(k => (data[k] || {})[a.id]).sort();
-    const allMin = allKeys.reduce((s, k) => s + data[k][a.id], 0);
-    return { a, usedDays, allMin, last: allKeys[allKeys.length - 1] };
-  }).sort((x, y) => y.usedDays - x.usedDays || x.a.name.localeCompare(y.a.name));
-  const row = ({ a, usedDays, allMin, last }) => {
-    const badge = usedDays >= FREQUENT_DAYS ? '<span class="badge freq">Frequent</span>'
-      : usedDays > 0 ? '<span class="badge">Occasional</span>' : '<span class="badge">Unused</span>';
+    const lim = LIMITS[a.id];
+    const tag = a.type === 'neg' ? 'Non-goal' : 'Goal';
+    let progress = '';
+    if (lim) {
+      const used = weekMinutes(a.id);
+      const p = Math.round(used / lim * 100);
+      progress = `<div class="act-progress">
+        <div class="act-progress-label">${p}% (${fmtMin(used)} of ${fmtMin(lim)}) this week</div>
+        <div class="usage" role="img" aria-label="${p}% of weekly limit"><span style="width:${Math.min(100, p)}%"></span></div>
+      </div>`;
+    }
     return `
       <div class="act-row">
         <div class="act-head">
-          <div class="act-name">${a.name} ${badge}</div>
-          <button type="button" class="act-remove" data-action="ask" data-id="${a.id}">Remove</button>
+          <div class="act-title">
+            <span class="badge ${a.type === 'neg' ? 'neg' : ''}">${tag}</span>
+            <div class="act-name">${a.name}</div>
+            <div class="caption">${lastLoggedText(a.id)}</div>
+          </div>
+          <div class="act-menu-wrap">
+            <button type="button" class="act-more" data-action="menu" data-id="${a.id}" aria-label="More options for ${a.name}" aria-haspopup="menu">&middot;&middot;&middot;</button>
+            <div class="act-menu" role="menu" id="menu-${a.id}" hidden>
+              <button type="button" role="menuitem" data-action="rename" data-id="${a.id}">Rename</button>
+              <button type="button" role="menuitem" data-action="limit" data-id="${a.id}">${lim ? 'Edit weekly limit' : 'Set weekly limit'}</button>
+              <button type="button" role="menuitem" class="danger" data-action="delete" data-id="${a.id}">Delete activity</button>
+            </div>
+          </div>
         </div>
-        <div class="caption">Logged on ${usedDays} of last 90 days${last ? ` · last ${fmtDate(last)}` : ''} · ${fmtMin(allMin)} total</div>
-        <div class="usage" role="img" aria-label="${usedDays} of 90 days"><span style="width:${(usedDays / 90) * 100}%"></span></div>
+        ${progress}
       </div>`;
-  };
-  const productive = rows.filter(r => r.a.type !== 'neg');
-  const unproductive = rows.filter(r => r.a.type === 'neg');
-  let html = '';
-  if (productive.length) html += `<h4 class="act-group">Productive <span class="act-count">${productive.length}</span></h4>` + productive.map(row).join('');
-  if (unproductive.length) html += `<h4 class="act-group">Unproductive <span class="act-count">${unproductive.length}</span></h4>` + unproductive.map(row).join('');
-  $('#actList').innerHTML = html || '<p class="hint">No activities yet. Add one below.</p>';
+  });
+  $('#actList').innerHTML = rows.join('') || '<p class="hint">No activities yet. Add one below.</p>';
+  renderNudge();
 }
 
 let toastTimer = null;
@@ -1896,16 +2016,132 @@ function openRemove(id) {
 function removeActivity(id) {
   const name = ACTS.find(a => a.id === id).name;
   ACTS = ACTS.filter(a => a.id !== id);
+  delete LIMITS[id];
+  saveLimits();
+  saveStore();
   Object.values(data).forEach(m => delete m[id]);
   showToast(`Removed "${name}".`);
   renderLog();
   renderHeat();
   renderManage();
 }
+function closeActMenus() { document.querySelectorAll('.act-menu').forEach(m => { m.hidden = true; }); }
 $('#actList').onclick = e => {
-  const btn = e.target.closest('button[data-action="ask"]');
-  if (btn) openRemove(btn.dataset.id);
+  const btn = e.target.closest('button[data-action]');
+  if (!btn) return;
+  const id = btn.dataset.id, action = btn.dataset.action;
+  if (action === 'menu') {
+    const menu = document.getElementById('menu-' + id);
+    const open = menu.hidden;
+    closeActMenus();
+    menu.hidden = !open;
+    return;
+  }
+  closeActMenus();
+  if (action === 'rename') openRename(id);
+  if (action === 'limit') openLimit(id);
+  if (action === 'delete') openRemove(id);
 };
+document.addEventListener('click', e => { if (!e.target.closest('.act-menu-wrap')) closeActMenus(); });
+
+// Rename keeps the activity id, so its history and limit stay attached
+let renaming = null;
+function openRename(id) {
+  renaming = ACTS.find(a => a.id === id);
+  $('#renameInput').value = renaming.name;
+  renameValidate();
+  $('#renameModal').showModal();
+  $('#renameInput').select();
+}
+function renameValidate() {
+  const val = $('#renameInput').value.trim();
+  const clash = ACTS.some(a => a !== renaming && a.name.toLowerCase() === val.toLowerCase());
+  let msg = '';
+  if (!val) msg = 'Enter a name for this activity.';
+  else if (clash) msg = `You already have an activity called ${val}.`;
+  $('#renameErr').textContent = msg;
+  $('#renameSave').disabled = !!msg || val === renaming.name;
+}
+$('#renameInput').addEventListener('input', renameValidate);
+$('#renameCancel').onclick = () => $('#renameModal').close();
+$('#renameSave').onclick = () => {
+  const old = renaming.name;
+  renaming.name = $('#renameInput').value.trim();
+  $('#renameModal').close();
+  saveStore();
+  renderLog();
+  renderHeat();
+  renderManage();
+  showToast(`Renamed "${old}" to "${renaming.name}".`);
+};
+
+// Weekly limit: hourly steps, 1h minimum, 40h maximum. Remove limit lives here and needs no confirmation.
+let limitFor = null, limitMin = 420;
+function openLimit(id) {
+  limitFor = ACTS.find(a => a.id === id);
+  limitMin = LIMITS[id] || 420;
+  $('#limitTitle').textContent = LIMITS[id] ? 'Edit weekly limit' : 'Set weekly limit';
+  $('#limitSub').textContent = `${limitFor.name} · ${limitFor.type === 'neg' ? 'Non-goal' : 'Goal'} activity`;
+  $('#limitRemove').hidden = !LIMITS[id];
+  updateLimit();
+  $('#limitModal').showModal();
+}
+function updateLimit() {
+  $('#limitOut').textContent = `${fmtMin(limitMin)} per week`;
+  $('#limitMinus').disabled = limitMin <= 60;
+  $('#limitPlus').disabled = limitMin >= 2400;
+}
+$('#limitMinus').onclick = () => { limitMin = Math.max(60, limitMin - 60); updateLimit(); };
+$('#limitPlus').onclick = () => { limitMin = Math.min(2400, limitMin + 60); updateLimit(); };
+$('#limitCancel').onclick = () => $('#limitModal').close();
+$('#limitSave').onclick = () => {
+  LIMITS[limitFor.id] = limitMin;
+  saveLimits();
+  $('#limitModal').close();
+  renderManage();
+  showToast(`${limitFor.name} weekly limit set to ${fmtMin(limitMin)}.`);
+};
+$('#limitRemove').onclick = () => {
+  const name = limitFor.name;
+  delete LIMITS[limitFor.id];
+  saveLimits();
+  $('#limitModal').close();
+  renderManage();
+  showToast(`${name} limit removed.`);
+};
+
+// Early-week nudge: Sunday through Tuesday, once a limit is at least half used. One consolidated banner.
+function nudgeCandidates() {
+  if (dateOf(TODAY).getDay() > 2) return [];
+  return ACTS.filter(a => LIMITS[a.id] && weekMinutes(a.id) / LIMITS[a.id] >= 0.5);
+}
+function nudgeKey(list) { return TODAY + '|' + list.map(a => a.id).join(','); }
+function renderNudge() {
+  const el = $('#nudgeBanner');
+  const list = nudgeCandidates();
+  let dismissed = null;
+  try { dismissed = localStorage.getItem(NUDGE_KEY); } catch (e) { /* storage unavailable */ }
+  if (!list.length || dismissed === nudgeKey(list)) { el.hidden = true; return; }
+  const day = WEEKDAY_NAMES[dateOf(TODAY).getDay()];
+  $('#nudgeMsg').textContent = list.length === 1
+    ? `You're at ${Math.round(weekMinutes(list[0].id) / LIMITS[list[0].id] * 100)}% of your weekly ${list[0].name} limit, and it's only ${day}. Want to try something different today?`
+    : `You're at 50% or more of your weekly limits for ${list.map(a => a.name).join(' and ')}, and it's only ${day}. Want to try something different today?`;
+  el.dataset.key = nudgeKey(list);
+  el.hidden = false;
+}
+$('#nudgeDismiss').onclick = () => {
+  try { localStorage.setItem(NUDGE_KEY, $('#nudgeBanner').dataset.key); } catch (e) { /* storage unavailable */ }
+  $('#nudgeBanner').hidden = true;
+};
+$('#nudgeTry').onclick = () => { pickSuggest(); $('#suggestModal').showModal(); };
+$('#suggestShuffle').onclick = pickSuggest;
+$('#suggestClose').onclick = () => $('#suggestModal').close();
+// Random pick from all activities, no recency cutoff and no guilt copy
+function pickSuggest() {
+  const pool = ACTS.slice().sort(() => Math.random() - 0.5).slice(0, 3);
+  $('#suggestList').innerHTML = pool.map(a => `
+    <div class="sug-row"><span>${a.name}<br><span class="caption">${lastLoggedText(a.id)}</span></span></div>`).join('');
+}
 $('#removeConfirm').onclick = () => {
   $('#removeModal').close();
   if (pendingRemove) removeActivity(pendingRemove);
@@ -1913,7 +2149,7 @@ $('#removeConfirm').onclick = () => {
 };
 $('#removeCancel').onclick = () => { pendingRemove = null; $('#removeModal').close(); };
 
-$('#addActOpen').onclick = () => openAddActivity('manage');
+$('#addActHeader').onclick = () => openAddActivity('activity');
 $('#addCancel').onclick = () => $('#addModal').close();
 $('#addName').addEventListener('input', () => { $('#addSave').disabled = !$('#addName').value.trim(); });
 $('#addSave').onclick = () => {
@@ -2039,10 +2275,11 @@ function showTab(t) {
   document.querySelectorAll('nav.side button').forEach(b => b.classList.toggle('active', b.dataset.tab === t));
   $('#home').hidden = t !== 'home';
   $('#history').hidden = t !== 'history';
+  $('#activity').hidden = t !== 'activity';
   $('#manage').hidden = t !== 'manage';
   if (t === 'home') renderHeader();
   if (t === 'history') { insightsAnimate = true; renderHistory(); }
-  if (t === 'manage') renderManage();
+  if (t === 'activity' || t === 'manage') renderManage();
 }
 document.querySelectorAll('nav.side button').forEach(btn => {
   btn.onclick = () => {
@@ -2079,7 +2316,7 @@ function loadStore() {
 async function exportBackup() {
   const msg = $('#dataMsg');
   const downloads = await window.claude?.use?.('downloads');
-  const payload = { app: 'Moomentum', version: 1, exportedAt: new Date().toISOString(), name: NAME, activities: ACTS, days: data };
+  const payload = { app: 'Moomentum', version: 1, exportedAt: new Date().toISOString(), name: NAME, activities: ACTS, days: data, limits: LIMITS };
   try {
     const json = JSON.stringify(payload, null, 2);
     const filename = `moomentum-backup-${TODAY}.json`;
@@ -2107,6 +2344,11 @@ async function exportBackup() {
 
 let pendingImport = null;
 
+function sanitizeLimits(v) {
+  const out = {};
+  if (v && typeof v === 'object') Object.entries(v).forEach(([id, m]) => { if (typeof m === 'number' && isFinite(m) && m > 0) out[id] = Math.round(m); });
+  return out;
+}
 function applyImport(mode) {
   if (!pendingImport) return;
   const incoming = cleanActivities(pendingImport.activities);
@@ -2121,6 +2363,10 @@ function applyImport(mode) {
       Object.entries(m).forEach(([id, min]) => { if (cur[id] == null) cur[id] = min; });
     });
   }
+  const incomingLimits = sanitizeLimits(pendingImport.limits);
+  if (mode === 'replace') LIMITS = incomingLimits;
+  else Object.entries(incomingLimits).forEach(([id, min]) => { if (LIMITS[id] == null) LIMITS[id] = min; });
+  saveLimits();
   const importedName = typeof pendingImport.name === 'string' ? pendingImport.name.trim().slice(0, 30) : '';
   if (importedName && (mode === 'replace' || !NAME)) {
     NAME = importedName;
@@ -2174,6 +2420,8 @@ $('#eraseGo').onclick = () => {
   if ($('#eraseInput').value !== 'ERASE') return;
   Object.keys(data).forEach(k => delete data[k]);
   ACTS = DEFAULT_ACTS.map(a => ({ ...a }));
+  LIMITS = {};
+  saveLimits();
   closeErase();
   lastLoggedISO = null;
   try { localStorage.removeItem(LAST_LOGGED_KEY); } catch (e) { /* storage unavailable */ }
