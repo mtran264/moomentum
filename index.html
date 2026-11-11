@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <link rel="icon" href="logo.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="icon/apple-touch-icon.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#1B2A4A">
 <meta charset="UTF-8">
@@ -78,6 +78,7 @@
   .icon-btn svg { width: 100%; height: 100%; display: block; fill: var(--night-sky); }
   .name-form { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; }
   .name-form input { flex: 1; min-width: 180px; max-width: 280px; }
+  #nameCancel { background: #fff; }
   .rings-card { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; background: #fff; border-radius: var(--radius-lg); box-shadow: var(--shadow-soft); padding: 16px 20px; margin-bottom: 16px; }
   .rings-wrap { position: relative; width: 240px; height: 240px; flex-shrink: 0; }
   .rings-wrap svg { display: block; animation: ringsIn .6s var(--ease) both; }
@@ -303,14 +304,14 @@
   .hbar-head span:last-child { font-weight: 500; color: var(--muted); font-size: 14px; }
   .hbar-track { height: 12px; border-radius: var(--radius-pill); background: var(--mist); overflow: hidden; }
   .hbar-track span { display: block; height: 100%; background: var(--night-cerulean); border-radius: var(--radius-pill); }
-  .hbar-track span.bar-grow { transform-origin: left center; animation: barGrow 420ms var(--ease) both; animation-delay: calc(var(--i, 0) * 60ms); }
+  .hbar-track span.bar-grow, .usage span.bar-grow { transform-origin: left center; animation: barGrow 420ms var(--ease) both; animation-delay: calc(var(--i, 0) * 60ms); }
   @keyframes barGrow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
   .trend-line.draw-line { stroke-dasharray: 100; stroke-dashoffset: 100; animation: lineDraw 900ms var(--ease) forwards; }
   @keyframes lineDraw { to { stroke-dashoffset: 0; } }
   .trend-dot { opacity: 0; animation: dotIn 280ms var(--ease) forwards; animation-delay: calc(var(--i, 0) * 60ms + 200ms); }
   @keyframes dotIn { from { opacity: 0; transform: translateX(-4px); } to { opacity: 1; transform: none; } }
   @media (prefers-reduced-motion: reduce) {
-    .hbar-track span.bar-grow, .trend-line.draw-line, .trend-dot { animation: none; }
+    .hbar-track span.bar-grow, .usage span.bar-grow, .trend-line.draw-line, .trend-dot { animation: none; }
     .trend-line.draw-line { stroke-dashoffset: 0; }
     .trend-dot { opacity: 1; }
   }
@@ -358,7 +359,7 @@
   .toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 12px); background: var(--night-deep); color: var(--moon-cream); padding: 12px 18px; border-radius: 16px; box-shadow: var(--shadow-lift); font-size: 14px; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity .2s var(--ease), transform .2s var(--ease); z-index: 60; max-width: calc(100% - 32px); text-align: center; }
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
   .act-count { display: inline-block; min-width: 22px; padding: 1px 8px; margin-left: 6px; border-radius: var(--radius-pill); background: var(--mist); color: var(--night-deep); font-size: 12px; text-align: center; letter-spacing: 0; }
-  .chip.add-chip { border-style: dashed; border-color: var(--night-sky); color: var(--night-cerulean); background: #fff; }
+  .chip.add-chip { border-style: solid; border-color: var(--night-sky); color: var(--night-cerulean); background: #fff; }
   .act-group { font: 600 13px var(--font-body); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin: 14px 0 2px; }
   #addErr { min-height: 18px; margin-bottom: 8px; font-size: 14px; color: var(--ember-deep); }
   .act-name { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-weight: 700; color: var(--night-deep); font-size: 17px; }
@@ -497,8 +498,15 @@
   .act-list-head { padding: 16px 16px 12px; border-bottom: 1px solid var(--border); }
   .act-list-title { margin: 0 0 4px; }
   .act-list-sub { margin: 0; }
+  .rep-shell { padding: 0; }
+  .rep-list-head { padding: 16px 16px 12px; border-bottom: 1px solid var(--border); }
+  .rep-list-title { margin: 0 0 4px; }
+  .rep-list-sub { margin: 0; }
+  .rep-list-body { padding: 16px; }
   #actList .act-row { padding-left: 16px; padding-right: 16px; }
   #actList .act-row:last-child { padding-bottom: 24px; }
+  #repList { margin: 0; }
+  #repStatus { margin: 12px 0 0; padding-bottom: 0; }
   #activity { padding-bottom: 32px; }
   #activity .section-title.snap-head { margin-bottom: 16px; }
   #limitMinus, #limitPlus, #limitCancel { background: #fff; border: 1px solid var(--border-strong); color: var(--text-primary); }
@@ -506,16 +514,87 @@
   .text-link { background: none; border: 0; padding: 0; font: inherit; font-size: 14px; color: var(--ember-deep); text-decoration: underline; cursor: pointer; }
   .act-menu { background: #fff !important; box-shadow: 0 6px 18px rgba(0, 0, 0, .10), 0 1px 3px rgba(0, 0, 0, .08) !important; }
   .act-menu button.danger { color: var(--ember-deep); }
+  .rep-list { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
+  .rep-card { background: #fff; border: 0.5px solid var(--border); border-radius: 14px; padding: 16px 18px; }
+  .rep-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .rep-kind { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; padding: 3px 9px; border-radius: 999px; }
+  .rep-kind.week { background: #E8EEF8; color: #3A5BA0; }
+  .rep-kind.mid { background: #FDF1D8; color: #A4502A; }
+  .rep-range { font-size: 13px; color: var(--text-secondary); }
+  .rep-stats { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 10px; font-size: 14px; color: var(--text-primary); }
+  .rep-stats b { font-family: var(--font-display); font-size: 16px; font-weight: 600; }
+  .rep-details { margin-top: 12px; padding-top: 12px; border-top: 0.5px solid var(--border); font-size: 14px; }
+  .rep-details dt { font-size: 12px; color: var(--text-secondary); margin-top: 8px; }
+  .rep-details dd { margin: 2px 0 0; color: var(--text-primary); }
+  .rep-toggle { margin-top: 10px; }
+  .rep-status { margin-top: 12px; text-align: center; }
+  nav.side button { display: flex; align-items: center; gap: 12px; }
+  nav.side button .nav-ico { width: 22px; height: 22px; flex-shrink: 0; }
+  nav.side button span { line-height: 1.2; }
+  @media (min-width: 900px) {
+    nav.side button { justify-content: flex-start; text-align: left; }
+  }
+  @media (max-width: 899px) {
+    header.top { display: none; }
+    nav.side, nav.side.open {
+      display: flex; flex-direction: row; justify-content: space-around; align-items: stretch;
+      position: fixed; top: auto; left: 0; right: 0; bottom: 0; height: auto; z-index: 40;
+      padding: 8px 8px calc(8px + env(safe-area-inset-bottom, 0px)); gap: 4px;
+      background: var(--night-ultramarine); border-radius: 36px 36px 0 0; box-shadow: var(--shadow-lift);
+    }
+    nav.side button {
+      flex: 1 1 0; min-width: 0; flex-direction: column; justify-content: center; gap: 4px;
+      padding: 8px 4px; min-height: 58px; font-size: 12px; font-weight: 600; color: var(--mist);
+      border-radius: var(--radius-md);
+    }
+    nav.side button .nav-ico { width: 24px; height: 24px; }
+    nav.side button.active { background: var(--star-pale); color: var(--night-deep); }
+    .app { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+  }
+  #nudgeBanner .row-controls { justify-content: flex-end; flex-wrap: nowrap; margin-left: auto; }
+  .sug-name { font-size: 15px; color: var(--text-primary); min-width: 0; }
+  .sug-last { white-space: nowrap; flex-shrink: 0; }
+  .stat-link { width: 100%; border: 0; font: inherit; cursor: pointer; color: inherit; }
+  .stat-link b { color: var(--night-cerulean); }
+  .chart { position: relative; }
+  .chart-tip { position: absolute; transform: translate(-50%, calc(-100% - 12px)); background: var(--night-deep); color: #fff; font-size: 13px; font-weight: 600; padding: 6px 10px; border-radius: 8px; white-space: nowrap; pointer-events: none; z-index: 5; box-shadow: var(--shadow-soft); }
+  @keyframes obCheckIn { 0% { transform: scale(.4) rotate(-20deg); opacity: 0; } 60% { transform: scale(1.12) rotate(4deg); opacity: 1; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
+  .ob-screen[data-step="5"]:not([hidden]) .ob-check { animation: obCheckIn 600ms var(--ease) both; }
+  @media (prefers-reduced-motion: reduce) { .ob-screen[data-step="5"]:not([hidden]) .ob-check { animation: none; } }
 </style>
 </head>
 <body>
 <div class="shell">
-  <nav class="side" id="nav" aria-label="Main">
+  <nav class="side" id="nav" aria-label="Main" data-active="home">
     <div class="brand"><img src="logo-nav-menu.svg" alt="logo" class="brand-icon">Moomentum</div>
-    <button class="active" data-tab="home">Home</button>
-    <button data-tab="history">Mootrics</button>
-    <button data-tab="activity">Activity</button>
-    <button data-tab="manage">Settings</button>
+    <button class="active" data-tab="home"><svg class="nav-ico" aria-hidden="true" focusable="false" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M5 20H2V8L8 5L14 8V20H11M5 20V13H11V20M5 20H11" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M18 14V17V20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M14 17H18H22" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M14 14H18H22" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+</svg><span>Home</span></button>
+    <button data-tab="activity"><svg class="nav-ico" aria-hidden="true" focusable="false" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 10L15 11.5L11 8.5L10 14L13.5 17L14 21.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M18 8.5V10V21.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M10 17L8 21.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M8.5 8.5C7 9.5 6 12 6 12L8 13" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M12 6.5C13.1046 6.5 14 5.60457 14 4.5C14 3.39543 13.1046 2.5 12 2.5C10.8954 2.5 10 3.39543 10 4.5C10 5.60457 10.8954 6.5 12 6.5Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+</svg><span>Activity</span></button>
+    <button data-tab="history"><svg class="nav-ico" aria-hidden="true" focusable="false" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M20 20H4V4" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M4 16.5L12 9L15 12L19.5 7.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+</svg><span>Mootrics</span></button>
+    <button data-tab="reports"><svg class="nav-ico" aria-hidden="true" focusable="false" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M10 9H6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M15.5 11C14.1193 11 13 9.88071 13 8.5C13 7.11929 14.1193 6 15.5 6C16.8807 6 18 7.11929 18 8.5C18 9.88071 16.8807 11 15.5 11Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M6 6H9" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M18 18L13.5 15L11 17L6 13" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M3 20.4V3.6C3 3.26863 3.26863 3 3.6 3H20.4C20.7314 3 21 3.26863 21 3.6V20.4C21 20.7314 20.7314 21 20.4 21H3.6C3.26863 21 3 20.7314 3 20.4Z" stroke="currentColor" stroke-width="1.5"/>
+</svg><span>Reports</span></button>
+    <button data-tab="manage"><svg class="nav-ico" aria-hidden="true" focusable="false" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M19.6224 10.3954L18.5247 7.7448L20 6L18 4L16.2647 5.48295L13.5578 4.36974L12.9353 2H10.981L10.3491 4.40113L7.70441 5.51596L6 4L4 6L5.45337 7.78885L4.3725 10.4463L2 11V13L4.40111 13.6555L5.51575 16.2997L4 18L6 20L7.79116 18.5403L10.397 19.6123L11 22H13L13.6045 19.6132L16.2551 18.5155C16.6969 18.8313 18 20 18 20L20 18L18.5159 16.2494L19.6139 13.598L21.9999 12.9772L22 11L19.6224 10.3954Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+</svg><span>Settings</span></button>
   </nav>
 
   <div class="app">
@@ -716,9 +795,9 @@
           <button data-r="all">All time</button>
         </div>
         <div class="stats">
-          <div class="stat"><b id="sTotal">0</b><span>Logged</span></div>
-          <div class="stat"><b id="sActive">0</b><span>Active days</span></div>
-          <div class="stat"><b id="sAvg">0</b><span>Avg / active day</span></div>
+          <button type="button" class="stat stat-link" data-def="hTotal"><b id="sTotal">0</b><span>Logged</span></button>
+          <button type="button" class="stat stat-link" data-def="hActive"><b id="sActive">0</b><span>Active days</span></button>
+          <button type="button" class="stat stat-link" data-def="hAvg"><b id="sAvg">0</b><span>Avg / active day</span></button>
         </div>
         <div class="section-title"><h2 id="trendTitle">Trend</h2></div>
         <div class="card chart" id="trend"></div>
@@ -735,6 +814,20 @@
             <p class="caption act-list-sub">Track how much time each activity gets and set optional weekly limits. Use the ··· menu to rename, set a limit, or delete an activity.</p>
           </div>
           <div id="actList"></div>
+        </div>
+      </section>
+      <section id="reports" hidden>
+        <div class="section-title snap-head"><h2>Reports</h2><button type="button" class="btn btn-primary btn-sm" id="clearReports">Clear all</button></div>
+        <div class="card rep-shell">
+          <div class="rep-list-head">
+            <h3 class="rep-list-title">Your reports</h3>
+            <p class="caption rep-sub rep-list-sub">Your Week in Review and Mid-Week reports, newest first. Up to a year of reports is kept. Erasing your data in Settings also clears report history.</p>
+          </div>
+          <div class="rep-list-body">
+            <div class="rep-list" id="repList"></div>
+            <p class="caption rep-status" id="repStatus"></p>
+            <div id="repSentinel" style="height:1px"></div>
+          </div>
         </div>
       </section>
       <section id="manage" hidden>
@@ -881,6 +974,14 @@
   <div class="dialog-actions">
     <button type="button" class="btn btn-ghost btn-sm" id="removeCancel">Cancel</button>
     <button type="button" class="btn btn-primary btn-sm" id="removeConfirm">Confirm remove</button>
+  </div>
+</dialog>
+<dialog id="clearReportsModal" aria-labelledby="clearReportsTitle">
+  <h3 id="clearReportsTitle">Clear all reports?</h3>
+  <p class="caption">This removes every Week in Review and Mid-Week report from your history. You can't undo this.</p>
+  <div class="goals-actions"><span class="grow"></span>
+    <button type="button" class="btn btn-secondary btn-sm" id="clearReportsCancel">Cancel</button>
+    <button type="button" class="btn btn-primary btn-sm" id="clearReportsConfirm">Clear all</button>
   </div>
 </dialog>
 <dialog id="renameModal" aria-labelledby="renameTitle">
@@ -1068,7 +1169,7 @@ $('#backupLater').onclick = () => {
 $('#backupNow').onclick = () => exportBackup();
 
 // App version and update check
-const APP_VERSION = '1.9.0';
+const APP_VERSION = '2.0.0';
 $('#appVersion').textContent = `Moomentum · Version ${APP_VERSION}`;
 function isNewerVersion(remote, local) {
   const r = String(remote).split('.').map(Number);
@@ -1483,6 +1584,9 @@ function renderKpis() {
 }
 
 const DEFS = {
+  hTotal: { title: 'Logged', body: () => 'Total time logged in the selected range.' },
+  hActive: { title: 'Active days', body: () => 'Days in the selected range with at least one activity logged, out of all days in that range.' },
+  hAvg: { title: 'Avg / active day', body: () => 'Total logged time divided by the number of active days in the selected range.' },
   prod: { title: 'Goal activity hours', body: () => 'Time spent on goal-related activities.' },
   days: { title: 'Net balance', body: () => 'Difference between goal and non-goal hours.' },
   reclaim: { title: 'Days logged', body: () => 'Number of days with at least one activity recorded.' }
@@ -1957,7 +2061,11 @@ function lastLoggedText(id) {
   return last ? `Last logged ${lastLabel(daysBetween(last, TODAY))}` : 'Never logged';
 }
 function renderManage() {
-  const rows = ACTS.map(a => {
+  const sortedActs = [...ACTS].sort((a, b) =>
+    Number(a.type === 'neg') - Number(b.type === 'neg') ||
+    a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
+  );
+  const rows = sortedActs.map((a, i) => {
     const lim = LIMITS[a.id];
     const tag = a.type === 'neg' ? 'Non-goal' : 'Goal';
     let progress = '';
@@ -1966,7 +2074,7 @@ function renderManage() {
       const p = Math.round(used / lim * 100);
       progress = `<div class="act-progress">
         <div class="act-progress-label">${p}% (${fmtMin(used)} of ${fmtMin(lim)}) this week</div>
-        <div class="usage" role="img" aria-label="${p}% of weekly limit"><span style="width:${Math.min(100, p)}%"></span></div>
+        <div class="usage" role="img" aria-label="${p}% of weekly limit"><span class="bar-grow" style="--i:${i};width:${Math.min(100, p)}%"></span></div>
       </div>`;
     }
     return `
@@ -2138,9 +2246,13 @@ $('#suggestShuffle').onclick = pickSuggest;
 $('#suggestClose').onclick = () => $('#suggestModal').close();
 // Random pick from all activities, no recency cutoff and no guilt copy
 function pickSuggest() {
-  const pool = ACTS.slice().sort(() => Math.random() - 0.5).slice(0, 3);
+  // Activities the banner already warned about are excluded so the suggestion is always something different
+  const warned = new Set(nudgeCandidates().map(a => a.id));
+  let candidates = ACTS.filter(a => !warned.has(a.id));
+  if (!candidates.length) candidates = ACTS.slice();
+  const pool = candidates.sort(() => Math.random() - 0.5).slice(0, 3);
   $('#suggestList').innerHTML = pool.map(a => `
-    <div class="sug-row"><span>${a.name}<br><span class="caption">${lastLoggedText(a.id)}</span></span></div>`).join('');
+    <div class="sug-row"><span class="sug-name">${a.name}</span><span class="caption sug-last">${lastLoggedText(a.id)}</span></div>`).join('');
 }
 $('#removeConfirm').onclick = () => {
   $('#removeModal').close();
@@ -2222,7 +2334,7 @@ function lineChart(bk, animate = false) {
     return `<line x1="${P.l}" x2="${W - P.r}" y1="${y(v)}" y2="${y(v)}" stroke="#E6ECF5"/>
             <text x="${P.l - 8}" y="${y(v) + 4}" font-size="12" text-anchor="end" fill="#3E4D6B">${fmtMin(v)}</text>`;
   }).join('');
-  const dots = bk.map((b, i) => `<circle class="${animate ? 'trend-dot' : ''}" style="--i:${i}" cx="${x(i)}" cy="${y(b.min)}" r="5" fill="#F2C94C" stroke="#283D6B" stroke-width="2"><title>${b.label}: ${fmtMin(b.min)}</title></circle>`).join('');
+  const dots = bk.map((b, i) => `<circle class="chart-hit" data-tip="${b.label}: ${fmtMin(b.min)}" cx="${x(i)}" cy="${y(b.min)}" r="16" fill="transparent"/><circle class="${animate ? 'trend-dot' : ''}" data-tip="${b.label}: ${fmtMin(b.min)}" style="--i:${i}" cx="${x(i)}" cy="${y(b.min)}" r="5" fill="#F2C94C" stroke="#283D6B" stroke-width="2"/>`).join('');
   const labels = bk.map((b, i) => (i % step === 0 ? `<text x="${x(i)}" y="${H - 10}" font-size="12" text-anchor="middle" fill="#3E4D6B">${b.label}</text>` : '')).join('');
   return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Line chart of time logged">
     ${grid}
@@ -2241,6 +2353,37 @@ function barChart(slices, animate = false) {
     </div>`).join('');
   return `<div role="list" aria-label="Time by activity">${rows}</div>`;
 }
+
+// Trend popover: hover on a mouse, press-and-hold or tap on touch
+const trendEl = document.getElementById('trend');
+const chartTip = document.createElement('div');
+chartTip.className = 'chart-tip';
+chartTip.setAttribute('role', 'status');
+chartTip.hidden = true;
+let tipHideTimer = null;
+function showChartTip(el) {
+  clearTimeout(tipHideTimer);
+  const host = trendEl.getBoundingClientRect(), pt = el.getBoundingClientRect();
+  chartTip.textContent = el.dataset.tip;
+  trendEl.appendChild(chartTip);
+  chartTip.style.left = (pt.left + pt.width / 2 - host.left) + 'px';
+  chartTip.style.top = (pt.top - host.top) + 'px';
+  chartTip.hidden = false;
+}
+function hideChartTip() { clearTimeout(tipHideTimer); chartTip.hidden = true; }
+trendEl.addEventListener('pointerover', e => { if (e.pointerType === 'mouse' && e.target.dataset && e.target.dataset.tip) showChartTip(e.target); });
+trendEl.addEventListener('pointerout', e => { if (e.pointerType === 'mouse') hideChartTip(); });
+trendEl.addEventListener('pointerdown', e => {
+  if (e.pointerType === 'mouse' || !e.target.dataset || !e.target.dataset.tip) return;
+  showChartTip(e.target);
+});
+trendEl.addEventListener('pointerup', e => { if (e.pointerType !== 'mouse') tipHideTimer = setTimeout(hideChartTip, 1500); });
+trendEl.addEventListener('pointercancel', hideChartTip);
+
+// Scorecards open their definitions
+document.querySelectorAll('.stat-link').forEach(btn => {
+  btn.onclick = () => openDef(btn.dataset.def);
+});
 
 let insightsAnimate = false;
 function renderHistory() {
@@ -2271,11 +2414,113 @@ $('#seg').querySelectorAll('button').forEach(btn => {
 });
 
 // Navigation
+// ---- Reports: Week in Review and Mid-Week history, built from logs (Sunday-start weeks, up to 52 weeks back) ----
+const REPORTS_CLEARED_KEY = 'moomentum:reportsClearedBefore';
+const REPORT_PAGE = 25, REPORT_MAX = 104;
+let repShown = 0, repAll = [];
+function reportTotals(from, to) {
+  let p = 0, n = 0;
+  const per = {};
+  for (let k = from; k <= to && k <= TODAY; k = addDays(k, 1)) {
+    Object.entries(data[k] || {}).forEach(([id, min]) => {
+      const a = ACTS.find(x => x.id === id);
+      if (!a) return;
+      per[id] = (per[id] || 0) + min;
+      if (a.type === 'neg') n += min; else p += min;
+    });
+  }
+  const top = type => Object.entries(per)
+    .filter(([id]) => (ACTS.find(x => x.id === id) || {}).type === type)
+    .sort((x, y) => y[1] - x[1])[0] || null;
+  return { p, n, net: p - n, topGoal: top('pos'), topNeg: top('neg') };
+}
+function buildReports() {
+  let cleared = null;
+  try { cleared = localStorage.getItem(REPORTS_CLEARED_KEY); } catch (e) { /* storage unavailable */ }
+  const out = [];
+  const thisSunday = sundayOf(TODAY);
+  for (let w = 0; w < 52; w++) {
+    const sun = addDays(thisSunday, -7 * w);
+    const sat = addDays(sun, 6), wed = addDays(sun, 3);
+    if (sat < TODAY) {
+      const t = reportTotals(sun, sat);
+      if (t.p + t.n > 0) out.push({ kind: 'week', start: sun, end: sat, t });
+    }
+    if (wed < TODAY) {
+      const t = reportTotals(sun, wed);
+      if (t.p + t.n > 0) out.push({ kind: 'mid', start: sun, end: wed, t });
+    }
+  }
+  return out
+    .filter(r => !cleared || r.end > cleared)
+    .sort((a, b) => (b.end > a.end ? 1 : b.end < a.end ? -1 : 0))
+    .slice(0, REPORT_MAX);
+}
+function fmtRepDate(k) { return dateOf(k).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
+function reportCard(r, i) {
+  const isWeek = r.kind === 'week';
+  const range = `${fmtRepDate(r.start)} - ${fmtRepDate(r.end)}`;
+  const named = x => x ? `${(ACTS.find(a => a.id === x[0]) || { name: x[0] }).name} ${fmtHM(x[1])}` : 'None logged';
+  const sign = r.t.net < 0 ? '\u2212' : '+';
+  const stats = isWeek
+    ? `<span><b>${fmtHM(r.t.p)}</b> goal activity hours</span><span><b>${sign}${fmtHM(Math.abs(r.t.net))}</b> net balance</span>`
+    : `<span><b>${fmtHM(r.t.p)}</b> goal activity hours</span>`;
+  return `<article class="rep-card">
+    <header class="rep-head"><span class="rep-kind ${r.kind}">${isWeek ? 'Week in Review' : 'Mid-Week'}</span><span class="rep-range">${range}</span></header>
+    <div class="rep-stats">${stats}</div>
+    <div class="rep-details" id="rd${i}" hidden><dl style="margin:0">
+      <dt>Top goal activity</dt><dd>${named(r.t.topGoal)}</dd>
+      <dt>Top non-goal activity</dt><dd>${named(r.t.topNeg)}</dd>
+      <dt>Net balance</dt><dd>${sign}${fmtHM(Math.abs(r.t.net))}</dd>
+    </dl></div>
+    <button type="button" class="btn btn-secondary btn-sm rep-toggle" data-rep="${i}" aria-expanded="false" aria-controls="rd${i}">View more</button>
+  </article>`;
+}
+function loadReportPage() {
+  const next = repAll.slice(repShown, repShown + REPORT_PAGE);
+  $('#repList').insertAdjacentHTML('beforeend', next.map((r, j) => reportCard(r, repShown + j)).join(''));
+  repShown += next.length;
+  $('#repStatus').textContent = !repAll.length
+    ? 'No reports yet. Reports appear after your first completed week.'
+    : `Showing ${repShown} of ${repAll.length} reports`;
+}
+function renderReports() {
+  repAll = buildReports();
+  repShown = 0;
+  $('#repList').innerHTML = '';
+  $('#clearReports').disabled = !repAll.length;
+  loadReportPage();
+}
+const repIO = new IntersectionObserver(es => {
+  if (es[0].isIntersecting && repShown < repAll.length) loadReportPage();
+}, { rootMargin: '200px' });
+repIO.observe(document.getElementById('repSentinel'));
+$('#repList').onclick = e => {
+  const b = e.target.closest('button[data-rep]');
+  if (!b) return;
+  const panel = document.getElementById('rd' + b.dataset.rep);
+  const open = panel.hidden;
+  panel.hidden = !open;
+  b.textContent = open ? 'View less' : 'View more';
+  b.setAttribute('aria-expanded', String(open));
+};
+$('#clearReports').onclick = () => $('#clearReportsModal').showModal();
+$('#clearReportsCancel').onclick = () => $('#clearReportsModal').close();
+$('#clearReportsConfirm').onclick = () => {
+  try { localStorage.setItem(REPORTS_CLEARED_KEY, TODAY); } catch (e) { /* storage unavailable */ }
+  $('#clearReportsModal').close();
+  renderReports();
+  showToast('Report history cleared.');
+};
+
 function showTab(t) {
   document.querySelectorAll('nav.side button').forEach(b => b.classList.toggle('active', b.dataset.tab === t));
   $('#home').hidden = t !== 'home';
   $('#history').hidden = t !== 'history';
   $('#activity').hidden = t !== 'activity';
+  $('#reports').hidden = t !== 'reports';
+  $('#nav').dataset.active = t;
+  if (t === 'reports') renderReports();
   $('#manage').hidden = t !== 'manage';
   if (t === 'home') renderHeader();
   if (t === 'history') { insightsAnimate = true; renderHistory(); }
@@ -2418,6 +2663,7 @@ $('#eraseExport').onclick = () => exportBackup();
 $('#eraseInput').oninput = e => { $('#eraseGo').disabled = e.target.value !== 'ERASE'; };
 $('#eraseGo').onclick = () => {
   if ($('#eraseInput').value !== 'ERASE') return;
+  try { localStorage.removeItem(REPORTS_CLEARED_KEY); } catch (e) { /* storage unavailable */ }
   Object.keys(data).forEach(k => delete data[k]);
   ACTS = DEFAULT_ACTS.map(a => ({ ...a }));
   LIMITS = {};
@@ -2659,7 +2905,7 @@ function obGo(n) {
   $('#obSkip').textContent = obStep === 4 ? 'Not now' : 'Skip';
   if (obStep === 1) obRenderChips();
   if (obStep === 2) obRenderFirstChips();
-  if (obStep === 5) obFinishTimer = setTimeout(obLeave, 5000);
+  if (obStep === 5) obFinishTimer = setTimeout(obLeave, 4000);
   const h = document.querySelector(`#onboard .ob-screen[data-step="${obStep}"] h1`);
   if (h) h.focus();
 }
