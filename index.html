@@ -323,8 +323,8 @@
   .pie-legend span:last-child { margin-left: auto; color: var(--muted); font-size: 14px; }
 
   /* Manage */
-  .act-row { display: flex; flex-direction: column; gap: 8px; padding: 16px 0; border-bottom: 1px solid var(--mist); }
-  .act-row:last-child { border-bottom: 0; }
+  .act-row { position: relative; display: flex; flex-direction: column; gap: 8px; padding: 16px 0; }
+  .act-row:not(:last-child)::after { content: ""; position: absolute; left: 16px; right: 16px; bottom: 0; border-bottom: 1px solid var(--mist); }
   #manage .section-title, #activity .section-title { margin-bottom: 4px; }
   .act-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   .act-remove { background: none; border: 0; padding: 8px 4px; min-height: 44px; color: var(--night-cerulean); font: 700 15px var(--font-body); cursor: pointer; }
@@ -516,6 +516,7 @@
   .act-menu button.danger { color: var(--ember-deep); }
   .rep-list { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
   .rep-card { background: #fff; border: 0.5px solid var(--border); border-radius: 14px; padding: 16px 18px; }
+  .rep-card:not(:last-child) { border-bottom: 1px solid var(--mist); }
   .rep-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
   .rep-kind { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; padding: 3px 9px; border-radius: 999px; }
   .rep-kind.week { background: #E8EEF8; color: #3A5BA0; }
@@ -530,6 +531,7 @@
   .rep-status { margin-top: 12px; text-align: center; }
   nav.side button { display: flex; align-items: center; gap: 12px; }
   nav.side button .nav-ico { width: 22px; height: 22px; flex-shrink: 0; }
+  nav.side button[data-tab="activity"] .nav-ico { transform: scale(1.08); }
   nav.side button span { line-height: 1.2; }
   @media (min-width: 900px) {
     nav.side button { justify-content: flex-start; text-align: left; }
@@ -573,12 +575,13 @@
 <path d="M14 17H18H22" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
 <path d="M14 14H18H22" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
 </svg><span>Home</span></button>
-    <button data-tab="activity"><svg class="nav-ico" aria-hidden="true" focusable="false" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M18 10L15 11.5L11 8.5L10 14L13.5 17L14 21.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M18 8.5V10V21.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M10 17L8 21.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M8.5 8.5C7 9.5 6 12 6 12L8 13" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M12 6.5C13.1046 6.5 14 5.60457 14 4.5C14 3.39543 13.1046 2.5 12 2.5C10.8954 2.5 10 3.39543 10 4.5C10 5.60457 10.8954 6.5 12 6.5Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+    <button data-tab="activity"><svg class="nav-ico" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(0.824188,0,0,0.824188,0.11745,3.45539)">
+        <path d="M5,20.91C4.498,20.91 4.09,20.502 4.09,20L4.09,19C4.09,15.758 6.04,12.972 8.831,11.75C7.766,10.85 7.09,9.504 7.09,8C7.09,7.865 7.095,7.731 7.106,7.599C5.994,7.29 5.157,6.871 4.701,6.43C4.286,6.028 4.104,5.581 4.104,5.138C4.104,4.696 4.285,4.251 4.696,3.851C5.193,3.366 6.149,2.908 7.424,2.593C8.098,0.984 9.776,-0.175 11.759,-0.175C13.693,-0.175 15.337,0.928 16.042,2.474C17.515,2.776 18.638,3.253 19.218,3.771C19.69,4.191 19.896,4.669 19.896,5.138C19.896,5.581 19.714,6.028 19.299,6.43C18.843,6.871 18.006,7.29 16.894,7.599C16.905,7.731 16.91,7.865 16.91,8C16.91,9.504 16.234,10.85 15.169,11.75C17.96,12.972 19.91,15.758 19.91,19L19.91,20C19.91,20.502 19.502,20.91 19,20.91C18.934,20.91 18.87,20.903 18.809,20.89C18.747,20.903 18.683,20.91 18.618,20.91C16.65,20.91 15.56,19.768 14.979,18.37C14.691,17.677 14.543,16.918 14.469,16.244C13.809,16.819 12.949,17.171 12.012,17.184C10.893,17.199 9.885,16.713 9.192,15.937C9.132,16.68 8.985,17.569 8.652,18.37C8.072,19.768 6.982,20.91 5.014,20.91C5.009,20.91 5.005,20.91 5,20.91ZM7.414,14.993C6.497,16.041 5.935,17.406 5.911,18.901C6.658,18.545 7.008,17.741 7.198,16.971C7.382,16.223 7.416,15.476 7.414,14.993ZM8.91,7.966C8.91,7.977 8.91,7.989 8.91,8C8.91,9.707 10.293,11.09 12,11.09C13.707,11.09 15.09,9.707 15.09,8C15.09,7.989 15.09,7.977 15.09,7.966C14.151,8.1 13.104,8.175 12,8.175C10.896,8.175 9.849,8.1 8.91,7.966ZM15.671,6.021C16.506,5.852 17.201,5.633 17.686,5.364C17.795,5.304 17.914,5.209 17.995,5.14C17.893,5.056 17.728,4.93 17.577,4.853C17.044,4.585 16.299,4.366 15.414,4.205C14.694,4.691 13.283,5.069 11.659,5.077C10.137,5.084 8.809,4.754 8.051,4.314C7.336,4.474 6.737,4.675 6.308,4.915C6.2,4.975 6.082,5.069 6.002,5.137C6.083,5.207 6.204,5.303 6.314,5.364C6.799,5.633 7.494,5.852 8.329,6.021C9.382,6.233 10.644,6.355 12,6.355C13.356,6.355 14.618,6.233 15.671,6.021ZM14.108,2.76C13.595,2.081 12.729,1.645 11.759,1.645C10.751,1.645 9.855,2.116 9.351,2.841C9.365,2.847 9.379,2.852 9.393,2.857C9.97,3.066 10.769,3.187 11.65,3.183C12.528,3.179 13.329,3.056 13.91,2.847C13.973,2.824 14.042,2.793 14.108,2.76ZM18.09,19.031L18.09,19C18.09,17.279 17.376,15.725 16.228,14.617C16.209,14.991 16.189,15.981 16.434,16.971C16.652,17.858 17.084,18.791 18.09,19.031ZM10.056,13.227C10.051,13.288 10.048,13.349 10.048,13.412C10.048,14.486 10.913,15.379 11.988,15.364C13.062,15.349 13.948,14.483 13.952,13.408C13.953,13.347 13.95,13.287 13.944,13.227C13.334,13.021 12.68,12.91 12,12.91C11.32,12.91 10.667,13.021 10.056,13.227Z"/>
+    </g>
+    <g transform="matrix(0.838287,0,0,0.659842,3.09975,5.75253)">
+        <path d="M17.133,15.216C15.343,14.831 14.509,13.248 14.128,11.666C13.732,10.019 13.881,8.372 13.881,8.372C13.936,7.749 14.38,7.3 14.871,7.371C15.361,7.441 15.714,8.005 15.659,8.628C15.659,8.628 15.554,9.815 15.84,11.002C16.023,11.763 16.394,12.523 17.133,12.856L17.133,8.5C17.133,7.892 17.521,7.398 18,7.398C18.479,7.398 18.867,7.892 18.867,8.5L18.867,12.856C19.606,12.523 19.977,11.763 20.16,11.002C20.446,9.815 20.341,8.628 20.341,8.628C20.286,8.005 20.639,7.441 21.129,7.371C21.62,7.3 22.064,7.749 22.119,8.372C22.119,8.372 22.268,10.019 21.872,11.666C21.491,13.248 20.657,14.831 18.867,15.216L18.867,21.5C18.867,22.108 18.479,22.602 18,22.602C17.521,22.602 17.133,22.108 17.133,21.5L17.133,15.216Z"/>
+    </g>
 </svg><span>Activity</span></button>
     <button data-tab="history"><svg class="nav-ico" aria-hidden="true" focusable="false" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M20 20H4V4" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
@@ -591,9 +594,17 @@
 <path d="M18 18L13.5 15L11 17L6 13" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
 <path d="M3 20.4V3.6C3 3.26863 3.26863 3 3.6 3H20.4C20.7314 3 21 3.26863 21 3.6V20.4C21 20.7314 20.7314 21 20.4 21H3.6C3.26863 21 3 20.7314 3 20.4Z" stroke="currentColor" stroke-width="1.5"/>
 </svg><span>Reports</span></button>
-    <button data-tab="manage"><svg class="nav-ico" aria-hidden="true" focusable="false" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M19.6224 10.3954L18.5247 7.7448L20 6L18 4L16.2647 5.48295L13.5578 4.36974L12.9353 2H10.981L10.3491 4.40113L7.70441 5.51596L6 4L4 6L5.45337 7.78885L4.3725 10.4463L2 11V13L4.40111 13.6555L5.51575 16.2997L4 18L6 20L7.79116 18.5403L10.397 19.6123L11 22H13L13.6045 19.6132L16.2551 18.5155C16.6969 18.8313 18 20 18 20L20 18L18.5159 16.2494L19.6139 13.598L21.9999 12.9772L22 11L19.6224 10.3954Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+    <button data-tab="manage"><svg class="nav-ico" aria-hidden="true" focusable="false" stroke-width="1.75" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M12 16C9.79086 16 8 14.2091 8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12C16 14.2091 14.2091 16 12 16Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M12 2V8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M12 16V22" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M2 12H8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M16 12H22" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M4.92896 4.92871L9.1716 9.17135" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M14.8284 14.8286L19.071 19.0713" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M4.92896 19.0713L9.1716 14.8286" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M14.8284 9.17139L19.071 4.92875" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
 </svg><span>Settings</span></button>
   </nav>
 
@@ -1169,7 +1180,7 @@ $('#backupLater').onclick = () => {
 $('#backupNow').onclick = () => exportBackup();
 
 // App version and update check
-const APP_VERSION = '2.0.0';
+const APP_VERSION = '2.0.1';
 $('#appVersion').textContent = `Moomentum · Version ${APP_VERSION}`;
 function isNewerVersion(remote, local) {
   const r = String(remote).split('.').map(Number);
