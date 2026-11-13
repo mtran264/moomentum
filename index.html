@@ -107,6 +107,7 @@
   .net-row.net-total b { font-size: 18px; }
   .net-row.net-total b.net-pos { color: var(--night-cerulean); }
   .net-row.net-total b.net-neg { color: var(--ember-deep); }
+  #repModalRows .net-row b { margin-left: auto; text-align: right; }
   @media (max-width: 640px) { .rings-note { text-align: center; } }
   .section-title.snap-head { align-items: center; flex-wrap: wrap; margin: 8px 0 16px; }
   .section-title.snap-head .seg.kpi-seg { margin: 0; }
@@ -198,6 +199,11 @@
   .wir-details h3 { margin: 14px 0 6px; font-family: var(--font-display); font-weight: 600; font-size: 17px; color: var(--night-deep); }
   .wir-details ul { margin: 0; padding-left: 18px; }
   .wir-details li { margin: 4px 0; font-size: 15px; }
+  .rep-lead { font-size: 16px; line-height: 1.5; color: var(--ink); margin: 4px 0 0; }
+  .rep-foot { display: flex; justify-content: flex-end; margin-top: 8px; }
+  .rep-more { background: var(--night-cerulean); color: var(--moon-cream); box-shadow: none; }
+  .rep-more:hover { background: var(--night-ultramarine); }
+  .rep-title { font-family: var(--font-body); font-weight: 700; font-size: 17px; color: var(--night-deep); margin: 10px 0 0; }
   .wir-aside { font-size: 15px; font-style: italic; color: var(--muted); margin: 10px 0 0; }
   .recap { background: #fff; border-radius: var(--radius-xl); box-shadow: var(--shadow-soft); overflow: hidden; margin-bottom: 20px; width: 100%; min-width: 0; }
   .last-logged { margin: -8px 4px 16px; font-size: 13px; color: var(--muted); font-weight: 500; }
@@ -304,6 +310,16 @@
   .hbar-head span:last-child { font-weight: 500; color: var(--muted); font-size: 14px; }
   .hbar-track { height: 12px; border-radius: var(--radius-pill); background: var(--mist); overflow: hidden; }
   .hbar-track span { display: block; height: 100%; background: var(--night-cerulean); border-radius: var(--radius-pill); }
+  .hbar-track span.is-neg { background: var(--ember-deep); }
+  .focus-ratio-summary { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 8px; }
+  .focus-ratio-summary > div { display: flex; flex-direction: column; }
+  .focus-ratio-summary > div:last-child { align-items: flex-end; text-align: right; }
+  .focus-ratio-summary span, .focus-ratio-summary small { font-size: 13px; color: var(--muted); }
+  .focus-ratio-summary b { font-family: var(--font-display); font-size: 18px; color: var(--night-deep); }
+  .focus-ratio-track { display: flex; height: 14px; overflow: hidden; border-radius: var(--radius-pill); background: var(--mist); }
+  .focus-ratio-track span { display: block; height: 100%; flex-shrink: 0; }
+  .focus-ratio-track .goal { background: var(--night-cerulean); }
+  .focus-ratio-track .non-goal { background: var(--ember-deep); }
   .hbar-track span.bar-grow, .usage span.bar-grow { transform-origin: left center; animation: barGrow 420ms var(--ease) both; animation-delay: calc(var(--i, 0) * 60ms); }
   @keyframes barGrow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
   .trend-line.draw-line { stroke-dasharray: 100; stroke-dashoffset: 100; animation: lineDraw 900ms var(--ease) forwards; }
@@ -367,6 +383,7 @@
   .badge.freq { background: var(--star-pale); color: var(--night-deep); box-shadow: var(--glow-star); }
   .usage { height: 10px; border-radius: var(--radius-pill); background: var(--mist); overflow: hidden; }
   .usage span { display: block; height: 100%; background: var(--night-cerulean); border-radius: var(--radius-pill); }
+  .usage span.is-neg { background: var(--ember-deep); }
   .confirm { background: var(--mist); border-radius: var(--radius-md); padding: 14px; font-size: 14px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
 
   /* Layout */
@@ -479,7 +496,7 @@
   @media (prefers-reduced-motion: reduce) { .confetti { display: none; } .ribbon { animation: none; } }
   .act-title { min-width: 0; }
   .act-menu-wrap { position: relative; flex-shrink: 0; }
-  .act-more { width: 36px; height: 32px; border: 0.5px solid var(--border); background: var(--surface-2); border-radius: 8px; cursor: pointer; font-size: 16px; line-height: 1; color: var(--text-primary); }
+  .act-more { width: 36px; height: 32px; border: 1px solid var(--mist); background: var(--surface-2); border-radius: 8px; cursor: pointer; font-size: 16px; line-height: 1; color: var(--night-deep); }
   .act-menu { position: absolute; right: 0; top: 38px; z-index: 20; min-width: 200px; background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 6px; box-shadow: var(--shadow-popover); }
   .act-menu button { display: block; width: 100%; text-align: left; background: none; border: 0; padding: 8px 10px; border-radius: 8px; font: inherit; font-size: 14px; color: var(--text-primary); cursor: pointer; }
   .act-menu button:hover { background: var(--surface-1); }
@@ -515,12 +532,11 @@
   .act-menu { background: #fff !important; box-shadow: 0 6px 18px rgba(0, 0, 0, .10), 0 1px 3px rgba(0, 0, 0, .08) !important; }
   .act-menu button.danger { color: var(--ember-deep); }
   .rep-list { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
-  .rep-card { background: #fff; border: 0.5px solid var(--border); border-radius: 14px; padding: 16px 18px; }
-  .rep-card:not(:last-child) { border-bottom: 1px solid var(--mist); }
+  .rep-card { background: #fff; border: 1px solid var(--mist); border-radius: 14px; padding: 16px 18px; margin-bottom: 12px; }
   .rep-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
   .rep-kind { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; padding: 3px 9px; border-radius: 999px; }
   .rep-kind.week { background: #E8EEF8; color: #3A5BA0; }
-  .rep-kind.mid { background: #FDF1D8; color: #A4502A; }
+  .rep-kind.mid { background: var(--star-pale); color: var(--night-cerulean); }
   .rep-range { font-size: 13px; color: var(--text-secondary); }
   .rep-stats { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 10px; font-size: 14px; color: var(--text-primary); }
   .rep-stats b { font-family: var(--font-display); font-size: 16px; font-weight: 600; }
@@ -595,16 +611,19 @@
 <path d="M3 20.4V3.6C3 3.26863 3.26863 3 3.6 3H20.4C20.7314 3 21 3.26863 21 3.6V20.4C21 20.7314 20.7314 21 20.4 21H3.6C3.26863 21 3 20.7314 3 20.4Z" stroke="currentColor" stroke-width="1.5"/>
 </svg><span>Reports</span></button>
     <button data-tab="manage"><svg class="nav-ico" aria-hidden="true" focusable="false" stroke-width="1.75" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M12 16C9.79086 16 8 14.2091 8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12C16 14.2091 14.2091 16 12 16Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M12 2V8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M12 16V22" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M2 12H8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M16 12H22" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M4.92896 4.92871L9.1716 9.17135" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M14.8284 14.8286L19.071 19.0713" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M4.92896 19.0713L9.1716 14.8286" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M14.8284 9.17139L19.071 4.92875" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M12,22C6.477,22 2,17.523 2,12C2,6.477 6.477,2 12,2C17.523,2 22,6.477 22,12C22,17.523 17.523,22 12,22Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M12,16C9.791,16 8,14.209 8,12C8,9.791 9.791,8 12,8C14.209,8 16,9.791 16,12C16,14.209 14.209,16 12,16Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M12,2L12,8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M12,16L12,22" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M2,12L8,12" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M16,12L22,12" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M4.929,4.929L9.172,9.171" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M14.828,14.829L19.071,19.071" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M4.929,19.071L9.172,14.829" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M14.828,9.171L19.071,4.929" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<g transform="matrix(1.56571,0,0,1.56571,-6.78628,-5.71812)">
+    <circle cx="11.999" cy="11.316" r="0.886" fill="none" stroke="currentColor" stroke-width="1.15" stroke-miterlimit="1.5"/>
+</g>
 </svg><span>Settings</span></button>
   </nav>
 
@@ -812,6 +831,8 @@
         </div>
         <div class="section-title"><h2 id="trendTitle">Trend</h2></div>
         <div class="card chart" id="trend"></div>
+        <div class="section-title"><h2>Focus Ratio</h2></div>
+        <div class="card" id="focusRatio"></div>
         <div class="section-title"><h2>Time by activity</h2></div>
         <div class="card" id="breakdown"></div>
       </section>
@@ -832,7 +853,7 @@
         <div class="card rep-shell">
           <div class="rep-list-head">
             <h3 class="rep-list-title">Your reports</h3>
-            <p class="caption rep-sub rep-list-sub">Your Week in Review and Mid-Week reports, newest first. Up to a year of reports is kept. Erasing your data in Settings also clears report history.</p>
+            <p class="caption rep-sub rep-list-sub">Your reports are cow-culated mid-week and at week's end. Stored for up to a year, with new reports replacing the oldest when full.</p>
           </div>
           <div class="rep-list-body">
             <div class="rep-list" id="repList"></div>
@@ -968,6 +989,14 @@
   <div class="dialog-actions">
     <button type="button" class="btn btn-ghost btn-sm" id="iosNotNow">Not now</button>
     <button type="button" class="btn btn-primary btn-sm" id="iosAlready">Already added</button>
+  </div>
+</dialog>
+<dialog id="repModal" aria-labelledby="repModalTitle">
+  <h3 id="repModalTitle"></h3>
+  <p class="caption" id="repModalRange"></p>
+  <div id="repModalRows"></div>
+  <div class="dialog-actions">
+    <button type="button" class="btn btn-primary btn-sm" id="repModalClose">Got it</button>
   </div>
 </dialog>
 <dialog id="netModal" aria-labelledby="netTitle">
@@ -1180,7 +1209,7 @@ $('#backupLater').onclick = () => {
 $('#backupNow').onclick = () => exportBackup();
 
 // App version and update check
-const APP_VERSION = '2.0.1';
+const APP_VERSION = '2.1.0';
 $('#appVersion').textContent = `Moomentum · Version ${APP_VERSION}`;
 function isNewerVersion(remote, local) {
   const r = String(remote).split('.').map(Number);
@@ -1331,6 +1360,94 @@ const BANNER_VARIANTS = {
     (amt) => `You added ${amt} of goal activity time compared to last week. Talk about moo-ving the needle.`
   ]
 };
+// Approved banner copy (reviewed CSV). Placeholders: {goal} {non} {net} {gap} {activity} {pct} {day}.
+// Week rotation picks the variant; state comes from balanceState().
+const APPROVED_COPY = {
+  midweek: {
+    goal: [
+      "You're {net} ahead so far this week, with {goal} of goal time logged. Keep the moo-mentum going!",
+      "Holy cow! This week, you've logged {goal} and are {net} ahead. There's still some time left to milk every minute.",
+      "The grass is greener on the goal side! {goal} logged and a {net} lead. A couple days left to graze ahead.",
+      "Halfway through the week and you're already {net} in the green. Your pace is working, so keep it up!"
+    ],
+    balanced: [
+      "Goal and non-goal time are nearly even so far, at {goal} to {non}. One intentional block tomorrow would tip the scale.",
+      "{goal} on goals, {non} elsewhere. Not a bad start! Let's give Thursday a little more moo-mentum.",
+      "The herd's split down the middle! {goal} on goals, {non} elsewhere. Time to steer Thursday toward what matters."
+    ],
+    lagging: [
+      "Non-goal time is ahead by {gap} this week. There's still time to turn it around, starting with one <strong>30-minute</strong> session.",
+      "The herd has wandered a little! Non-goal time is ahead by {gap}. Time to moo-ve back toward your goals with a quick <strong>30-minute</strong> session.",
+      "You're {gap} behind on goals so far. Don't let the week go completely udderly sideways! A <strong>30-minute</strong> session can help close the gap."
+    ]
+  },
+  endweek: {
+    goal: [
+      "What a moo-velous week! You logged {goal} of goal activity and finished {net} ahead of non-goal time.",
+      "Look at you go! You're ahead by {net} for the week, with {goal} spent on what matters to you. Udderly impressive.",
+      "You put {goal} into your goals this week and came out {net} ahead. That's legen-dairy!"
+    ],
+    balanced: [
+      "A balanced week: {goal} of goal time against {non} of non-goal time. Small shifts next week can tip it your way.",
+      "Your week landed close to even, at {net} net. Pick one activity to nudge up next week.",
+      "The week wasn't too shabby! {goal} on goals and {non} elsewhere. Let's make next week even better!"
+    ],
+    lagging: [
+      "Looks like the herd wandered off course! You're {gap} behind on goal time. No need to cry over spilled milk. Ready to pick one small goal for next week?",
+      "Don't let a slow week get your udders in a twist! You're {gap} behind. Let's find one small way to get moo-ving next week.",
+      "A little less goal time than planned this week. You have {goal} of goal activity logged, but no biggie! Got one small goal in mind for next week?"
+    ]
+  },
+  limit50: {
+    goal: [
+      "{activity} is at {pct} of its weekly limit, and your goal time is ahead. No need to rush the rest of the week.",
+      "Holy cow! You've used {pct} of your {activity} limit already with {day} still open. Time to slow those hooves a little.",
+      "{pct} of your weekly {activity} limit is gone. Plenty of week left to spend the rest on what you love."
+    ],
+    balanced: [
+      "You're at {pct} of your weekly {activity} limit on {day}. Let's try a different pasture today?",
+      "{activity} has used {pct} of its weekly limit already. A goal session today would keep your balance even.",
+      "{pct} of your {activity} limit is used with {day} still ahead. Try swapping one block for a goal activity."
+    ],
+    lagging: [
+      "{activity} is getting a lot of attention sitting at {pct} of its weekly limit. Got a little time to spend on one of your other goals today?",
+      "You've used {pct} of your {activity} limit. How about switching pastures and giving a goal <strong>30 minutes</strong>?",
+      "{pct} of the {activity} limit is gone. Don't you think it's time to moo-ve toward a goal session?"
+    ]
+  },
+  limit100: {
+    goal: [
+      "You've reached your weekly {activity} limit. Your goal time is ahead, and there's still plenty of pasture to explore.",
+      "{activity} hit its weekly limit. That's enough grazing for now! Your goal time is ahead, so let the rest of the week roam free.",
+      "Your {activity} limit is reached for the week, and your goals are carrying it, so keep that moo-mentum going."
+    ],
+    balanced: [
+      "You've reached your weekly {activity} limit. Put the rest of the week toward a goal to stay even.",
+      "The {activity} limit is reached for this week. Your balance is even, so one goal session would tip it forward.",
+      "{activity} is at its weekly limit. Nothing is lost here, there's plenty of week left to nurture what matters."
+    ],
+    lagging: [
+      "You've reached your weekly {activity} limit, and goal time is behind. Time to pivot: one goal activity session before end of the week.",
+      "{activity} hit its limit for the week. Use the remaining days to catch up on goals, one small moo-ve at a time.",
+      "Your {activity} limit is reached. Your mission: complete a short goal activity session before it's pasture bedtime."
+    ]
+  }
+};
+// Fills {placeholders}. Values are escaped; durations, net balances and percentages are bolded.
+const BOLD_KEYS = new Set(['goal', 'non', 'net', 'gap', 'pct']);
+function fillCopy(tpl, vars) {
+  return tpl.replace(/\{(\w+)\}/g, (m, k) => {
+    if (!(k in vars)) return m;
+    const v = wirEsc(vars[k]);
+    if (k === 'pct') return `<strong>${v}%</strong>`;
+    return BOLD_KEYS.has(k) ? `<strong>${v}</strong>` : v;
+  });
+}
+// Same thresholds as the net copy and the CSV triggers: +/-15 min.
+function balanceState(net) { return net >= 15 ? 'goal' : net <= -15 ? 'lagging' : 'balanced'; }
+// Rotates through variants: indexes can be negative-safe and offset per context.
+function pickApproved(list, idx) { return list[((idx % list.length) + list.length) % list.length]; }
+function weekIndex(sundayKey) { return Math.floor(new Date(sundayKey + 'T00:00:00').getTime() / (7 * 864e5)); }
 const FIRST_USE_KEY = 'moomentum:firstUse';
 // The comparison features wait 7 days after first use (onboarding completion) so there is a week to compare against
 function firstUseDate() {
@@ -2085,7 +2202,7 @@ function renderManage() {
       const p = Math.round(used / lim * 100);
       progress = `<div class="act-progress">
         <div class="act-progress-label">${p}% (${fmtMin(used)} of ${fmtMin(lim)}) this week</div>
-        <div class="usage" role="img" aria-label="${p}% of weekly limit"><span class="bar-grow" style="--i:${i};width:${Math.min(100, p)}%"></span></div>
+        <div class="usage" role="img" aria-label="${p}% of weekly limit"><span class="bar-grow${a.type === 'neg' ? ' is-neg' : ''}" style="--i:${i};width:${Math.min(100, p)}%"></span></div>
       </div>`;
     }
     return `
@@ -2229,23 +2346,36 @@ $('#limitRemove').onclick = () => {
   showToast(`${name} limit removed.`);
 };
 
-// Early-week nudge: Sunday through Tuesday, once a limit is at least half used. One consolidated banner.
+// Limit nudges. 100% reached shows any day; 50% to 99% shows Sunday through Tuesday only. One consolidated banner.
+const pctOf = a => weekMinutes(a.id) / LIMITS[a.id] * 100;
+function reachedLimits() {
+  return ACTS.filter(a => LIMITS[a.id] && pctOf(a) >= 100).sort((x, y) => pctOf(y) - pctOf(x));
+}
 function nudgeCandidates() {
   if (dateOf(TODAY).getDay() > 2) return [];
-  return ACTS.filter(a => LIMITS[a.id] && weekMinutes(a.id) / LIMITS[a.id] >= 0.5);
+  return ACTS.filter(a => LIMITS[a.id] && pctOf(a) >= 50 && pctOf(a) < 100).sort((x, y) => pctOf(y) - pctOf(x));
 }
-function nudgeKey(list) { return TODAY + '|' + list.map(a => a.id).join(','); }
+// Week-to-date net balance across all activities, used to pick the copy state
+function weekNetMin() {
+  return ACTS.reduce((sum, a) => sum + (a.type === 'neg' ? -weekMinutes(a.id) : weekMinutes(a.id)), 0);
+}
 function renderNudge() {
   const el = $('#nudgeBanner');
-  const list = nudgeCandidates();
+  const reached = reachedLimits();
+  const near = nudgeCandidates();
+  const list = reached.length ? reached : near;
+  const mode = reached.length ? 'limit100' : 'limit50';
   let dismissed = null;
   try { dismissed = localStorage.getItem(NUDGE_KEY); } catch (e) { /* storage unavailable */ }
-  if (!list.length || dismissed === nudgeKey(list)) { el.hidden = true; return; }
+  const key = TODAY + '|' + mode + '|' + list.map(a => a.id).join(',');
+  if (!list.length || dismissed === key) { el.hidden = true; return; }
+  const top = list[0];
   const day = WEEKDAY_NAMES[dateOf(TODAY).getDay()];
-  $('#nudgeMsg').textContent = list.length === 1
-    ? `You're at ${Math.round(weekMinutes(list[0].id) / LIMITS[list[0].id] * 100)}% of your weekly ${list[0].name} limit, and it's only ${day}. Want to try something different today?`
-    : `You're at 50% or more of your weekly limits for ${list.map(a => a.name).join(' and ')}, and it's only ${day}. Want to try something different today?`;
-  el.dataset.key = nudgeKey(list);
+  const vars = { activity: top.name, pct: Math.round(pctOf(top)), day };
+  const state = balanceState(weekNetMin());
+  const tpl = pickApproved(APPROVED_COPY[mode][state], weekIndex(sundayOf(TODAY)) + (mode === 'limit100' ? 3 : 2));
+  $('#nudgeMsg').innerHTML = fillCopy(tpl, vars);
+  el.dataset.key = key;
   el.hidden = false;
 }
 $('#nudgeDismiss').onclick = () => {
@@ -2258,7 +2388,7 @@ $('#suggestClose').onclick = () => $('#suggestModal').close();
 // Random pick from all activities, no recency cutoff and no guilt copy
 function pickSuggest() {
   // Activities the banner already warned about are excluded so the suggestion is always something different
-  const warned = new Set(nudgeCandidates().map(a => a.id));
+  const warned = new Set([...nudgeCandidates(), ...reachedLimits()].map(a => a.id));
   let candidates = ACTS.filter(a => !warned.has(a.id));
   if (!candidates.length) candidates = ACTS.slice();
   const pool = candidates.sort(() => Math.random() - 0.5).slice(0, 3);
@@ -2307,14 +2437,19 @@ function rangeDays() {
 }
 
 function buckets(days) {
+  // Each bucket keeps the total (line height) plus goal and non-goal minutes for the popover
+  const make = (label, ks) => {
+    let p = 0, n = 0, min = 0;
+    ks.forEach(k => { const t = netOf(k); p += t.p; n += t.n; min += total(data[k] || {}); });
+    return { label, min, p, n };
+  };
   if (range === 'week') {
-    return days.map(k => ({ label: new Date(k + 'T12:00').toLocaleDateString('en-US', { weekday: 'short' }), min: total(data[k] || {}) }));
+    return days.map(k => make(new Date(k + 'T12:00').toLocaleDateString('en-US', { weekday: 'short' }), [k]));
   }
   if (range === 'month') {
     const out = [];
     for (let i = 0; i < days.length; i += 7) {
-      const chunk = days.slice(i, i + 7);
-      out.push({ label: `W${out.length + 1}`, min: chunk.reduce((s, k) => s + total(data[k] || {}), 0) });
+      out.push(make(`W${out.length + 1}`, days.slice(i, i + 7)));
     }
     return out;
   }
@@ -2324,14 +2459,16 @@ function buckets(days) {
     if (!map.has(mk)) {
       map.set(mk, {
         label: new Date(k + 'T12:00').toLocaleDateString('en-US', range === 'all' ? { month: 'short', year: '2-digit' } : { month: 'short' }),
-        min: 0
+        ks: []
       });
     }
-    map.get(mk).min += total(data[k] || {});
+    map.get(mk).ks.push(k);
   });
-  return [...map.values()];
+  return [...map.values()].map(m => make(m.label, m.ks));
 }
 
+// Popover text: the period and both values, so the reader sees goal and non-goal time
+function tipOf(b) { return `${b.label}: Goal ${fmtMin(b.p)} · Non-goal ${fmtMin(b.n)}`; }
 function lineChart(bk, animate = false) {
   const W = 600, H = 220, P = { l: 76, r: 16, t: 16, b: 34 };
   const max = Math.max(...bk.map(b => b.min), 1);
@@ -2345,7 +2482,7 @@ function lineChart(bk, animate = false) {
     return `<line x1="${P.l}" x2="${W - P.r}" y1="${y(v)}" y2="${y(v)}" stroke="#E6ECF5"/>
             <text x="${P.l - 8}" y="${y(v) + 4}" font-size="12" text-anchor="end" fill="#3E4D6B">${fmtMin(v)}</text>`;
   }).join('');
-  const dots = bk.map((b, i) => `<circle class="chart-hit" data-tip="${b.label}: ${fmtMin(b.min)}" cx="${x(i)}" cy="${y(b.min)}" r="16" fill="transparent"/><circle class="${animate ? 'trend-dot' : ''}" data-tip="${b.label}: ${fmtMin(b.min)}" style="--i:${i}" cx="${x(i)}" cy="${y(b.min)}" r="5" fill="#F2C94C" stroke="#283D6B" stroke-width="2"/>`).join('');
+  const dots = bk.map((b, i) => `<circle class="chart-hit" data-tip="${tipOf(b)}" cx="${x(i)}" cy="${y(b.min)}" r="16" fill="transparent"/><circle class="${animate ? 'trend-dot' : ''}" data-tip="${tipOf(b)}" style="--i:${i}" cx="${x(i)}" cy="${y(b.min)}" r="5" fill="#F2C94C" stroke="#283D6B" stroke-width="2"/>`).join('');
   const labels = bk.map((b, i) => (i % step === 0 ? `<text x="${x(i)}" y="${H - 10}" font-size="12" text-anchor="middle" fill="#3E4D6B">${b.label}</text>` : '')).join('');
   return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Line chart of time logged">
     ${grid}
@@ -2360,9 +2497,26 @@ function barChart(slices, animate = false) {
   const rows = slices.map((s, i) => `
     <div class="hbar">
       <div class="hbar-head"><span>${s.name}</span><span>${Math.round((s.min / sum) * 100)}% · ${fmtMin(s.min)}</span></div>
-      <div class="hbar-track"><span class="${animate ? 'bar-grow' : ''}" style="--i:${i};width:${((s.min / sum) * 100).toFixed(1)}%"></span></div>
+      <div class="hbar-track"><span class="${animate ? 'bar-grow' : ''}${s.type === 'neg' ? ' is-neg' : ''}" style="--i:${i};width:${((s.min / sum) * 100).toFixed(1)}%"></span></div>
     </div>`).join('');
-  return `<div role="list" aria-label="Time by activity">${rows}</div>`;
+  return `<div role="list" aria-label="Time by activity">${rows}</div>
+    <div class="legend" style="gap:18px"><span style="display:inline-flex;align-items:center;gap:6px"><i style="background:#3A5BA0"></i>Goal</span><span style="display:inline-flex;align-items:center;gap:6px"><i style="background:#A4502A"></i>Non-goal</span></div>`;
+}
+
+function focusRatioChart(goalMin, nonGoalMin) {
+  const total = goalMin + nonGoalMin;
+  if (!total) return '<p class="hint">No time logged in this range.</p>';
+  const goalPct = goalMin / total * 100;
+  const goalLabelPct = Math.round(goalPct);
+  const nonGoalLabelPct = 100 - goalLabelPct;
+  return `<div class="focus-ratio-summary">
+      <div><span>Goal</span><b>${goalLabelPct}%</b><small>${fmtMin(goalMin)}</small></div>
+      <div><span>Non-goal</span><b>${nonGoalLabelPct}%</b><small>${fmtMin(nonGoalMin)}</small></div>
+    </div>
+    <div class="focus-ratio-track" role="img" aria-label="Goal ${goalLabelPct} percent, Non-goal ${nonGoalLabelPct} percent">
+      <span class="goal" style="width:${goalPct}%"></span><span class="non-goal" style="width:${100 - goalPct}%"></span>
+    </div>
+    <div class="legend" style="gap:18px"><span style="display:inline-flex;align-items:center;gap:6px"><i style="background:#3A5BA0"></i>Goal</span><span style="display:inline-flex;align-items:center;gap:6px"><i style="background:#A4502A"></i>Non-goal</span></div>`;
 }
 
 // Trend popover: hover on a mouse, press-and-hold or tap on touch
@@ -2377,9 +2531,16 @@ function showChartTip(el) {
   const host = trendEl.getBoundingClientRect(), pt = el.getBoundingClientRect();
   chartTip.textContent = el.dataset.tip;
   trendEl.appendChild(chartTip);
-  chartTip.style.left = (pt.left + pt.width / 2 - host.left) + 'px';
-  chartTip.style.top = (pt.top - host.top) + 'px';
-  chartTip.hidden = false;
+  chartTip.hidden = false; // measure once visible
+  const w = chartTip.offsetWidth, h = chartTip.offsetHeight, edge = 8, gap = 12;
+  // Centre on the point, then shift in from either side so the popover never clips
+  const cx = pt.left + pt.width / 2 - host.left;
+  const left = Math.min(Math.max(cx - w / 2, edge), Math.max(edge, host.width - w - edge));
+  // Above the point when there is room, otherwise below it
+  const above = pt.top - host.top - h - gap >= 0;
+  chartTip.style.left = left + 'px';
+  chartTip.style.top = (above ? pt.top - host.top : pt.bottom - host.top) + 'px';
+  chartTip.style.transform = above ? `translateY(calc(-100% - ${gap}px))` : `translateY(${gap}px)`;
 }
 function hideChartTip() { clearTimeout(tipHideTimer); chartTip.hidden = true; }
 trendEl.addEventListener('pointerover', e => { if (e.pointerType === 'mouse' && e.target.dataset && e.target.dataset.tip) showChartTip(e.target); });
@@ -2397,21 +2558,61 @@ document.querySelectorAll('.stat-link').forEach(btn => {
 });
 
 let insightsAnimate = false;
+let historyStatsShown = { total: 0, active: 0, avg: 0 };
+let historyStatsRaf = null;
+function updateHistoryStats(values, days) {
+  $('#sTotal').textContent = fmtMin(Math.round(values.total));
+  $('#sActive').textContent = `${Math.round(values.active)}/${days}`;
+  $('#sAvg').textContent = values.avg ? fmtMin(Math.round(values.avg)) : '0m';
+}
+function animateHistoryStats(target, days, animate) {
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const from = { ...historyStatsShown };
+  cancelAnimationFrame(historyStatsRaf);
+  if (!animate || reduce || Object.keys(target).every(k => from[k] === target[k])) {
+    historyStatsShown = { ...target };
+    updateHistoryStats(historyStatsShown, days);
+    return;
+  }
+  const start = performance.now();
+  const dur = 600;
+  const step = now => {
+    const p = Math.min(1, (now - start) / dur);
+    const eased = 1 - Math.pow(1 - p, 3);
+    historyStatsShown = Object.fromEntries(
+      Object.keys(target).map(k => [k, from[k] + (target[k] - from[k]) * eased])
+    );
+    updateHistoryStats(historyStatsShown, days);
+    if (p < 1) {
+      historyStatsRaf = requestAnimationFrame(step);
+    } else {
+      historyStatsShown = { ...target };
+      updateHistoryStats(historyStatsShown, days);
+    }
+  };
+  historyStatsRaf = requestAnimationFrame(step);
+}
 function renderHistory() {
   const animate = insightsAnimate;
   insightsAnimate = false;
   const days = rangeDays();
   const rangeTotal = days.reduce((s, k) => s + total(data[k] || {}), 0);
   const active = days.filter(k => total(data[k] || {}) > 0).length;
-  $('#sTotal').textContent = fmtMin(rangeTotal);
-  $('#sActive').textContent = `${active}/${days.length}`;
-  $('#sAvg').textContent = active ? fmtMin(Math.round(rangeTotal / active)) : '0m';
+  animateHistoryStats({
+    total: rangeTotal,
+    active,
+    avg: active ? Math.round(rangeTotal / active) : 0
+  }, days.length, animate);
   $('#trendTitle').textContent = { week: 'Daily', month: 'Weekly', quarter: 'Monthly', year: 'Monthly', all: 'Monthly' }[range] + ' trend';
   $('#trend').innerHTML = lineChart(buckets(days), animate);
   const totals = ACTS.map(a => ({
     name: a.name,
+    type: a.type,
     min: days.reduce((s, k) => s + ((data[k] || {})[a.id] || 0), 0)
   })).filter(s => s.min > 0).sort((a, b) => b.min - a.min);
+  const goalMin = totals.filter(s => s.type !== 'neg').reduce((s, a) => s + a.min, 0);
+  const nonGoalMin = totals.filter(s => s.type === 'neg').reduce((s, a) => s + a.min, 0);
+  $('#focusRatio').innerHTML = focusRatioChart(goalMin, nonGoalMin);
   $('#breakdown').innerHTML = barChart(totals, animate);
 }
 
@@ -2468,24 +2669,75 @@ function buildReports() {
     .slice(0, REPORT_MAX);
 }
 function fmtRepDate(k) { return dateOf(k).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
+// Narrative summary for a report card. Mid-Week uses the midweek copy; Week in Review uses the end-of-week copy.
+function reportSummary(r) {
+  const net = r.t.net;
+  const vars = { goal: fmtHM(r.t.p), non: fmtHM(r.t.n), net: fmtHM(Math.abs(net)), gap: fmtHM(Math.abs(net)) };
+  const isWeek = r.kind === 'week';
+  const set = isWeek ? APPROVED_COPY.endweek : APPROVED_COPY.midweek;
+  return fillCopy(pickApproved(set[balanceState(net)], weekIndex(r.start) + (isWeek ? 1 : 0)), vars);
+}
+// Bold title for each card. Each balance state has a pool; cards rotate through it so repeat weeks read differently.
+const REPORT_TITLES = {
+  goal: [
+    "You're moo-ving in the right direction!",
+    "Leading the herd!",
+    "You're on a roll in the pasture!",
+    "Holy cow, look at you go!",
+    "Your goals are grazing strong!",
+    "You're ahead of the herd!",
+    "That's some serious moo-mentum!"
+  ],
+  balanced: [
+    "The herd is fairly balanced",
+    "You're keeping the herd in balance!",
+    "A little grazing on both sides!",
+    "Steady as a cow in the pasture!",
+    "You're finding your own rhythm!",
+    "Keeping things moo-ving evenly!",
+    "You're holding your ground!"
+  ],
+  lagging: [
+    "It's a slow week but let's stay moo-tivated!",
+    "Time to get moo-tivated",
+    "Let's get that moo-mentum going!",
+    "Everyone has a slow week, even cows!",
+    "There's room to grow in the pasture!",
+    "Time to steer things back on track!",
+    "The herd is waiting for you!"
+  ]
+};
+function reportTitle(r) {
+  const list = REPORT_TITLES[balanceState(r.t.net)];
+  // Offset Week in Review so it doesn't always match the Mid-Week title for the same week
+  return pickApproved(list, weekIndex(r.start) + (r.kind === 'week' ? 3 : 0));
+}
 function reportCard(r, i) {
   const isWeek = r.kind === 'week';
   const range = `${fmtRepDate(r.start)} - ${fmtRepDate(r.end)}`;
-  const named = x => x ? `${(ACTS.find(a => a.id === x[0]) || { name: x[0] }).name} ${fmtHM(x[1])}` : 'None logged';
-  const sign = r.t.net < 0 ? '\u2212' : '+';
-  const stats = isWeek
-    ? `<span><b>${fmtHM(r.t.p)}</b> goal activity hours</span><span><b>${sign}${fmtHM(Math.abs(r.t.net))}</b> net balance</span>`
-    : `<span><b>${fmtHM(r.t.p)}</b> goal activity hours</span>`;
   return `<article class="rep-card">
     <header class="rep-head"><span class="rep-kind ${r.kind}">${isWeek ? 'Week in Review' : 'Mid-Week'}</span><span class="rep-range">${range}</span></header>
-    <div class="rep-stats">${stats}</div>
-    <div class="rep-details" id="rd${i}" hidden><dl style="margin:0">
-      <dt>Top goal activity</dt><dd>${named(r.t.topGoal)}</dd>
-      <dt>Top non-goal activity</dt><dd>${named(r.t.topNeg)}</dd>
-      <dt>Net balance</dt><dd>${sign}${fmtHM(Math.abs(r.t.net))}</dd>
-    </dl></div>
-    <button type="button" class="btn btn-secondary btn-sm rep-toggle" data-rep="${i}" aria-expanded="false" aria-controls="rd${i}">View more</button>
+    <h4 class="rep-title">${reportTitle(r)}</h4>
+    <p class="rep-lead">${reportSummary(r)}</p>
+    <div class="rep-foot"><button type="button" class="btn btn-sm rep-more" data-rep="${i}" aria-haspopup="dialog">View more</button></div>
   </article>`;
+}
+// Breakdown modal: top activities, totals and net balance for one report
+function openRepModal(r) {
+  if (!r) return;
+  const named = x => x ? `${(ACTS.find(a => a.id === x[0]) || { name: x[0] }).name} ${fmtHM(x[1])}` : 'None logged';
+  const net = r.t.net;
+  $('#repModalTitle').textContent = r.kind === 'week' ? 'Week in Review' : 'Mid-Week';
+  $('#repModalRange').textContent = `${fmtRepDate(r.start)} - ${fmtRepDate(r.end)}`;
+  const rows = [
+    ['Top goal activity', named(r.t.topGoal)],
+    ['Top non-goal activity', named(r.t.topNeg)],
+    ['Total goal activity logged', fmtHM(r.t.p)],
+    ['Total non-goal activity logged', fmtHM(r.t.n)]
+  ].map(([l, v]) => `<div class="net-row"><span>${wirEsc(l)}</span><b>${wirEsc(v)}</b></div>`).join('');
+  const netRow = `<div class="net-row net-total"><span>Net balance</span><b class="${net >= 0 ? 'net-pos' : 'net-neg'}">${net < 0 ? '\u2212' : '+'}${fmtHM(Math.abs(net))}</b></div>`;
+  $('#repModalRows').innerHTML = rows + netRow;
+  $('#repModal').showModal();
 }
 function loadReportPage() {
   const next = repAll.slice(repShown, repShown + REPORT_PAGE);
@@ -2507,14 +2759,11 @@ const repIO = new IntersectionObserver(es => {
 }, { rootMargin: '200px' });
 repIO.observe(document.getElementById('repSentinel'));
 $('#repList').onclick = e => {
-  const b = e.target.closest('button[data-rep]');
+  const b = e.target.closest('button.rep-more');
   if (!b) return;
-  const panel = document.getElementById('rd' + b.dataset.rep);
-  const open = panel.hidden;
-  panel.hidden = !open;
-  b.textContent = open ? 'View less' : 'View more';
-  b.setAttribute('aria-expanded', String(open));
+  openRepModal(repAll[Number(b.dataset.rep)]);
 };
+$('#repModalClose').onclick = () => $('#repModal').close();
 $('#clearReports').onclick = () => $('#clearReportsModal').showModal();
 $('#clearReportsCancel').onclick = () => $('#clearReportsModal').close();
 $('#clearReportsConfirm').onclick = () => {
@@ -2768,7 +3017,9 @@ function wirAnalyze(sundayKey, mondayKey) {
     .map(a => ({ name: a.name, idle: wirDaysBetween(lastLog[a.id], sundayKey) }))
     .filter(s => s.idle >= 14)
     .sort((a, b) => b.idle - a.idle).slice(0, 3);
-  return { total, days, diff, cream, best, comeback, stale };
+  let goal = 0, non = 0;
+  Object.entries(thisWeek).forEach(([id, min]) => { if (ACTS.find(a => a.id === id).type === 'neg') non += min; else goal += min; });
+  return { total, days, diff, cream, best, comeback, stale, goal, non };
 }
 function renderWeekInReview() {
   const card = $('#wir');
@@ -2789,15 +3040,12 @@ function renderWeekInReview() {
     lead = `Udder-ly impressive. ${nameOf(s.best)} hit a new high this week at ${fmtHM(s.cream[0][1])}. Your best pasture yet.`;
   } else if (s.comeback) {
     lead = `Back from the back forty! After ${s.comeback.gap} days away, ${nameOf(s.comeback.id)} is grazing again. Welcome home.`;
-  } else if (s.days >= 4 && s.diff >= 60) {
-    const opener = pick(['Amazing!', 'Moo-velous!', 'Udderly impressive!', 'Cow-tastic!', 'Herd-ly believable!', 'Brilliant!']);
-    lead = `${opener} Talk about Moo-mentum. You logged ${X} across ${s.days} of 7 days, ${fmtHM(s.diff)} more than last week. Stay moo-tivated, my friend.`;
-  } else if (s.days >= 3) {
-    lead = `Remember, time and milk moo-ves fast... so fast, it goes pasteurized. You logged ${X} this week, right in line with your usual pace.`;
-  } else if (s.total > 0) {
-    lead = `The pasture was calm this week, with ${X} logged across ${s.days} of 7 days. Quiet weeks happen to every herd.`;
-  } else {
+  } else if (s.total === 0) {
     lead = 'The pasture was quiet this week, with nothing logged yet. A fresh start is one good graze away.';
+  } else {
+    const net = s.goal - s.non;
+    const vars = { goal: fmtHM(s.goal), non: fmtHM(s.non), net: fmtHM(Math.abs(net)), gap: fmtHM(Math.abs(net)) };
+    lead = fillCopy(pickApproved(APPROVED_COPY.endweek[balanceState(net)], weekIdx + 1), vars);
   }
 
   const closers = [
