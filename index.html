@@ -40,8 +40,8 @@
   .shell { min-height: 100vh; }
   nav.side { display: flex; background: var(--night-ultramarine); color: var(--moon-cream); }
   nav.side .brand { display: none; }
-  nav.side button { flex: 1; min-height: 48px; background: none; border: 0; border-radius: var(--radius-pill); color: var(--mist); font-weight: 700; transition: background 180ms var(--ease); }
-  nav.side button.active { background: var(--star-pale); color: var(--night-deep); }
+  nav.side button { flex: 1; min-height: 48px; background: none; border: 0; border-radius: var(--radius-pill); color: var(--mist); font-weight: 700; transition: background 180ms ease-in, color 180ms ease-in, transform 220ms ease-in; }
+  nav.side button.active { background: var(--star-pale); color: var(--night-deep); transform: translateY(-2px); transition-timing-function: ease-out; }
   .app { max-width: 960px; margin: 0 auto; }
   header.top { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--night-ultramarine); color: var(--moon-cream); position: sticky; top: 0; z-index: 20; }
   header.top h1 { font-size: 22px; color: var(--moon-cream); }
@@ -81,7 +81,8 @@
   #nameCancel { background: #fff; }
   .rings-card { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; background: #fff; border-radius: var(--radius-lg); box-shadow: var(--shadow-soft); padding: 16px 20px; margin-bottom: 16px; }
   .rings-wrap { position: relative; width: 240px; height: 240px; flex-shrink: 0; }
-  .rings-wrap svg { display: block; animation: ringsIn .6s var(--ease) both; }
+  .rings-wrap svg { display: block; }
+  .rings-wrap.revealed svg { animation: ringsIn .6s var(--ease) both; }
   @keyframes ringsIn { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: none; } }
   .rings-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; }
   .rings-center span { font-size: 12px; color: var(--muted); font-weight: 600; }
@@ -124,8 +125,15 @@
   .goal-stepper { gap: 8px; }
   .goal-stepper button { width: 44px; height: 44px; min-width: 44px; border-radius: 12px; border: 0; background: var(--star-chrome); color: var(--night-deep); box-shadow: var(--shadow-soft); font-size: 22px; font-weight: 700; }
   .goal-stepper button:hover { background: var(--star-pale); }
-  .goal-stepper input { width: 96px; height: 44px; padding: 0 6px; border: 2px solid var(--mist); border-radius: 12px; background: #fff; text-align: center; font-size: 18px; font-weight: 600; font-family: var(--font-display); color: var(--night-deep); -moz-appearance: textfield; }
-  .goal-stepper input:focus { outline: none; border-color: var(--night-cerulean); }
+  .goal-stepper input { width: 96px; height: 44px; padding: 0 6px; border: 2px solid var(--mist); border-radius: 12px; background: #fff; text-align: center; font-size: 18px; font-weight: 600; font-family: var(--font-display); color: transparent; caret-color: var(--night-deep); -moz-appearance: textfield; }
+  .goal-stepper input:focus { outline: none; border-color: var(--night-cerulean); color: var(--night-deep); }
+  .odo-field { position: relative; display: inline-block; width: 96px; height: 44px; vertical-align: middle; }
+  .odo { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; font-family: var(--font-display); font-weight: 600; font-size: 18px; line-height: 1; color: var(--night-deep); transition: opacity 120ms var(--ease); }
+  .goal-stepper input:focus + .odo { opacity: 0; }
+  .odo .reel { display: block; height: 1em; width: .6em; overflow: hidden; }
+  .odo .strip { display: flex; flex-direction: column; transition: transform 460ms var(--ease); }
+  .odo .strip span { display: block; height: 1em; line-height: 1em; text-align: center; }
+  @media (prefers-reduced-motion: reduce) { .odo .strip { transition: none; } }
   .goal-stepper input.over { border-color: var(--ember); }
   .goal-stepper .unit { font-size: 15px; color: var(--muted); }
   .stepper-bump-up input { animation: valueUp 180ms var(--ease); }
@@ -236,6 +244,15 @@
   .chip.on { background: var(--night-ultramarine); border-color: var(--night-ultramarine); color: var(--moon-cream); }
   .chip.neg { border-style: dashed; border-color: var(--mist); }
   .chip.neg.on { background: var(--ember-deep); border-color: var(--ember-deep); color: #FFFFFF; }
+  .chip { position: relative; overflow: hidden; isolation: isolate; }
+  .chip:not(.neg).sweep::before { content: ''; position: absolute; inset: 0; z-index: -1; background: var(--star-pale); transform-origin: left center; transform: scaleX(0); animation: chipSweep 240ms var(--ease) forwards; }
+  .chip.on.sweep { background: #fff; color: var(--night-ultramarine); }
+  .chip.pop { animation: chipPop 360ms var(--ease); }
+  @keyframes chipSweep { to { transform: scaleX(1); } }
+  @keyframes chipPop { 0% { transform: scale(.96); } 50% { transform: scale(1); } 100% { transform: scale(1); } }
+  .gain-token { position: fixed; z-index: 250; pointer-events: none; transform: translate(-50%, 0); padding: 2px 9px; border-radius: var(--radius-pill); background: var(--star-pale); color: var(--night-ultramarine); font-family: var(--font-display); font-weight: 600; font-size: 14px; animation: gainUp 700ms var(--ease) forwards; }
+  @keyframes gainUp { 0% { opacity: 0; transform: translate(-50%, 6px) scale(.8); } 20% { opacity: 1; transform: translate(-50%, -4px) scale(1.05); } 100% { opacity: 0; transform: translate(-50%, -38px) scale(1); } }
+  @media (prefers-reduced-motion: reduce) { .chip.pop, .gain-token { animation: none; } .chip:not(.neg).sweep::before { animation: none; transform: scaleX(1); } }
   .neg-opt { display: flex; align-items: center; gap: 8px; min-height: 44px; margin: -4px 0 12px; font-size: 15px; font-weight: 500; color: var(--muted); cursor: pointer; }
   .neg-opt input { width: 20px; height: 20px; accent-color: var(--ember-deep); margin: 0; }
   .add-row { display: flex; gap: 8px; margin-bottom: 12px; }
@@ -320,14 +337,15 @@
   .focus-ratio-track span { display: block; height: 100%; flex-shrink: 0; }
   .focus-ratio-track .goal { background: var(--night-cerulean); }
   .focus-ratio-track .non-goal { background: var(--ember-deep); }
-  .hbar-track span.bar-grow, .usage span.bar-grow { transform-origin: left center; animation: barGrow 420ms var(--ease) both; animation-delay: calc(var(--i, 0) * 60ms); }
+  .focus-ratio-track .scroll-fill:not(.bar-grow), .hbar-track .scroll-fill:not(.bar-grow) { transform: scaleX(0); transform-origin: left center; }
+  .hbar-track span.bar-grow, .usage span.bar-grow, .focus-ratio-track span.bar-grow { transform-origin: left center; animation: barGrow 400ms var(--ease) both; animation-delay: calc(var(--section-delay, 0ms) + var(--i, 0) * 60ms); }
   @keyframes barGrow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
   .trend-line.draw-line { stroke-dasharray: 100; stroke-dashoffset: 100; animation: lineDraw 900ms var(--ease) forwards; }
   @keyframes lineDraw { to { stroke-dashoffset: 0; } }
-  .trend-dot { opacity: 0; animation: dotIn 280ms var(--ease) forwards; animation-delay: calc(var(--i, 0) * 60ms + 200ms); }
+  .trend-dot { opacity: 0; animation: dotIn 300ms var(--ease) forwards; animation-delay: calc(var(--i, 0) * 60ms + 200ms); }
   @keyframes dotIn { from { opacity: 0; transform: translateX(-4px); } to { opacity: 1; transform: none; } }
   @media (prefers-reduced-motion: reduce) {
-    .hbar-track span.bar-grow, .usage span.bar-grow, .trend-line.draw-line, .trend-dot { animation: none; }
+    .hbar-track span.bar-grow, .usage span.bar-grow, .focus-ratio-track span.bar-grow, .trend-line.draw-line, .trend-dot { animation: none; }
     .trend-line.draw-line { stroke-dashoffset: 0; }
     .trend-dot { opacity: 1; }
   }
@@ -374,6 +392,14 @@
   .app-version { text-align: center; font-size: 13px; color: var(--muted); margin: 24px 0 8px; }
   .toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 12px); background: var(--night-deep); color: var(--moon-cream); padding: 12px 18px; border-radius: 16px; box-shadow: var(--shadow-lift); font-size: 14px; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity .2s var(--ease), transform .2s var(--ease); z-index: 60; max-width: calc(100% - 32px); text-align: center; }
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
+  #saveBtn { position: relative; }
+  .save-check { position: absolute; top: 50%; right: 22px; width: 18px; height: 18px; transform: translateY(-50%); fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0; transition: opacity 160ms var(--ease); }
+  #saveBtn.is-saved { animation: savePulse 360ms var(--ease); }
+  #saveBtn.is-saved .save-check { opacity: 1; }
+  #saveBtn.is-saved .save-check path { animation: checkDraw 420ms var(--ease) 80ms forwards; }
+  @keyframes savePulse { 0% { transform: scale(1); } 40% { transform: scale(1.03); } 100% { transform: scale(1); } }
+  @keyframes checkDraw { to { stroke-dashoffset: 0; } }
+  @media (prefers-reduced-motion: reduce) { #saveBtn.is-saved, #saveBtn.is-saved .save-check path { animation: none; } #saveBtn.is-saved .save-check path { stroke-dashoffset: 0; } }
   .act-count { display: inline-block; min-width: 22px; padding: 1px 8px; margin-left: 6px; border-radius: var(--radius-pill); background: var(--mist); color: var(--night-deep); font-size: 12px; text-align: center; letter-spacing: 0; }
   .chip.add-chip { border-style: solid; border-color: var(--night-sky); color: var(--night-cerulean); background: #fff; }
   .act-group { font: 600 13px var(--font-body); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin: 14px 0 2px; }
@@ -442,7 +468,10 @@
   .day-tile.selected { border-color: var(--night-cerulean); }
   .day-tile.today { background: var(--night-cerulean); color: #fff; }
   .day-tile.today .tm, .day-tile.today .tw { color: #fff; opacity: .85; }
-  .day-tile:disabled { opacity: .4; cursor: not-allowed; box-shadow: none; }
+  .day-tile:disabled { --tile-o: .4; opacity: .4; cursor: not-allowed; box-shadow: none; }
+  .day-tile.tile-in { animation: tileIn 320ms var(--ease) backwards; animation-delay: calc(var(--i, 0) * 45ms); }
+  @keyframes tileIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: var(--tile-o, 1); transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .day-tile.tile-in { animation: none; } }
   .log-section { border-top: 1px dashed var(--mist); padding: 16px 0 0; margin-top: 16px; }
   .log-section > h3 { margin: 0 0 4px; }
   .recap-divider { border-top: 1px dashed var(--mist); margin: 14px 0 12px; }
@@ -533,6 +562,10 @@
   .act-menu button.danger { color: var(--ember-deep); }
   .rep-list { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
   .rep-card { background: #fff; border: 1px solid var(--mist); border-radius: 14px; padding: 16px 18px; margin-bottom: 12px; }
+  .rep-card.is-pending { opacity: 0; transform: translateY(14px); }
+  .rep-card.is-revealed { animation: reportCardIn 420ms var(--ease) both; }
+  @keyframes reportCardIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .rep-card.is-revealed { animation: none; } }
   .rep-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
   .rep-kind { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; padding: 3px 9px; border-radius: 999px; }
   .rep-kind.week { background: #E8EEF8; color: #3A5BA0; }
@@ -735,7 +768,7 @@
                 <div class="collapse closed" id="detailWrap"><div>
                   <div id="selected"></div>
                   <div class="total" id="totalRow"><span>Time logged</span><span id="total">0m</span></div>
-                  <button class="btn btn-primary btn-block" id="saveBtn">Save recap</button>
+                  <button class="btn btn-primary btn-block" id="saveBtn"><span class="save-label">Save recap</span><svg class="save-check" viewBox="0 0 24 24" aria-hidden="true"><path pathLength="1" d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
                 </div></div>
               </div></div>
               <div class="collapse closed" id="savedWrap"><div>
@@ -769,8 +802,8 @@
             <button type="button" data-range="ytd" aria-pressed="false">This Year</button>
           </div>
         </div>
-        <div class="rings-card">
-          <div class="rings-wrap">
+        <div class="rings-card" id="ringsCard">
+          <div class="rings-wrap" id="ringsWrap">
             <svg width="240" height="240" viewBox="0 0 240 240" role="img" aria-labelledby="ringsTitle ringsDesc">
               <title id="ringsTitle">Year-to-date rings</title>
               <desc id="ringsDesc">Outer ring: goal activity hours. Middle ring: net balance. Inner ring: days logged.</desc>
@@ -796,7 +829,7 @@
         <div class="card whats-panel" id="whatsThisPanel">
           <div class="whats-row"><svg class="whats-ico" id="bulbIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 114.1 122.88" aria-hidden="true" focusable="false"><path fill-rule="evenodd" fill="currentColor" d="M75.84,27.1a35.68,35.68,0,0,1,8.61,7.09,32.45,32.45,0,0,1,5.76,9.26h0a36.84,36.84,0,0,1,1.85,6,34.64,34.64,0,0,1,.24,14,38.69,38.69,0,0,1-2.15,7.32l-.12.25c-2.06,5-5.59,9.86-9,14.66-1.75,2.42-3.48,4.82-4.94,7.15A4.69,4.69,0,0,1,71.73,95l-27.56,4.1A4.7,4.7,0,0,1,39,95.69a40.19,40.19,0,0,0-2.54-5.82,24.85,24.85,0,0,0-3-4.49c-1.43-1.63-2.88-3.29-4.29-5.2A40.42,40.42,0,0,1,25,73.24h0a41.08,41.08,0,0,1-2.81-8,35.84,35.84,0,0,1-.95-8.45v0A35.39,35.39,0,0,1,22.35,48a41.69,41.69,0,0,1,3.42-8.85l.2-.35a35.55,35.55,0,0,1,7.13-8.63,33.72,33.72,0,0,1,9.46-5.83l.28-.1a35.41,35.41,0,0,1,8-2.14,37.78,37.78,0,0,1,8.77-.2,39.14,39.14,0,0,1,8.4,1.71,38.44,38.44,0,0,1,7.79,3.49Zm-4,87.26a17.37,17.37,0,0,1-6.28,6.29,16.46,16.46,0,0,1-7.2,2.2A14.87,14.87,0,0,1,51,121.4a15.1,15.1,0,0,1-4.39-3.27l25.29-3.77Zm2.41-14.15,0,1.65,0,.58a22,22,0,0,1,0,3.25l-.49,2.39-30.64,4.56-.54-1.23-1.19-4.9,0-1.42,32.79-4.88ZM56.34,3.77A3.84,3.84,0,0,1,60.23,0h0l.27,0A3.84,3.84,0,0,1,64,3.89h0a1.27,1.27,0,0,1,0,.2l-.21,8.21h0a2.11,2.11,0,0,1,0,.26,3.84,3.84,0,0,1-3.87,3.54h0l-.27,0a3.84,3.84,0,0,1-3.53-3.88h0a1.09,1.09,0,0,1,0-.19l.2-8.25ZM14,18.15a3.84,3.84,0,0,1,2.47-6.66,3.83,3.83,0,0,1,2.76,1l6.16,5.73a3.91,3.91,0,0,1,1.22,2.68,3.82,3.82,0,0,1-1,2.76,3.86,3.86,0,0,1-2.67,1.22,3.8,3.8,0,0,1-2.76-1L14,18.15ZM3.92,60.48A3.86,3.86,0,0,1,0,56.75a3.84,3.84,0,0,1,3.73-4l8.41-.28a3.84,3.84,0,0,1,4,3.72v.06h0v.14a3.84,3.84,0,0,1-3.73,3.77h-.15l-8.3.27Zm106-11.92H110a3.84,3.84,0,0,1,2.66.86,3.81,3.81,0,0,1,1.4,2.59v0a.49.49,0,0,1,0,.13,3.84,3.84,0,0,1-3.44,4.06l-8.37.89a3.83,3.83,0,0,1-2.81-.85,3.84,3.84,0,0,1,2-6.8c2.79-.31,5.6-.63,8.4-.9ZM93.33,15.09A3.83,3.83,0,0,1,98.65,14h0a3.73,3.73,0,0,1,1.63,2.44,3.84,3.84,0,0,1-.58,2.88l-4.68,7A3.8,3.8,0,0,1,92.58,28a3.88,3.88,0,0,1-2.88-.57A3.92,3.92,0,0,1,88.06,25a3.84,3.84,0,0,1,.58-2.88l4.69-7ZM38.23,80.87A42.19,42.19,0,0,1,31,70.56,31.2,31.2,0,0,1,27.89,57,31.7,31.7,0,0,1,31.7,42.56a.47.47,0,0,0,.05-.1h0a27.5,27.5,0,0,1,13.4-11.71,29.65,29.65,0,0,1,13.93-2A32.09,32.09,0,0,1,72.39,33,27.43,27.43,0,0,1,84,46.2,28.85,28.85,0,0,1,84,68.45C81.31,75,75.15,82,71.11,88.4a1.67,1.67,0,0,0-.67,0L44.36,92.25a35,35,0,0,0-6.13-11.38Z"/></svg><p class="whats-result" id="whatsThisResult"></p></div>
         </div>
-        <div class="card">
+        <div class="card" id="homeHeatCard">
           <div class="heat-cal">
             <div class="month-nav">
               <button type="button" class="caret" id="prevMonth" aria-label="Previous month"><svg viewBox="0 0 10 16" aria-hidden="true"><path d="M8 2 2 8l6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
@@ -1209,7 +1242,7 @@ $('#backupLater').onclick = () => {
 $('#backupNow').onclick = () => exportBackup();
 
 // App version and update check
-const APP_VERSION = '2.1.1';
+const APP_VERSION = '2.2.0';
 $('#appVersion').textContent = `Moomentum · Version ${APP_VERSION}`;
 function isNewerVersion(remote, local) {
   const r = String(remote).split('.').map(Number);
@@ -1487,6 +1520,10 @@ $('#bannerClose').onclick = () => {
 
 const ringState = { prod: 0, days: 0, reclaim: 0 };
 const RING_IDS = { prod: '#ringProd', days: '#ringDays', reclaim: '#ringReclaim' };
+let ringsInView = false;
+let pendingRingTargets = null;
+let pendingNetTarget = null;
+let homeVisualObserverStarted = false;
 function setRingDash(key, v) { $(RING_IDS[key]).setAttribute('stroke-dasharray', `${v.toFixed(2)} 100`); }
 function animateRings(targets) {
   const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1701,11 +1738,17 @@ function renderKpis() {
   maybeShowBackupReminder();
   const { G, prodMin, negMin, daysLogged, netMin, ringPcts } = getKpiStats(kpiRange);
   // Outer ring: goal activity hours. Middle ring: net balance. Inner ring: days logged.
-  animateRings(ringPcts);
   lastProd = prodMin;
   lastNeg = negMin;
   updateNetCopy(netMin);
-  animateNet(netMin, () => checkNetMilestone(netMin));
+  if (ringsInView) {
+    $('#ringsWrap').classList.add('revealed');
+    animateRings(ringPcts);
+    animateNet(netMin, () => checkNetMilestone(netMin));
+  } else {
+    pendingRingTargets = ringPcts;
+    pendingNetTarget = netMin;
+  }
   $('#lProd').textContent = `${fmtMin(prodMin)} of ${G.prodTxt}`;
   $('#lDays').textContent = `${netMin < 0 ? '−' : ''}${fmtMin(Math.abs(netMin))} of ${G.netTxt}`;
   $('#lReclaim').textContent = `${daysLogged} of ${G.daysTxt}`;
@@ -1835,21 +1878,58 @@ function setDate(k) {
   renderHeat();
 }
 
+// Chip micro-interactions: goal chips wipe and pop on select; both types float a +time token.
+function createChip(id) {
+  const b = document.createElement('button');
+  b.className = 'chip';
+  b.dataset.id = id;
+  b.onclick = () => tapChip(b);
+  return b;
+}
+function tapChip(b) {
+  const a = ACTS.find(x => x.id === b.dataset.id);
+  if (!a) return;
+  const cur = day(current);
+  if (cur[a.id] != null) {
+    delete cur[a.id];
+  } else {
+    cur[a.id] = 30;
+    if (a.type !== 'neg') playGoalReward(b);
+    showGainToken(b, `+${fmtHM(30)}`);
+  }
+  renderLog();
+}
+function playGoalReward(b) {
+  b.classList.remove('sweep', 'pop');
+  void b.offsetWidth; // restart the animation on quick repeat taps
+  b.classList.add('sweep', 'pop');
+  setTimeout(() => b.classList.remove('sweep'), 260);
+  setTimeout(() => b.classList.remove('pop'), 400);
+}
+function showGainToken(b, text) {
+  const r = b.getBoundingClientRect();
+  const t = document.createElement('div');
+  t.className = 'gain-token';
+  t.textContent = text;
+  t.style.left = `${r.left + r.width / 2}px`;
+  t.style.top = `${r.top}px`;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 750);
+}
 function renderChips() {
   const cur = day(current);
-  $('#chips').innerHTML = '';
+  const host = $('#chips');
+  // Reuse existing chip buttons so state changes transition in place instead of popping in
+  const existing = new Map([...host.querySelectorAll('button[data-id]')].map(el => [el.dataset.id, el]));
+  host.innerHTML = '';
   const sortedActs = ACTS.slice().sort((x, y) => (x.type === 'neg') - (y.type === 'neg') || x.name.localeCompare(y.name));
   sortedActs.forEach(a => {
-    const b = document.createElement('button');
-    b.className = 'chip' + (a.type === 'neg' ? ' neg' : '') + (cur[a.id] != null ? ' on' : '');
+    const b = existing.get(a.id) || createChip(a.id);
     b.textContent = a.name;
+    b.classList.toggle('neg', a.type === 'neg');
+    b.classList.toggle('on', cur[a.id] != null);
     b.setAttribute('aria-pressed', cur[a.id] != null);
-    b.onclick = () => {
-      if (cur[a.id] != null) delete cur[a.id];
-      else cur[a.id] = 30;
-      renderLog();
-    };
-    $('#chips').appendChild(b);
+    host.appendChild(b);
   });
   const addBtn = document.createElement('button');
   addBtn.type = 'button';
@@ -1860,6 +1940,22 @@ function renderChips() {
   $('#chips').appendChild(addBtn);
 }
 
+// Odometer for the stepper minutes. The input stays the editable control; this layer shows the digits and rolls them.
+const odoLast = new Map(); // `${date}|${activity}` -> minutes last shown, so the next render rolls from it
+function odoHTML(value, from) {
+  const digits = String(value).split('');
+  const prev = from != null ? String(from).padStart(digits.length, '0').slice(-digits.length) : null;
+  const strip = '0123456789'.split('').map(n => `<span>${n}</span>`).join('');
+  const reels = digits.map((d, i) => {
+    const start = prev ? prev[i] : d;
+    return `<span class="reel"><span class="strip" data-d="${d}" style="transform:translateY(-${Number(start) * 10}%)">${strip}</span></span>`;
+  }).join('');
+  return `<span class="odo" aria-hidden="true">${reels}</span>`;
+}
+function odoRoll(root) {
+  void root.offsetWidth; // commit the starting positions first so the change animates
+  root.querySelectorAll('.odo .strip').forEach(s => { s.style.transform = `translateY(-${Number(s.dataset.d) * 10}%)`; });
+}
 let pendingBump = null;
 function renderSelected() {
   const bump = pendingBump;
@@ -1878,7 +1974,7 @@ function renderSelected() {
     row.innerHTML = `<span>${a.name}</span>
       <span class="stepper goal-stepper">
         <button data-d="-15" aria-label="Less time">&minus;</button>
-        <input type="number" inputmode="numeric" min="15" max="1440" step="15" value="${cur[id]}" aria-label="Minutes for ${a.name}">
+        <span class="odo-field"><input type="number" inputmode="numeric" min="15" max="1440" step="15" value="${cur[id]}" aria-label="Minutes for ${a.name}">${odoHTML(cur[id], odoLast.get(current + '|' + id))}</span>
         <span class="unit">m</span>
         <button data-d="15" aria-label="More time">+</button>
       </span>`;
@@ -1903,6 +1999,7 @@ function renderSelected() {
       cur[id] = Math.min(MAX_MIN, Math.max(15, Math.round(v / 15) * 15));
       renderLog();
     });
+    odoLast.set(current + '|' + id, cur[id]);
     rows[id] = row;
   });
   // Rows that were just deselected stay in place and fade out before they are removed
@@ -1917,6 +2014,9 @@ function renderSelected() {
     box.appendChild(ghost);
     setTimeout(() => ghost.remove(), 280);
   });
+  // Forget odometer memory for removed rows, then roll the digits that changed
+  oldIds.filter(id => !ids.includes(id)).forEach(id => odoLast.delete(current + '|' + id));
+  odoRoll(box);
 }
 
 function renderLog() {
@@ -1941,10 +2041,14 @@ function openAddActivity(source) {
 
 // Log flow: Sunday-start week strip, activities, and a saved summary
 let weekAnchor = null;
+let weekAnimate = false; // set only by the prev and next week buttons, so picking a day doesn't replay the fade
 let recap = { done: false };
+let savedHold = false; // keeps the form, and the Save button, on screen while the checkmark plays
 const dateOf = k => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d); };
 function sundayOf(k) { return addDays(k, -dateOf(k).getDay()); }
 function renderWeekStrip() {
+  const animate = weekAnimate;
+  weekAnimate = false;
   const start = weekAnchor || sundayOf(current);
   const end = addDays(start, 6);
   const label = k => dateOf(k).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -1962,6 +2066,7 @@ function renderWeekStrip() {
     b.setAttribute('aria-pressed', String(k === current));
     b.setAttribute('aria-label', dt.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }));
     b.innerHTML = `<span class="tm">${dt.toLocaleDateString('en-US', { month: 'short' })}</span><span class="td">${dt.getDate()}</span><span class="tw">${dt.toLocaleDateString('en-US', { weekday: 'short' })}</span>`;
+    if (animate) { b.classList.add('tile-in'); b.style.setProperty('--i', i); }
     b.onclick = () => pickDay(k);
     tiles.appendChild(b);
   }
@@ -1977,8 +2082,8 @@ function renderLogState() {
   const ids = Object.keys(cur).filter(id => ACTS.some(a => a.id === id));
   $('#hintWrap').classList.toggle('closed', ids.length > 0);
   $('#detailWrap').classList.toggle('closed', ids.length === 0);
-  $('#editWrap').classList.toggle('closed', recap.done);
-  $('#savedWrap').classList.toggle('closed', !recap.done);
+  $('#editWrap').classList.toggle('closed', recap.done && !savedHold);
+  $('#savedWrap').classList.toggle('closed', !recap.done || savedHold);
   $('#loggedSummary').textContent = ids.length
     ? 'Logged: ' + ids.map(id => `${ACTS.find(a => a.id === id).name} ${fmtHM(cur[id])}`).join(', ')
     : 'Nothing logged for this day.';
@@ -1987,12 +2092,13 @@ function renderRecap() {
   renderWeekStrip();
   renderLogState();
 }
-$('#wkPrev').onclick = () => { weekAnchor = addDays(weekAnchor || sundayOf(current), -7); renderWeekStrip(); };
-$('#wkNext').onclick = () => { weekAnchor = addDays(weekAnchor || sundayOf(current), 7); renderWeekStrip(); };
+$('#wkPrev').onclick = () => { weekAnchor = addDays(weekAnchor || sundayOf(current), -7); weekAnimate = true; renderWeekStrip(); };
+$('#wkNext').onclick = () => { weekAnchor = addDays(weekAnchor || sundayOf(current), 7); weekAnimate = true; renderWeekStrip(); };
 
 $('#saveBtn').onclick = () => {
   const cur = day(current);
   if (!Object.keys(cur).length) return;
+  savedHold = true;
   recap.done = true;
   recordLastLogged();
   renderRecap();
@@ -2000,6 +2106,20 @@ $('#saveBtn').onclick = () => {
   renderWeekInReview();
   checkGoalHits(getKpiStats(kpiRange).ringPcts, kpiRange);
   showToast('Recap saved', 2500);
+  confirmSaved();
+};
+
+// Confirmation on the save button: the label reads Saved and a checkmark draws itself, then the button resets
+let savedTimer = null;
+function confirmSaved() {
+  const btn = $('#saveBtn');
+  const label = btn.querySelector('.save-label');
+  btn.classList.remove('is-saved');
+  void btn.offsetWidth; // restart the animation on repeat saves
+  btn.classList.add('is-saved');
+  label.textContent = 'Saved';
+  clearTimeout(savedTimer);
+  savedTimer = setTimeout(() => { btn.classList.remove('is-saved'); label.textContent = 'Save recap'; savedHold = false; renderLogState(); }, 2000);
 };
 
 // Last-logged footnote: saved on every recap save or edit, shown on every launch
@@ -2038,6 +2158,16 @@ function selectDay(k) {
 }
 
 let heatAnimate = true;
+let heatmapInView = false;
+let heatmapNeedsAnimation = true;
+function consumeHeatAnimation() {
+  const animate = heatAnimate && heatmapInView;
+  if (!heatmapInView) heatmapNeedsAnimation = true;
+  else if (animate) heatmapNeedsAnimation = false;
+  heatAnimate = false;
+  return animate;
+}
+
 function renderHeat() {
   const month = kpiRange === 'month';
   document.querySelector('.heat-cal').hidden = !month;
@@ -2047,8 +2177,7 @@ function renderHeat() {
 }
 
 function renderCalendar() {
-  const animate = heatAnimate;
-  heatAnimate = false;
+  const animate = consumeHeatAnimation();
   const { y, m } = viewMonth;
   const first = new Date(y, m, 1);
   const daysIn = new Date(y, m + 1, 0).getDate();
@@ -2085,8 +2214,7 @@ function renderCalendar() {
 }
 
 function renderYearGrid() {
-  const animate = heatAnimate;
-  heatAnimate = false;
+  const animate = consumeHeatAnimation();
   const grid = $('#grid');
   grid.innerHTML = '';
   const end = daysAgo(0);
@@ -2136,6 +2264,55 @@ function renderYearGrid() {
   }
   const wrap = grid.parentElement;
   wrap.scrollLeft = wrap.scrollWidth;
+}
+
+function revealPendingRings() {
+  $('#ringsWrap').classList.add('revealed');
+  if (pendingRingTargets) {
+    animateRings(pendingRingTargets);
+    pendingRingTargets = null;
+  }
+  if (pendingNetTarget !== null) {
+    const netMin = pendingNetTarget;
+    pendingNetTarget = null;
+    animateNet(netMin, () => checkNetMilestone(netMin));
+  }
+}
+
+function initHomeVisualizationObserver() {
+  if (homeVisualObserverStarted) return;
+  homeVisualObserverStarted = true;
+  const ringCard = $('#ringsCard');
+  const heatCard = $('#homeHeatCard');
+
+  if (!('IntersectionObserver' in window)) {
+    ringsInView = true;
+    revealPendingRings();
+    heatmapInView = true;
+    if (heatmapNeedsAnimation) {
+      heatAnimate = true;
+      renderHeat();
+    }
+    return;
+  }
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.target === ringCard) {
+        ringsInView = entry.isIntersecting;
+        if (ringsInView) revealPendingRings();
+      } else if (entry.target === heatCard) {
+        const enteredView = entry.isIntersecting && !heatmapInView;
+        heatmapInView = entry.isIntersecting;
+        if (enteredView && heatmapNeedsAnimation) {
+          heatAnimate = true;
+          renderHeat();
+        }
+      }
+    });
+  }, { threshold: 0.1 });
+  observer.observe(ringCard);
+  observer.observe(heatCard);
 }
 
 $('#prevMonth').onclick = () => {
@@ -2233,6 +2410,10 @@ let toastTimer = null;
 function showToast(msg, ms = 800) {
   const t = $('#toast');
   t.textContent = msg;
+  // Sit just above the bottom navigation on phones; on desktop the nav is a sidebar, so keep the default position
+  const nav = $('#nav');
+  const navFixed = nav && getComputedStyle(nav).position === 'fixed';
+  t.style.bottom = navFixed ? `${Math.round(nav.getBoundingClientRect().height) + 16}px` : '';
   t.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), ms);
@@ -2491,13 +2672,13 @@ function lineChart(bk, animate = false) {
   </svg>`;
 }
 
-function barChart(slices, animate = false) {
+function barChart(slices) {
   if (!slices.length) return '<p class="hint">No time logged in this range.</p>';
   const sum = slices.reduce((s, x) => s + x.min, 0);
-  const rows = slices.map((s, i) => `
+  const rows = slices.map(s => `
     <div class="hbar">
       <div class="hbar-head"><span>${s.name}</span><span>${Math.round((s.min / sum) * 100)}% · ${fmtMin(s.min)}</span></div>
-      <div class="hbar-track"><span class="${animate ? 'bar-grow' : ''}${s.type === 'neg' ? ' is-neg' : ''}" style="--i:${i};width:${((s.min / sum) * 100).toFixed(1)}%"></span></div>
+    <div class="hbar-track"><span class="scroll-fill${s.type === 'neg' ? ' is-neg' : ''}" style="width:${((s.min / sum) * 100).toFixed(1)}%"></span></div>
     </div>`).join('');
   return `<div role="list" aria-label="Time by activity">${rows}</div>
     <div class="legend" style="gap:18px"><span style="display:inline-flex;align-items:center;gap:6px"><i style="background:#3A5BA0"></i>Goal</span><span style="display:inline-flex;align-items:center;gap:6px"><i style="background:#A4502A"></i>Non-goal</span></div>`;
@@ -2514,9 +2695,35 @@ function focusRatioChart(goalMin, nonGoalMin) {
       <div><span>Non-goal</span><b>${nonGoalLabelPct}%</b><small>${fmtMin(nonGoalMin)}</small></div>
     </div>
     <div class="focus-ratio-track" role="img" aria-label="Goal ${goalLabelPct} percent, Non-goal ${nonGoalLabelPct} percent">
-      <span class="goal" style="width:${goalPct}%"></span><span class="non-goal" style="width:${100 - goalPct}%"></span>
+      <span class="goal scroll-fill" style="width:${goalPct}%"></span><span class="non-goal scroll-fill" style="width:${100 - goalPct}%"></span>
     </div>
     <div class="legend" style="gap:18px"><span style="display:inline-flex;align-items:center;gap:6px"><i style="background:#3A5BA0"></i>Goal</span><span style="display:inline-flex;align-items:center;gap:6px"><i style="background:#A4502A"></i>Non-goal</span></div>`;
+}
+
+let historyBarsObserver = null;
+function observeHistoryBars() {
+  historyBarsObserver?.disconnect();
+  const cards = [$('#focusRatio'), $('#breakdown')];
+  const revealBars = (card, sectionIndex) => {
+    card.querySelectorAll('.scroll-fill').forEach((bar, i) => {
+      bar.style.setProperty('--i', i);
+      bar.style.setProperty('--section-delay', `${sectionIndex * 600}ms`);
+      bar.classList.add('bar-grow');
+    });
+  };
+  if (!('IntersectionObserver' in window)) {
+    cards.forEach(revealBars);
+    return;
+  }
+  historyBarsObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const sectionIndex = cards.indexOf(entry.target);
+      revealBars(entry.target, sectionIndex);
+      historyBarsObserver.unobserve(entry.target);
+    });
+  }, { threshold: 0.1 });
+  cards.forEach(card => historyBarsObserver.observe(card));
 }
 
 // Trend popover: hover on a mouse, press-and-hold or tap on touch
@@ -2613,7 +2820,8 @@ function renderHistory() {
   const goalMin = totals.filter(s => s.type !== 'neg').reduce((s, a) => s + a.min, 0);
   const nonGoalMin = totals.filter(s => s.type === 'neg').reduce((s, a) => s + a.min, 0);
   $('#focusRatio').innerHTML = focusRatioChart(goalMin, nonGoalMin);
-  $('#breakdown').innerHTML = barChart(totals, animate);
+  $('#breakdown').innerHTML = barChart(totals);
+  observeHistoryBars();
 }
 
 $('#seg').querySelectorAll('button').forEach(btn => {
@@ -2628,7 +2836,7 @@ $('#seg').querySelectorAll('button').forEach(btn => {
 // Navigation
 // ---- Reports: Week in Review and Mid-Week history, built from logs (Sunday-start weeks, up to 52 weeks back) ----
 const REPORTS_CLEARED_KEY = 'moomentum:reportsClearedBefore';
-const REPORT_PAGE = 25, REPORT_MAX = 104;
+const REPORT_INITIAL = 2, REPORT_PAGE = 1, REPORT_MAX = 104;
 let repShown = 0, repAll = [];
 function reportTotals(from, to) {
   let p = 0, n = 0;
@@ -2715,7 +2923,7 @@ function reportTitle(r) {
 function reportCard(r, i) {
   const isWeek = r.kind === 'week';
   const range = `${fmtRepDate(r.start)} - ${fmtRepDate(r.end)}`;
-  return `<article class="rep-card">
+  return `<article class="rep-card is-pending">
     <header class="rep-head"><span class="rep-kind ${r.kind}">${isWeek ? 'Week in Review' : 'Mid-Week'}</span><span class="rep-range">${range}</span></header>
     <h4 class="rep-title">${reportTitle(r)}</h4>
     <p class="rep-lead">${reportSummary(r)}</p>
@@ -2739,10 +2947,33 @@ function openRepModal(r) {
   $('#repModalRows').innerHTML = rows + netRow;
   $('#repModal').showModal();
 }
-function loadReportPage() {
-  const next = repAll.slice(repShown, repShown + REPORT_PAGE);
+let repCardObserver = null;
+if ('IntersectionObserver' in window) {
+  repCardObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.remove('is-pending');
+      entry.target.classList.add('is-revealed');
+      repCardObserver.unobserve(entry.target);
+    });
+  }, { threshold: 0.1 });
+}
+function observeReportCards() {
+  const cards = $('#repList').querySelectorAll('.rep-card.is-pending');
+  if (!repCardObserver) {
+    cards.forEach(card => {
+      card.classList.remove('is-pending');
+      card.classList.add('is-revealed');
+    });
+    return;
+  }
+  cards.forEach(card => repCardObserver.observe(card));
+}
+function loadReportPage(count = REPORT_PAGE) {
+  const next = repAll.slice(repShown, repShown + count);
   $('#repList').insertAdjacentHTML('beforeend', next.map((r, j) => reportCard(r, repShown + j)).join(''));
   repShown += next.length;
+  observeReportCards();
   $('#repStatus').textContent = !repAll.length
     ? 'No reports yet. Reports appear after your first completed week.'
     : `Showing ${repShown} of ${repAll.length} reports`;
@@ -2750,14 +2981,74 @@ function loadReportPage() {
 function renderReports() {
   repAll = buildReports();
   repShown = 0;
+  reportScrollY = window.scrollY;
+  reportScrollDirection = 0;
+  reportLastLoadGeneration = reportScrollGeneration;
+  reportSentinelVisible = false;
+  repCardObserver?.disconnect();
   $('#repList').innerHTML = '';
   $('#clearReports').disabled = !repAll.length;
+  loadReportPage(REPORT_INITIAL);
+  repSentinelVisible = isReportSentinelVisible();
+}
+const repSentinel = $('#repSentinel');
+let repSentinelVisible = false;
+let reportScrollY = window.scrollY;
+let reportScrollDirection = 0;
+let reportScrollGeneration = 0;
+let reportLastLoadGeneration = 0;
+function isReportSentinelVisible() {
+  const rect = repSentinel.getBoundingClientRect();
+  return !$('#reports').hidden && rect.height > 0 &&
+    rect.top < window.innerHeight && rect.bottom > 0;
+}
+function maybeLoadReportOnScroll() {
+  if (reportScrollDirection <= 0 || !repSentinelVisible ||
+      reportScrollGeneration === reportLastLoadGeneration || repShown >= repAll.length) return;
+  reportLastLoadGeneration = reportScrollGeneration;
   loadReportPage();
 }
-const repIO = new IntersectionObserver(es => {
-  if (es[0].isIntersecting && repShown < repAll.length) loadReportPage();
-}, { rootMargin: '200px' });
-repIO.observe(document.getElementById('repSentinel'));
+let repIO = null;
+if ('IntersectionObserver' in window) {
+  repIO = new IntersectionObserver(entries => {
+    repSentinelVisible = entries.some(entry => entry.target === repSentinel && entry.isIntersecting);
+    maybeLoadReportOnScroll();
+  });
+  repIO.observe(repSentinel);
+}
+window.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  reportScrollDirection = y > reportScrollY ? 1 : y < reportScrollY ? -1 : 0;
+  if (reportScrollDirection > 0) reportScrollGeneration++;
+  reportScrollY = y;
+  if (!repIO) {
+    repSentinelVisible = isReportSentinelVisible();
+  }
+  maybeLoadReportOnScroll();
+}, { passive: true });
+function handleReportScrollGesture() {
+  if ($('#reports').hidden) return;
+  repSentinelVisible = isReportSentinelVisible();
+  reportScrollDirection = 1;
+  reportScrollGeneration++;
+  maybeLoadReportOnScroll();
+}
+window.addEventListener('wheel', e => {
+  if (e.deltaY > 0 && document.documentElement.scrollHeight <= window.innerHeight + 1) {
+    handleReportScrollGesture();
+  }
+}, { passive: true });
+let reportTouchStartY = null;
+window.addEventListener('touchstart', e => {
+  reportTouchStartY = e.touches.length === 1 ? e.touches[0].clientY : null;
+}, { passive: true });
+window.addEventListener('touchend', e => {
+  if (reportTouchStartY !== null && reportTouchStartY - e.changedTouches[0].clientY > 8 &&
+      document.documentElement.scrollHeight <= window.innerHeight + 1) {
+    handleReportScrollGesture();
+  }
+  reportTouchStartY = null;
+}, { passive: true });
 $('#repList').onclick = e => {
   const b = e.target.closest('button.rep-more');
   if (!b) return;
@@ -3188,6 +3479,7 @@ function finishOnboarding() {
   renderHeat();
   renderKpis();
   renderWeekInReview();
+  initHomeVisualizationObserver();
   // Install prompt waits 60 seconds after first-launch onboarding completes
   setTimeout(maybeShowInstallPrompt, 60000);
 }
@@ -3249,6 +3541,7 @@ if (!startOnboarding()) {
   maybeShowBackupReminder();
   if (isChromeAndroid) setTimeout(maybeShowInstallPrompt, 3000);
   else maybeShowInstallPrompt();
+  initHomeVisualizationObserver();
 }
 // Recap accordion starts open on every launch; the user can collapse it by tapping the toggle.
 setRecapOpen(true);
