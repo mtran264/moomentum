@@ -1209,7 +1209,7 @@ $('#backupLater').onclick = () => {
 $('#backupNow').onclick = () => exportBackup();
 
 // App version and update check
-const APP_VERSION = '2.1.0';
+const APP_VERSION = '2.1.1';
 $('#appVersion').textContent = `Moomentum · Version ${APP_VERSION}`;
 function isNewerVersion(remote, local) {
   const r = String(remote).split('.').map(Number);
@@ -2774,6 +2774,7 @@ $('#clearReportsConfirm').onclick = () => {
 };
 
 function showTab(t) {
+  const activeTab = $('#nav').dataset.active || document.querySelector('nav.side button.active')?.dataset.tab;
   document.querySelectorAll('nav.side button').forEach(b => b.classList.toggle('active', b.dataset.tab === t));
   $('#home').hidden = t !== 'home';
   $('#history').hidden = t !== 'history';
@@ -2785,6 +2786,7 @@ function showTab(t) {
   if (t === 'home') renderHeader();
   if (t === 'history') { insightsAnimate = true; renderHistory(); }
   if (t === 'activity' || t === 'manage') renderManage();
+  if (activeTab !== t) window.scrollTo(0, 0);
 }
 document.querySelectorAll('nav.side button').forEach(btn => {
   btn.onclick = () => {
